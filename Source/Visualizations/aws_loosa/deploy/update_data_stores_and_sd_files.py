@@ -120,7 +120,7 @@ def update_db_sd_files(latest_deployed_github_repo_commit):
     for d in diffs:
         changed_file = Path(d.a_path)
         file_basename = changed_file.name.split(".")[0]
-        if (".mapx" in changed_file.name or ".yml" in changed_file.name) and "viz_publish_service" in str(changed_file):
+        if ("static" in changed_file.name and (".mapx" in changed_file.name or ".yml" in changed_file.name)) and "viz_publish_service" in str(changed_file):
             if file_basename not in changed_services:
                 changed_services.append(file_basename)
         

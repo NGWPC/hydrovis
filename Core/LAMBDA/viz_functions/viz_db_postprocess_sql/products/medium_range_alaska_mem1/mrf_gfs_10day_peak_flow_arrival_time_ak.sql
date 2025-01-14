@@ -28,8 +28,11 @@ JOIN cache.max_flows_mrf_gfs_10day_ak AS max_flows
 -- Join in channels data to get reach metadata and geometry
 JOIN derived.channels_ak as channels ON forecasts.feature_id = channels.feature_id::bigint
 
+-- Join in recurrence flows to get high water threshold
+JOIN derived.recurrence_flows_ak AS rf ON forecasts.feature_id = rf.feature_id
+
 -- Join in high water arrival time for return time (the yaml config file ensures that arrival time finishes first for this, but we'll join on reference_time as well to ensure)
 JOIN publish.mrf_gfs_10day_high_water_arrival_time_ak AS arrival_time ON forecasts.feature_id = arrival_time.feature_id and forecasts.reference_time = arrival_time.reference_time
 
 WHERE round((forecasts.streamflow*35.315)::numeric, 2) >= rf.high_water_threshold
-GROUP BY forecasts.feature_id, forecasts.reference_time, forecasts.nwm_vers, forecasts.streamflow, max_flows.discharge_cfs, arrival_time.below_bank_return_hour, channels.geom, channels.strm_order, channels.name, channels.huc6;
+GROUP BY forecasts.feature_id, forecasts.reference_time, forecasts.nwm_vers, forecasts.streamflow, max_flows.discharge_cfs, arrival_time.below_bank_return_hour, arrival_time.below_bank_return_time, channels.geom, channels.strm_order, channels.name, channels.huc6, rf.high_water_threshold;
