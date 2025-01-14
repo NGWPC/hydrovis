@@ -7,8 +7,7 @@ import inspect
 try:
     import fsspec
 except:
-    import boto3
-    from botocore.exceptions import ClientError
+    print("fsspec not found, will fall back to boto3")
 
 class RequiredTableNotUpdated(Exception):
     """ This is a custom exception to report back to the AWS Step Function that a required table does not exist or has not yet been updated with the current reference time. """
@@ -414,6 +413,8 @@ class s3_file:
                 files = cls.fs.ls(f"{bucket}/{prefix}", detail=True)
                 return [f for f in files if f['type'] == 'file']
             except:
+                import boto3
+                
                 s3 = boto3.client('s3')
                 files = []
                 paginator = s3.get_paginator('list_objects_v2')
@@ -442,6 +443,9 @@ class s3_file:
         try:
             return self.fs.exists(f"{self.bucket}/{self.key}")
         except:
+            import boto3
+            from botocore.exceptions import ClientError
+
             s3_resource = boto3.resource('s3')
             try:
                 s3_resource.Object(self.bucket, self.key).load()

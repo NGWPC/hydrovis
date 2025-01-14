@@ -499,10 +499,12 @@ data "cloudinit_config" "startup" {
               egis_db_port         = local.dbs["egis"]["db_port"]
               egis_db_username     = local.dbs["egis"]["db_username"]
               egis_db_password     = local.dbs["egis"]["db_password"]
+              egis_db_name         = local.dbs["egis"]["db_name"]
               viz_db_host          = local.dbs["viz"]["db_host"]
               viz_db_port          = local.dbs["viz"]["db_port"]
               viz_db_username      = local.dbs["viz"]["db_username"]
               viz_db_password      = local.dbs["viz"]["db_password"]
+              viz_db_name          = local.dbs["viz"]["db_name"]
             })
           }
         ]
