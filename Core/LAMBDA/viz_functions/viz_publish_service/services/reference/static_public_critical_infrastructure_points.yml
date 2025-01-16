@@ -1,0 +1,9 @@
+service: static_public_critical_infrastructure_points
+summary: Critical infrastructure as points
+description: Depicts the locations of colleges, fire stations, hospitals, nursing homes, police stations, and schools throughout the United States and its territories
+tags: national water model, nwm, reference
+credits: NOAA/NWS National Water Center
+egis_server: server
+egis_folder: reference
+feature_service: true
+public_service: false

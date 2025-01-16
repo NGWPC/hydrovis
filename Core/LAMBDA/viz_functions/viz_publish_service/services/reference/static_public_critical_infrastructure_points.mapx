@@ -1,0 +1,900 @@
+{
+  "type" : "CIMMapDocument",
+  "version" : "2.7.0",
+  "build" : 26828,
+  "mapDefinition" : {
+    "type" : "CIMMap",
+    "name" : "Map",
+    "uRI" : "CIMPATH=map/map.xml",
+    "sourceModifiedTime" : {
+      "type" : "TimeInstant"
+    },
+    "useSourceMetadata" : true,
+    "illumination" : {
+      "type" : "CIMIlluminationProperties",
+      "ambientLight" : 75,
+      "sunPositionX" : -0.61237243569579003,
+      "sunPositionY" : 0.61237243569579003,
+      "sunPositionZ" : 0.5,
+      "illuminationSource" : "AbsoluteSunPosition",
+      "sunAzimuth" : 315,
+      "sunAltitude" : 30,
+      "showStars" : true,
+      "enableAmbientOcclusion" : true,
+      "enableEyeDomeLighting" : true
+    },
+    "layers" : [
+      "CIMPATH=map/is_hydrovis_static_public_critical_infrastructure_points.xml"
+    ],
+    "defaultViewingMode" : "Map",
+    "mapType" : "Map",
+    "defaultExtent" : {
+      "xmin" : -10270366.9492253959,
+      "ymin" : 3710521.33466028515,
+      "xmax" : -9939055.65712730587,
+      "ymax" : 3836046.85290640406,
+      "spatialReference" : {
+        "wkid" : 102100,
+        "latestWkid" : 3857
+      }
+    },
+    "elevationSurfaces" : [
+      {
+        "type" : "CIMMapElevationSurface",
+        "elevationMode" : "BaseGlobeSurface",
+        "name" : "Ground",
+        "verticalExaggeration" : 1,
+        "mapElevationID" : "{1DC6D0F9-620F-48D0-B3C2-57D811BE753D}",
+        "color" : {
+          "type" : "CIMRGBColor",
+          "values" : [
+            255,
+            255,
+            255,
+            100
+          ]
+        },
+        "surfaceTINShadingMode" : "Smooth",
+        "visibility" : true,
+        "expanded" : true
+      }
+    ],
+    "generalPlacementProperties" : {
+      "type" : "CIMMaplexGeneralPlacementProperties",
+      "invertedLabelTolerance" : 2,
+      "unplacedLabelColor" : {
+        "type" : "CIMRGBColor",
+        "values" : [
+          255,
+          0,
+          0,
+          100
+        ]
+      },
+      "keyNumberGroups" : [
+        {
+          "type" : "CIMMaplexKeyNumberGroup",
+          "delimiterCharacter" : ".",
+          "horizontalAlignment" : "Left",
+          "maximumNumberOfLines" : 20,
+          "minimumNumberOfLines" : 2,
+          "name" : "Default",
+          "numberResetType" : "None",
+          "keyNumberMethod" : "PreventUnplacedLabels"
+        }
+      ],
+      "placementQuality" : "High"
+    },
+    "snappingProperties" : {
+      "type" : "CIMSnappingProperties",
+      "xYTolerance" : 10,
+      "xYToleranceUnit" : "SnapXYToleranceUnitPixel",
+      "snapToSketchEnabled" : true,
+      "snapRequestType" : "SnapRequestType_GeometricAndVisualSnapping",
+      "isZSnappingEnabled" : true
+    },
+    "spatialReference" : {
+      "wkid" : 102100,
+      "latestWkid" : 3857
+    },
+    "timeDisplay" : {
+      "type" : "CIMMapTimeDisplay",
+      "defaultTimeIntervalUnits" : "esriTimeUnitsUnknown",
+      "timeValue" : {
+        "type" : "TimeExtent",
+        "start" : null,
+        "end" : null,
+        "empty" : false
+      },
+      "timeRelation" : "esriTimeRelationOverlaps"
+    },
+    "colorModel" : "RGB",
+    "scaleDisplayFormat" : "Value",
+    "clippingMode" : "None",
+    "nearPlaneClipDistanceMode" : "Automatic",
+    "rGBColorProfile" : "sRGB IEC61966-2-1 noBPC",
+    "cMYKColorProfile" : "U.S. Web Coated (SWOP) v2"
+  },
+  "layerDefinitions" : [
+    {
+      "type" : "CIMFeatureLayer",
+      "name" : "static_public_critical_infrastructure_points",
+      "uRI" : "CIMPATH=map/is_hydrovis_static_public_critical_infrastructure_points.xml",
+      "sourceModifiedTime" : {
+        "type" : "TimeInstant"
+      },
+      "useSourceMetadata" : true,
+      "description" : "hydrovis.hydrovis.static_public_critical_infrastructure_points",
+      "layerElevation" : {
+        "type" : "CIMLayerElevationSurface",
+        "mapElevationID" : "{1DC6D0F9-620F-48D0-B3C2-57D811BE753D}"
+      },
+      "expanded" : true,
+      "layerType" : "Operational",
+      "showLegends" : true,
+      "visibility" : true,
+      "displayCacheType" : "Permanent",
+      "maxDisplayCacheAge" : 5,
+      "showPopups" : true,
+      "serviceLayerID" : -1,
+      "refreshRate" : -1,
+      "refreshRateUnit" : "esriTimeUnitsSeconds",
+      "blendingMode" : "Alpha",
+      "autoGenerateFeatureTemplates" : true,
+      "featureElevationExpression" : "0",
+      "featureTable" : {
+        "type" : "CIMFeatureTable",
+        "displayField" : "name",
+        "editable" : true,
+        "dataConnection" : {
+          "type" : "CIMSqlQueryDataConnection",
+          "workspaceConnectionString" : "ENCRYPTED_PASSWORD=00022e68704e547642676d7033392f6e43444a4a2f754855616e544850664f622f63692f6b5752345251746d792b6d777a524d75623242333132766575447161664b58782a00;SERVER=hv-ti-egis-rds-pg-egdb.c4vzypepnkx3.us-east-1.rds.amazonaws.com;INSTANCE=sde:postgresql:hv-ti-egis-rds-pg-egdb.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DBCLIENT=postgresql;DB_CONNECTION_PROPERTIES=hv-ti-egis-rds-pg-egdb.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DATABASE=hydrovis;USER=hydrovis;AUTHENTICATION_MODE=DBMS",
+          "workspaceFactory" : "SDE",
+          "dataset" : "hydrovis.hydrovis.%static_public_critical_infrastructure_points",
+          "datasetType" : "esriDTFeatureClass",
+          "sqlQuery" : "select country,naics_code,specialty,excess_bed,val_method,tot_enroll,city,latitude,county,level_,source,type,st_grade,sourcedate,st_grade_1,alias,state,id,helipad,build_type,end_grade,longitude,zip,trauma,naics_desc,website,address,naicscode,telephone,addressbui,tot_emp,population,enrollment,val_date,zipcode,alt_name,naicsdescr,ft_teacher,name,beds,objectid,status,geometry,oid from hydrovis.reference.static_public_critical_infrastructure_points_fema",
+          "srid" : "3857",
+          "spatialReference" : {
+            "wkid" : 102100,
+            "latestWkid" : 3857
+          },
+          "oIDFields" : "oid",
+          "geometryType" : "esriGeometryPoint",
+          "extent" : {
+            "xmin" : -19663709.1926999986,
+            "ymin" : -1613687.87180000171,
+            "xmax" : 19077762.1308000013,
+            "ymax" : 11514228.6788000017,
+            "spatialReference" : {
+              "wkid" : 102100,
+              "latestWkid" : 3857
+            }
+          },
+          "queryFields" : [
+            {
+              "name" : "country",
+              "type" : "esriFieldTypeString",
+              "alias" : "country",
+              "length" : 60000
+            },
+            {
+              "name" : "naics_code",
+              "type" : "esriFieldTypeString",
+              "alias" : "naics_code",
+              "length" : 60000
+            },
+            {
+              "name" : "specialty",
+              "type" : "esriFieldTypeString",
+              "alias" : "specialty",
+              "length" : 60000
+            },
+            {
+              "name" : "excess_bed",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "excess_bed"
+            },
+            {
+              "name" : "val_method",
+              "type" : "esriFieldTypeString",
+              "alias" : "val_method",
+              "length" : 60000
+            },
+            {
+              "name" : "tot_enroll",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "tot_enroll"
+            },
+            {
+              "name" : "city",
+              "type" : "esriFieldTypeString",
+              "alias" : "city",
+              "length" : 60000
+            },
+            {
+              "name" : "latitude",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "latitude"
+            },
+            {
+              "name" : "county",
+              "type" : "esriFieldTypeString",
+              "alias" : "county",
+              "length" : 60000
+            },
+            {
+              "name" : "level_",
+              "type" : "esriFieldTypeString",
+              "alias" : "level_",
+              "length" : 60000
+            },
+            {
+              "name" : "source",
+              "type" : "esriFieldTypeString",
+              "alias" : "source",
+              "length" : 60000
+            },
+            {
+              "name" : "type",
+              "type" : "esriFieldTypeString",
+              "alias" : "type",
+              "length" : 60000
+            },
+            {
+              "name" : "st_grade",
+              "type" : "esriFieldTypeString",
+              "alias" : "st_grade",
+              "length" : 60000
+            },
+            {
+              "name" : "sourcedate",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "sourcedate"
+            },
+            {
+              "name" : "st_grade_1",
+              "type" : "esriFieldTypeString",
+              "alias" : "st_grade_1",
+              "length" : 60000
+            },
+            {
+              "name" : "alias",
+              "type" : "esriFieldTypeString",
+              "alias" : "alias",
+              "length" : 60000
+            },
+            {
+              "name" : "state",
+              "type" : "esriFieldTypeString",
+              "alias" : "state",
+              "length" : 60000
+            },
+            {
+              "name" : "id",
+              "type" : "esriFieldTypeString",
+              "alias" : "id",
+              "length" : 60000
+            },
+            {
+              "name" : "helipad",
+              "type" : "esriFieldTypeString",
+              "alias" : "helipad",
+              "length" : 60000
+            },
+            {
+              "name" : "build_type",
+              "type" : "esriFieldTypeString",
+              "alias" : "build_type",
+              "length" : 60000
+            },
+            {
+              "name" : "end_grade",
+              "type" : "esriFieldTypeString",
+              "alias" : "end_grade",
+              "length" : 60000
+            },
+            {
+              "name" : "longitude",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "longitude"
+            },
+            {
+              "name" : "zip",
+              "type" : "esriFieldTypeString",
+              "alias" : "zip",
+              "length" : 60000
+            },
+            {
+              "name" : "trauma",
+              "type" : "esriFieldTypeString",
+              "alias" : "trauma",
+              "length" : 60000
+            },
+            {
+              "name" : "naics_desc",
+              "type" : "esriFieldTypeString",
+              "alias" : "naics_desc",
+              "length" : 60000
+            },
+            {
+              "name" : "website",
+              "type" : "esriFieldTypeString",
+              "alias" : "website",
+              "length" : 60000
+            },
+            {
+              "name" : "address",
+              "type" : "esriFieldTypeString",
+              "alias" : "address",
+              "length" : 60000
+            },
+            {
+              "name" : "naicscode",
+              "type" : "esriFieldTypeString",
+              "alias" : "naicscode",
+              "length" : 60000
+            },
+            {
+              "name" : "telephone",
+              "type" : "esriFieldTypeString",
+              "alias" : "telephone",
+              "length" : 60000
+            },
+            {
+              "name" : "addressbui",
+              "type" : "esriFieldTypeString",
+              "alias" : "addressbui",
+              "length" : 60000
+            },
+            {
+              "name" : "tot_emp",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "tot_emp"
+            },
+            {
+              "name" : "population",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "population"
+            },
+            {
+              "name" : "enrollment",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "enrollment"
+            },
+            {
+              "name" : "val_date",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "val_date"
+            },
+            {
+              "name" : "zipcode",
+              "type" : "esriFieldTypeString",
+              "alias" : "zipcode",
+              "length" : 60000
+            },
+            {
+              "name" : "alt_name",
+              "type" : "esriFieldTypeString",
+              "alias" : "alt_name",
+              "length" : 60000
+            },
+            {
+              "name" : "naicsdescr",
+              "type" : "esriFieldTypeString",
+              "alias" : "naicsdescr",
+              "length" : 60000
+            },
+            {
+              "name" : "ft_teacher",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "ft_teacher"
+            },
+            {
+              "name" : "name",
+              "type" : "esriFieldTypeString",
+              "alias" : "name",
+              "length" : 60000
+            },
+            {
+              "name" : "beds",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "beds"
+            },
+            {
+              "name" : "objectid",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "objectid"
+            },
+            {
+              "name" : "status",
+              "type" : "esriFieldTypeString",
+              "alias" : "status",
+              "length" : 60000
+            },
+            {
+              "name" : "geometry",
+              "type" : "esriFieldTypeGeometry",
+              "alias" : "geometry",
+              "geometryDef" : {
+                "avgNumPoints" : 0,
+                "geometryType" : "esriGeometryPoint",
+                "hasM" : false,
+                "hasZ" : false,
+                "spatialReference" : {
+                  "wkid" : 102100,
+                  "latestWkid" : 3857
+                }
+              }
+            },
+            {
+              "name" : "oid",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "oid"
+            }
+          ],
+          "spatialStorageType" : 8
+        },
+        "studyAreaSpatialRel" : "esriSpatialRelUndefined",
+        "searchOrder" : "esriSearchOrderSpatial"
+      },
+      "htmlPopupEnabled" : true,
+      "selectable" : true,
+      "featureCacheType" : "Session",
+      "displayFiltersType" : "ByScale",
+      "featureBlendingMode" : "Alpha",
+      "labelClasses" : [
+        {
+          "type" : "CIMLabelClass",
+          "expressionTitle" : "Custom",
+          "expression" : "$feature.NAME",
+          "expressionEngine" : "Arcade",
+          "featuresToLabel" : "AllVisibleFeatures",
+          "maplexLabelPlacementProperties" : {
+            "type" : "CIMMaplexLabelPlacementProperties",
+            "featureType" : "Point",
+            "avoidPolygonHoles" : true,
+            "canOverrunFeature" : true,
+            "canPlaceLabelOutsidePolygon" : true,
+            "canRemoveOverlappingLabel" : true,
+            "canStackLabel" : true,
+            "connectionType" : "Unambiguous",
+            "constrainOffset" : "NoConstraint",
+            "contourAlignmentType" : "Page",
+            "contourLadderType" : "Straight",
+            "contourMaximumAngle" : 90,
+            "enableConnection" : true,
+            "enablePointPlacementPriorities" : true,
+            "featureWeight" : 0,
+            "fontHeightReductionLimit" : 4,
+            "fontHeightReductionStep" : 0.5,
+            "fontWidthReductionLimit" : 90,
+            "fontWidthReductionStep" : 5,
+            "graticuleAlignmentType" : "Straight",
+            "keyNumberGroupName" : "Default",
+            "labelBuffer" : 15,
+            "labelLargestPolygon" : true,
+            "labelPriority" : -1,
+            "labelStackingProperties" : {
+              "type" : "CIMMaplexLabelStackingProperties",
+              "stackAlignment" : "ChooseBest",
+              "maximumNumberOfLines" : 3,
+              "minimumNumberOfCharsPerLine" : 3,
+              "maximumNumberOfCharsPerLine" : 24,
+              "separators" : [
+                {
+                  "type" : "CIMMaplexStackingSeparator",
+                  "separator" : " ",
+                  "splitAfter" : true
+                },
+                {
+                  "type" : "CIMMaplexStackingSeparator",
+                  "separator" : ",",
+                  "visible" : true,
+                  "splitAfter" : true
+                }
+              ]
+            },
+            "lineFeatureType" : "General",
+            "linePlacementMethod" : "OffsetCurvedFromLine",
+            "maximumLabelOverrun" : 36,
+            "maximumLabelOverrunUnit" : "Point",
+            "minimumFeatureSizeUnit" : "Map",
+            "multiPartOption" : "OneLabelPerPart",
+            "offsetAlongLineProperties" : {
+              "type" : "CIMMaplexOffsetAlongLineProperties",
+              "placementMethod" : "BestPositionAlongLine",
+              "labelAnchorPoint" : "CenterOfLabel",
+              "distanceUnit" : "Percentage",
+              "useLineDirection" : true
+            },
+            "pointExternalZonePriorities" : {
+              "type" : "CIMMaplexExternalZonePriorities",
+              "aboveLeft" : 4,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerRight" : 3,
+              "belowRight" : 5,
+              "belowCenter" : 7,
+              "belowLeft" : 8,
+              "centerLeft" : 6
+            },
+            "pointPlacementMethod" : "AroundPoint",
+            "polygonAnchorPointType" : "GeometricCenter",
+            "polygonBoundaryWeight" : 0,
+            "polygonExternalZones" : {
+              "type" : "CIMMaplexExternalZonePriorities",
+              "aboveLeft" : 4,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerRight" : 3,
+              "belowRight" : 5,
+              "belowCenter" : 7,
+              "belowLeft" : 8,
+              "centerLeft" : 6
+            },
+            "polygonFeatureType" : "General",
+            "polygonInternalZones" : {
+              "type" : "CIMMaplexInternalZonePriorities",
+              "center" : 1
+            },
+            "polygonPlacementMethod" : "CurvedInPolygon",
+            "primaryOffset" : 1,
+            "primaryOffsetUnit" : "Point",
+            "removeExtraWhiteSpace" : true,
+            "repetitionIntervalUnit" : "Point",
+            "rotationProperties" : {
+              "type" : "CIMMaplexRotationProperties",
+              "rotationType" : "Arithmetic",
+              "alignmentType" : "Straight"
+            },
+            "secondaryOffset" : 100,
+            "strategyPriorities" : {
+              "type" : "CIMMaplexStrategyPriorities",
+              "stacking" : 1,
+              "overrun" : 2,
+              "fontCompression" : 3,
+              "fontReduction" : 4,
+              "abbreviation" : 5
+            },
+            "thinningDistanceUnit" : "Point",
+            "truncationMarkerCharacter" : ".",
+            "truncationMinimumLength" : 1,
+            "truncationPreferredCharacters" : "aeiou",
+            "truncationExcludedCharacters" : "0123456789",
+            "polygonAnchorPointPerimeterInsetUnit" : "Point"
+          },
+          "name" : "Class 1",
+          "priority" : -1,
+          "standardLabelPlacementProperties" : {
+            "type" : "CIMStandardLabelPlacementProperties",
+            "featureType" : "Line",
+            "featureWeight" : "None",
+            "labelWeight" : "High",
+            "numLabelsOption" : "OneLabelPerName",
+            "lineLabelPosition" : {
+              "type" : "CIMStandardLineLabelPosition",
+              "above" : true,
+              "inLine" : true,
+              "parallel" : true
+            },
+            "lineLabelPriorities" : {
+              "type" : "CIMStandardLineLabelPriorities",
+              "aboveStart" : 3,
+              "aboveAlong" : 3,
+              "aboveEnd" : 3,
+              "centerStart" : 3,
+              "centerAlong" : 3,
+              "centerEnd" : 3,
+              "belowStart" : 3,
+              "belowAlong" : 3,
+              "belowEnd" : 3
+            },
+            "pointPlacementMethod" : "AroundPoint",
+            "pointPlacementPriorities" : {
+              "type" : "CIMStandardPointPlacementPriorities",
+              "aboveLeft" : 2,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerLeft" : 3,
+              "centerRight" : 2,
+              "belowLeft" : 3,
+              "belowCenter" : 3,
+              "belowRight" : 2
+            },
+            "rotationType" : "Arithmetic",
+            "polygonPlacementMethod" : "AlwaysHorizontal"
+          },
+          "textSymbol" : {
+            "type" : "CIMSymbolReference",
+            "symbol" : {
+              "type" : "CIMTextSymbol",
+              "blockProgression" : "TTB",
+              "depth3D" : 1,
+              "extrapolateBaselines" : true,
+              "fontEffects" : "Normal",
+              "fontEncoding" : "Unicode",
+              "fontFamilyName" : "Tahoma",
+              "fontStyleName" : "Regular",
+              "fontType" : "Unspecified",
+              "haloSize" : 1,
+              "height" : 10,
+              "hinting" : "Default",
+              "horizontalAlignment" : "Left",
+              "kerning" : true,
+              "letterWidth" : 100,
+              "ligatures" : true,
+              "lineGapType" : "ExtraLeading",
+              "symbol" : {
+                "type" : "CIMPolygonSymbol",
+                "symbolLayers" : [
+                  {
+                    "type" : "CIMSolidFill",
+                    "enable" : true,
+                    "color" : {
+                      "type" : "CIMRGBColor",
+                      "values" : [
+                        0,
+                        0,
+                        0,
+                        100
+                      ]
+                    }
+                  }
+                ]
+              },
+              "textCase" : "Normal",
+              "textDirection" : "LTR",
+              "verticalAlignment" : "Bottom",
+              "verticalGlyphOrientation" : "Right",
+              "wordSpacing" : 100,
+              "billboardMode3D" : "FaceNearPlane"
+            }
+          },
+          "useCodedValue" : true,
+          "visibility" : true,
+          "iD" : -1
+        }
+      ],
+      "renderer" : {
+        "type" : "CIMUniqueValueRenderer",
+        "defaultSymbolPatch" : "Default",
+        "fields" : [
+          "build_type"
+        ],
+        "groups" : [
+          {
+            "type" : "CIMUniqueValueGroup",
+            "classes" : [
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "Colleges",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPointSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMPictureMarker",
+                        "enable" : true,
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 18,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "invertBackfaceTexture" : true,
+                        "scaleX" : 1,
+                        "textureFilter" : "Picture",
+                        "url" : "data:image/png;base64,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"
+                      }
+                    ],
+                    "haloSize" : 1,
+                    "scaleX" : 1,
+                    "angleAlignment" : "Display"
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "COLLEGES"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "Fire/EMS",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPointSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMPictureMarker",
+                        "enable" : true,
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 18,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "invertBackfaceTexture" : true,
+                        "scaleX" : 1,
+                        "textureFilter" : "Picture",
+                        "url" : "data:image/png;base64,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"
+                      }
+                    ],
+                    "haloSize" : 1,
+                    "scaleX" : 1,
+                    "angleAlignment" : "Display"
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "FIRE/EMS"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "Hospitals",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPointSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMPictureMarker",
+                        "enable" : true,
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 18,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "invertBackfaceTexture" : true,
+                        "scaleX" : 1,
+                        "textureFilter" : "Picture",
+                        "url" : "data:image/png;base64,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"
+                      }
+                    ],
+                    "haloSize" : 1,
+                    "scaleX" : 1,
+                    "angleAlignment" : "Display"
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "HOSPITALS"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "Nursing Home",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPointSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMPictureMarker",
+                        "enable" : true,
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 18,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "invertBackfaceTexture" : true,
+                        "scaleX" : 1,
+                        "textureFilter" : "Picture",
+                        "url" : "data:image/png;base64,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"
+                      }
+                    ],
+                    "haloSize" : 1,
+                    "scaleX" : 1,
+                    "angleAlignment" : "Display"
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "NURSING HOME"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "Police",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPointSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMPictureMarker",
+                        "enable" : true,
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 18,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "invertBackfaceTexture" : true,
+                        "scaleX" : 1,
+                        "textureFilter" : "Picture",
+                        "url" : "data:image/png;base64,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"
+                      }
+                    ],
+                    "haloSize" : 1,
+                    "scaleX" : 1,
+                    "angleAlignment" : "Display"
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "POLICE"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "Schools",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPointSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMPictureMarker",
+                        "enable" : true,
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 18,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "invertBackfaceTexture" : true,
+                        "scaleX" : 1,
+                        "textureFilter" : "Picture",
+                        "url" : "data:image/png;base64,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"
+                      }
+                    ],
+                    "haloSize" : 1,
+                    "scaleX" : 1,
+                    "angleAlignment" : "Display"
+                  },
+                  "symbolName" : "Level_1"
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "SCHOOLS"
+                    ]
+                  }
+                ],
+                "visible" : true
+              }
+            ]
+          }
+        ],
+        "polygonSymbolColorTarget" : "Fill"
+      },
+      "scaleSymbols" : true,
+      "snappable" : true
+    }
+  ]
+}
