@@ -14,40 +14,17 @@ from git import Repo
 from aws_loosa.consts import paths
 from aws_loosa.utils.viz_lambda_shared_funcs import get_service_metadata, check_s3_file_existence
 
-s3 = boto3.resource('s3')
-s3_client = boto3.client('s3')
-
-service_dict = {
-    "static_hand_catchments_0_branches_noaa": "fim_catchments",
-    "static_hand_catchments_0_branches_hi_noaa": "fim_catchments",
-    "static_hand_catchments_0_branches_prvi_noaa": "fim_catchments",
-    "static_hand_catchments_gms_branches_noaa": "fim_catchments",
-    "static_hand_catchments_gms_branches_hi_noaa": "fim_catchments",
-    "static_hand_catchments_gms_branches_prvi_noaa": "fim_catchments",
-    "static_nwm_flowlines": "reference",
-    "static_nwm_flowlines_hi": "reference",
-    "static_nwm_flowlines_prvi": "reference",
-    "static_nwm_coastal_domain_noaa": "reference",
-    "static_nwm_waterbodies": "reference",
-    "static_nwm_waterbodies_hi": "reference",
-    "static_nwm_waterbodies_prvi": "reference",
-    "static_public_fim_domain": "reference",
-    "static_hand_inundation_performance_metrics_noaa": "reference",
-    "static_flow_based_catfim_noaa": "reference",
-    "static_stage_based_catfim_noaa": "reference",
-    "static_stage_based_catfim": "reference",
-    "static_nwm_aep_inundation_extent_library_noaa": "aep_fim",
-    "static_hand_rating_curve_performance_metrics_noaa": "reference",
-    "static_ras2fim_boundaries_noaa": "reference"
-}
-
+S3_CLIENT = boto3.client('s3')
+GIS = arcgis.gis.GIS(
+    f"https://{consts.EGIS_HOST}/portal", username=consts.EGIS_USERNAME, password=consts.EGIS_PASSWORD,
+    verify_cert=False
+)
+EMPTY_FILE = Path(__file__).parent / 'empty_file'
+EMPTY_FILE.write_text('')
+FAILED_LIST = []
 
 def update_data_stores():
     print(f"Connecting to {consts.EGIS_HOST}")
-    gis = arcgis.gis.GIS(
-        f"https://{consts.EGIS_HOST}/portal", username=consts.EGIS_USERNAME, password=consts.EGIS_PASSWORD,
-        verify_cert=False
-    )
 
     print(f"Creating connection string for {os.environ['EGIS_DB_HOST']}")
     conn_str = arcpy.management.CreateDatabaseConnectionString(
@@ -57,7 +34,7 @@ def update_data_stores():
     conn_str = re.findall("<WorkspaceConnectionString>(.*)</WorkspaceConnectionString>", str(conn_str))[0]
 
     print("Connecting to servers")
-    servers = gis.admin.servers.list()
+    servers = GIS.admin.servers.list()
     unique_name = uuid.uuid4().hex
 
     for server in servers:
@@ -93,8 +70,7 @@ def create_sde_file():
         )
 
 
-def update_db_sd_files(latest_deployed_github_repo_commit):  
-    print("Updating mapx files and creating SD files")
+def update_db_sd_files(changed_services):  
     sd_folder = os.path.join(paths.AUTHORITATIVE_ROOT, "sd_files")
     deployment_bucket = os.environ['DEPLOYMENT_DATA_BUCKET']
     fim_output_bucket = os.environ['FIM_OUTPUT_BUCKET']
@@ -112,34 +88,31 @@ def update_db_sd_files(latest_deployed_github_repo_commit):
     baseline_aprx_path = os.path.join(paths.EMPTY_PRO_PROJECT_DIR, "Empty_Project.aprx")
 
     services_data = get_service_metadata()
-
-    print(f"Getting changed services since commit {latest_deployed_github_repo_commit}")
-    changed_services = []
-    repo = Repo(paths.HYDROVIS_DIR)
-    diffs = repo.head.commit.diff(latest_deployed_github_repo_commit)
-    for d in diffs:
-        changed_file = Path(d.a_path)
-        file_basename = changed_file.name.split(".")[0]
-        if ("static" in changed_file.name and (".mapx" in changed_file.name or ".yml" in changed_file.name)) and "viz_publish_service" in str(changed_file):
-            if file_basename not in changed_services:
-                changed_services.append(file_basename)
         
     for service_name in changed_services:
-        print(f"Creating SD file for {service_name}...")
-        
         service_data = [item for item in services_data if item['service'] == service_name]
         if not service_data:
+            FAILED_LIST.append(service_name)
             print(f"*************\nMetadata not found for {service_name}\n*************")
             continue
 
         service_data = service_data[0]
+        publish_flag_key = f"published_flags/{service_data['egis_server']}/{service_data['egis_folder']}/{service_name}/{service_name}"
+        
+        if "static" not in service_name:
+            if check_s3_file_existence(fim_output_bucket, publish_flag_key):
+                print(f"Deleting publish flag for {service_name}")
+                S3_CLIENT.delete_object(Bucket=fim_output_bucket, Key=publish_flag_key)
+            continue
+
         temp_aprx = arcpy.mp.ArcGISProject(baseline_aprx_path)
         temp_aprx.importDocument(service_data['mapx'])
         temp_aprx_fpath = os.path.join(sd_folder, f'{service_name}.aprx')
         temp_aprx.saveACopy(temp_aprx_fpath)
         aprx = arcpy.mp.ArcGISProject(temp_aprx_fpath)
         
-        sd_file = create_sd_file(aprx, service_name, sd_folder, conn_str, service_data)
+        sd_file, upload = create_sd_file(aprx, service_name, sd_folder, conn_str, service_data)
+
         if not sd_file:
             continue
 
@@ -147,34 +120,43 @@ def update_db_sd_files(latest_deployed_github_repo_commit):
         del aprx
         os.remove(temp_aprx_fpath)
 
-        print(f"Uploading {sd_file} to {deployment_bucket}")
-        s3_client.upload_file(
-           sd_file, deployment_bucket,
-           f"viz_sd_files/{os.path.basename(sd_file)}",
-           ExtraArgs={"ServerSideEncryption": "aws:kms"}
-        )
+        if upload:
+            print(f"Uploading {sd_file} to {deployment_bucket}")
+            S3_CLIENT.upload_file(
+               sd_file, deployment_bucket,
+               f"viz_sd_files/{os.path.basename(sd_file)}",
+               ExtraArgs={"ServerSideEncryption": "aws:kms"}
+            )
 
-        print(f"Deleting publish flag for {service_name}")
-        publish_folder = service_data['egis_folder']
-        publish_server = service_data['egis_server']
-        publish_flag = f"published_flags/{publish_server}/{publish_folder}/{service_name}/{service_name}"
-        if check_s3_file_existence(fim_output_bucket, publish_flag):
-            s3_client.delete_object(Bucket=fim_output_bucket, Key=publish_flag)
+        print(f"Publishing {service_name}...")
+        success = publish_service(service_name, sd_file, service_data)
+
+        if success:
+            S3_CLIENT.upload_file(str(EMPTY_FILE), fim_output_bucket, publish_flag_key, ExtraArgs={'ServerSideEncryption': 'aws:kms'})
+            print(f"---> Created publish flag {publish_flag_key} on {fim_output_bucket}.")
 
 def create_sd_file(aprx, service_name, sd_folder, conn_str, service_data):
     sd_service_name = f"{service_name}{consts.SERVICE_NAME_TAG}"
     sd_creation_folder = "C:\\Users\\arcgis\\sd_creation"
     sd_creation_file = os.path.join(sd_creation_folder, service_name)
+    sd_filename = service_name + ".sd"
+    sd_output_filename = os.path.join(sd_folder, sd_filename)
 
     if not os.path.exists(sd_creation_folder):
         os.makedirs(sd_creation_folder)
 
-    if os.path.exists(sd_creation_file):
+    if os.path.exists(sd_creation_file) and os.path.exists(sd_output_filename):
         print(f"SD file already created for {service_name}")
-        return
+        return sd_output_filename, False
+    
+    print(f"Creating SD file for {service_name}...") 
 
-    if service_dict.get(service_name):
-        schema = service_dict.get(service_name)
+    if 'aep' in service_name:
+        schema = 'aep_fim'
+    elif 'catchments' in service_name:
+        schema = 'fim_catchments'
+    elif 'static' in service_name:
+        schema = 'reference'
     else:
         schema = "services"
 
@@ -265,30 +247,15 @@ def create_sd_file(aprx, service_name, sd_folder, conn_str, service_data):
 
     m = aprx.listMaps()[0]
 
-    experimental_addition = """
-        <br><br>The NWS is accepting comments through December 31, 2022 on the Experimental NWC Visualization Services. 
-        This service is one of many Experimental NWC Visualization Services. 
-        Please provide feedback on the Experimental NWC Visualization Services at: https://www.surveymonkey.com/r/Exp_NWCVisSvcs_2022
-        <br><br>Link to graphical web page: https://www.weather.gov/owp/operations
-        <br><br>Link to data download (shapefile): TBD
-        <br><br>Link to metadata: https://nws.weather.gov/products/PDD/SDD_ExpNWCVisualizationServices_2022.pdf
-    """
-    
-    description = service_data['description']
-    if service_data['public_service']:
-        description = description + experimental_addition
-
-    summary = service_data['summary'] + consts.SUMMARY_TAG
-    
     # Create MapImageSharingDraft and set service properties
     print(f"Creating MapImageSharingDraft and setting service properties for {sd_service_name}...")
     sharing_draft = m.getWebLayerSharingDraft("FEDERATED_SERVER", "MAP_IMAGE", sd_service_name)
     sharing_draft.copyDataToServer = False
     sharing_draft.overwriteExistingService = True
     sharing_draft.serverFolder = service_data['egis_folder']
-    sharing_draft.summary = summary
+    sharing_draft.summary = service_data['summary'] + consts.SUMMARY_TAG
     sharing_draft.tags = service_data['tags']
-    sharing_draft.description = description
+    sharing_draft.description = service_data['description']
     sharing_draft.credits = service_data['credits']
     sharing_draft.serviceName = sd_service_name
     sharing_draft.offline = True
@@ -350,23 +317,107 @@ def create_sd_file(aprx, service_name, sd_folder, conn_str, service_data):
 
     sddraft_output_filename = sddraft_mod_xml_file
 
-    sd_filename = service_name + ".sd"
-    sd_output_filename = os.path.join(sd_folder, sd_filename)
-    if os.path.exists(sd_output_filename):
-        os.remove(sd_output_filename)
     try:
         arcpy.StageService_server(sddraft_output_filename, sd_output_filename)
     except Exception as e:
+        FAILED_LIST.append(service_name)
+        print("\nvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
         print(e)
-        return
+        print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n")
+        return False, False
 
     file2 = open(sd_creation_file,"w+")
     file2.close()
 
     os.remove(sddraft_output_filename)
 
-    return sd_output_filename
+    return sd_output_filename, True
 
+def publish_service(service_name, sd_file, service_data):
+    sd_publish_folder = "C:\\Users\\arcgis\\sd_publish"
+    sd_publish_file = os.path.join(sd_publish_folder, service_name)
+
+    if not os.path.exists(sd_publish_folder):
+        os.makedirs(sd_publish_folder)
+
+    if os.path.exists(sd_publish_file):
+        print(f"SD file already published for {service_name}")
+        return False
+
+    folder = service_data['egis_folder'] # folder is hereafter reassigned after use in get_service_data above
+    summary = service_data['summary']
+    description = service_data['description']
+    tags = service_data['tags']
+    credits = service_data['credits']
+    server = service_data['egis_server']
+    public_service = True if 'testing' in consts.EGIS_HOST else service_data['public_service']
+    publish_folder = service_data['egis_folder']
+    publish_server = None
+    for gis_server in GIS.admin.servers.list():
+        if server == "server":
+            if "server" in gis_server.url or "egis-gis" in gis_server.url:
+                publish_server = gis_server
+                break
+        elif server == "image":
+            if "image" in gis_server.url or "egis-img" in gis_server.url:
+                publish_server = gis_server
+                break
+    if not publish_server:
+        raise Exception(f"Could not find appropriate GIS server for {server}")
+
+    success = publish_server.services.publish_sd(sd_file=sd_file, folder=publish_folder)
+    print(f"Publish success: {success}")
+
+    service_name_publish = f"{service_name}{consts.SERVICE_NAME_TAG}"
+
+    existing_service = ([s for s in publish_server.services.list(folder=folder, refresh=True) if 'serviceName' in s.properties and s.properties['serviceName'] == service_name_publish] or [None])[0]
+    if not existing_service:
+        raise Exception("Service does not exist although supposedly published successfully.")
+
+    # Ensuring that the description for the service matches the iteminfo
+    if not existing_service.properties['description']:
+        print("Updating service property description to match iteminfo")
+        service_properties = existing_service.properties
+        service_properties['description'] = existing_service.iteminformation.properties['description']
+        try:
+            existing_service.edit(dict(service_properties))
+        except:
+            existing_service = ([s for s in publish_server.services.list(folder=folder, refresh=True) if 'serviceName' in s.properties and s.properties['serviceName'] == service_name_publish] or [None])[0]
+            if not existing_service.properties['description']:
+                raise Exception("Failed to update the map service description")
+
+    portalItems = existing_service.properties["portalProperties"]['portalItems']
+
+    for portalItem in portalItems:
+        new_item = GIS.content.get(portalItem['itemID'])
+        new_item.update(item_properties={'snippet': summary, 'description': description, 'tags': tags, 'accessInformation': credits})
+    
+        print(f"---> Updated {portalItem} descriptions, tags, and credits in Portal.")
+        if public_service:
+            new_item.share(org=True, everyone=True)
+            print(f"---> Updated {portalItem} sharing to org and public in Portal.")
+        else:    
+            new_item.share(org=True)
+            print(f"---> Updated {portalItem} sharing to org in Portal.")
+
+    file1 = open(sd_publish_file,"w+")
+    file1.close()
+
+    return True
+        
+def get_modified_service_list(latest_deployed_github_repo_commit):
+    print(f"Getting changed services since commit {latest_deployed_github_repo_commit}")
+    modified_service_list = []
+    repo = Repo(paths.HYDROVIS_DIR)
+    diffs = repo.head.commit.diff(latest_deployed_github_repo_commit)
+    for d in diffs:
+        changed_file = Path(d.a_path)
+        file_basename = changed_file.name.split(".")[0]
+        if (".mapx" in changed_file.name or ".yml" in changed_file.name) and "viz_publish_service" in str(changed_file):
+            if file_basename not in modified_service_list:
+                modified_service_list.append(file_basename)
+
+    return modified_service_list
 
 if __name__ == '__main__':
     latest_deployed_github_repo_commit = sys.argv[1]
@@ -375,4 +426,11 @@ if __name__ == '__main__':
 
     create_sde_file()
 
-    update_db_sd_files(latest_deployed_github_repo_commit)
+    modified_service_list = get_modified_service_list(latest_deployed_github_repo_commit)
+
+    update_db_sd_files(modified_service_list)
+
+    print("\nDONE")
+    if FAILED_LIST:
+        print("\nServices that failed:")
+        print("\n".join(FAILED_LIST))

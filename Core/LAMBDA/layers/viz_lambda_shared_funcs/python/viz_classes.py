@@ -105,7 +105,6 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                     cur.execute(sql)
             except Exception as e:
                 raise e
-        self.connection.close()
                 
     ###################################                
     def sql_to_dataframe(self, sql, return_geodataframe=False):
@@ -141,7 +140,6 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                     rows = cur.fetchone()[0]
             except Exception as e:
                 raise e
-        self.connection.close()
 
         return rows
     
@@ -301,8 +299,7 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                 if data_reftime != reference_time: # table reference time matches current reference time
                     issues_encountered.append(f'Table {table} has unexpected reftime. Expected {reference_time} but found {data_reftime}.')
                     continue
-        connection.close()
-        
+
         if issues_encountered:
             if raise_if_false:
                 raise RequiredTableNotUpdated(' '.join(issues_encountered))
