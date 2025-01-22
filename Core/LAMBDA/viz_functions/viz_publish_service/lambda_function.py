@@ -81,8 +81,7 @@ def lambda_handler(event, context):
 				print(f"---> {sd_s3_path} does not currently exist. Attempting to publish via GP service.")
 				i = next(counter)
 				if i > 5:
-					print(f"Retried gp service publish {i} times. Skipping {sd_s3_path}. Please investigate and republish manually using ArcGIS Rest Services Directory")
-					break
+					raise Exception(f"Retried gp service publish {i} times. Skipping {sd_s3_path}. Please investigate and republish manually using ArcGIS Rest Services Directory")
 				try:
 					# Make POST request to GP Service to (re)create a service definition file in order to (re)publish.
 					mapx_to_sd(service_name, summary, description, public_service, tags, credits, feature_service, s3_sd_path, gis, egis_db_host, egis_db_username, egis_db_password, egis_db_database, s3_bucket, environment, folder, egis_db_password_secret_name)

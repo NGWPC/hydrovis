@@ -98,11 +98,16 @@ def update_db_sd_files(changed_services):
 
         service_data = service_data[0]
         publish_flag_key = f"published_flags/{service_data['egis_server']}/{service_data['egis_folder']}/{service_name}/{service_name}"
+        sd_key = f"viz_sd_files/{service_name}.sd"
         
         if "static" not in service_name:
             if check_s3_file_existence(fim_output_bucket, publish_flag_key):
                 print(f"Deleting publish flag for {service_name}")
                 S3_CLIENT.delete_object(Bucket=fim_output_bucket, Key=publish_flag_key)
+            if check_s3_file_existence(deployment_bucket, sd_key):
+                print(f"Deleting sd file for {service_name}")
+                S3_CLIENT.delete_object(Bucket=deployment_bucket, Key=sd_key)
+
             continue
 
         temp_aprx = arcpy.mp.ArcGISProject(baseline_aprx_path)
@@ -123,8 +128,7 @@ def update_db_sd_files(changed_services):
         if upload:
             print(f"Uploading {sd_file} to {deployment_bucket}")
             S3_CLIENT.upload_file(
-               sd_file, deployment_bucket,
-               f"viz_sd_files/{os.path.basename(sd_file)}",
+               sd_file, deployment_bucket, sd_key,
                ExtraArgs={"ServerSideEncryption": "aws:kms"}
             )
 
@@ -139,7 +143,7 @@ def create_sd_file(aprx, service_name, sd_folder, conn_str, service_data):
     sd_service_name = f"{service_name}{consts.SERVICE_NAME_TAG}"
     sd_creation_folder = "C:\\Users\\arcgis\\sd_creation"
     sd_creation_file = os.path.join(sd_creation_folder, service_name)
-    sd_filename = service_name + ".sd"
+    sd_filename = f"{service_name}.sd"
     sd_output_filename = os.path.join(sd_folder, sd_filename)
 
     if not os.path.exists(sd_creation_folder):
