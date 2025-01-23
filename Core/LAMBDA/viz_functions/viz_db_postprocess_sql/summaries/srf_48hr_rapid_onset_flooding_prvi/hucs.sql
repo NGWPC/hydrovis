@@ -18,3 +18,13 @@ FROM derived.huc10s_prvi AS hucs
 JOIN derived.featureid_huc_crosswalk AS crosswalk ON hucs.huc10 = crosswalk.huc10
 JOIN publish.srf_48hr_rapid_onset_flooding_prvi AS rof ON crosswalk.feature_id = rof.feature_id
 GROUP BY hucs.huc10, hucs.low_order_reach_count, hucs.total_low_order_reach_length, hucs.total_low_order_reach_miles, hucs.geom
+
+INSERT INTO publish.srf_48hr_rapid_onset_flooding_hucs_prvi (
+	nwm_waterway_length_flooded_percent,
+	reference_time, 
+	update_time
+) VALUES (
+	1.0,
+	to_char('1900-01-01 00:00:00'::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC'), 
+	to_char(now()::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC')
+);
