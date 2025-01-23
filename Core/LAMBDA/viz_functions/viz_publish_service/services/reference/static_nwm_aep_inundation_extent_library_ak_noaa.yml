@@ -1,0 +1,20 @@
+service: static_nwm_aep_inundation_extent_library_ak_noaa
+summary: NWM AEP Inundation Extent Library - Alaska
+description: "Depicts the inundation extent of the National Water Model (NWM) high
+  water threshold and annual exceedance probabilities in Alaska. High water threshold flows
+  and annual exceedance probabilities were derived from USGS regression equations
+  found at https://pubs.usgs.gov/wri/wri994142/pdf/wri99-4142.pdf.  High water thresholds
+  (regionally varied) and AEPs were derived using the 40-year NWM v3.0 reanalysis
+  simulation. \n\nThis is a static service and not a forecast service\n\nThis service
+  is for internal use only for NOAA employees and requires access to view.  Please
+  do not share externally without prior approval from OWP as this service is experimental
+  and undergoing regular developmental changes. \n\nFor feedback or questions please
+  reach out to GID directly via slack at national-water-center-gid or national-water-center-fim
+  pages or reach out directly to derek.giardino@noaa.gov"
+tags: nws, flood, categorical, hand, fim, inundation, height, above, nearest, drainage,
+  aep, recurrence, alaska
+credits: National Water Model, NOAA/NWS National Water Center
+egis_server: server
+egis_folder: fim_libs
+feature_service: false
+public_service: false

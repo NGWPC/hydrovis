@@ -1,0 +1,24 @@
+-- No RAS2FIM cached features for Alaska yet, but keeping the script in case it is added later.
+
+DROP TABLE IF EXISTS publish.rf_5_inundation_ak;
+SELECT
+    crosswalk.hydro_id,
+    crosswalk.hydro_id::text AS hydro_id_str,
+    ST_Transform(gc.geom, 3857) AS geom,
+    crosswalk.feature_id,
+    crosswalk.feature_id::text AS feature_id_str,
+    ROUND(CAST(fs.rf_5_0_17c as numeric), 2) AS streamflow_cfs,
+    gc.stage_ft as fim_stage_ft,
+    mgc.max_rc_stage_ft,
+    mgc.max_rc_discharge_cfs,
+    mgc.model_version,
+    '{fim_version}' as fim_version,
+    to_char('1900-01-01 00:00:00'::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC') AS reference_time,
+    crosswalk.huc8 as huc8,
+    crosswalk.branch_id as branch
+INTO publish.rf_5_inundation_ak
+FROM ras2fim.geocurves gc
+JOIN derived.recurrence_flows_ak fs ON fs.feature_id = gc.feature_id
+JOIN ras2fim.max_geocurves mgc ON gc.feature_id = mgc.feature_id
+JOIN derived.fim4_featureid_crosswalk AS crosswalk ON gc.feature_id = crosswalk.feature_id
+WHERE gc.discharge_cfs >= fs.rf_5_0_17c AND gc.previous_discharge_cfs < fs.rf_5_0_17c;
