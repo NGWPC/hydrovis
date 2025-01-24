@@ -149,7 +149,7 @@
         "type" : "CIMStandardDataConnection",
         "workspaceConnectionString" : "DATABASE=\\\\viz-fileshare.hydrovis.internal\\viz\\published\\connection_files\\HydroVis_S3_processing_outputs.acs\\ana_72hr_snow_water_equiv_change\\20230421\\21\\workspace\\mrf",
         "workspaceFactory" : "Raster",
-        "dataset" : "ana_24hr_snow_water_equiv_change.mrf",
+        "dataset" : "ana_past_24hr_snow_water_equivalent_change.mrf",
         "datasetType" : "esriDTAny"
       },
       "colorizer" : {
@@ -446,7 +446,7 @@
         "type" : "CIMStandardDataConnection",
         "workspaceConnectionString" : "DATABASE=\\\\viz-fileshare.hydrovis.internal\\viz\\published\\connection_files\\HydroVis_S3_processing_outputs.acs\\ana_72hr_snow_water_equiv_change\\20230421\\21\\workspace\\mrf",
         "workspaceFactory" : "Raster",
-        "dataset" : "ana_48hr_snow_water_equiv_change.mrf",
+        "dataset" : "ana_past_48hr_snow_water_equivalent_change.mrf",
         "datasetType" : "esriDTAny"
       },
       "colorizer" : {
@@ -743,7 +743,7 @@
         "type" : "CIMStandardDataConnection",
         "workspaceConnectionString" : "DATABASE=\\\\viz-fileshare.hydrovis.internal\\viz\\published\\connection_files\\HydroVis_S3_processing_outputs.acs\\ana_72hr_snow_water_equiv_change\\20230421\\21\\workspace\\mrf",
         "workspaceFactory" : "Raster",
-        "dataset" : "ana_72hr_snow_water_equiv_change.mrf",
+        "dataset" : "ana_past_72hr_snow_water_equivalent_change",
         "datasetType" : "esriDTAny"
       },
       "colorizer" : {
