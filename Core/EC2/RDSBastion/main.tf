@@ -377,6 +377,7 @@ data "cloudinit_config" "startup" {
       foreign_schema      = "public"
       foreign_server      = "wrds_location"
       user_mappings       = [jsondecode(var.viz_proc_admin_rw_secret_string)["username"]]
+      expect_task_token   = false
     })
   }
 
@@ -398,6 +399,7 @@ data "cloudinit_config" "startup" {
       foreign_schema      = "public EXCEPT (hml, hml_status, hml_log, hml_xml, hml_xml_log)"
       foreign_server      = "wrds_rfcfcst"
       user_mappings       = [jsondecode(var.viz_proc_admin_rw_secret_string)["username"]]
+      expect_task_token   = false
     })
   }
 
@@ -503,6 +505,28 @@ data "cloudinit_config" "startup" {
               viz_db_port          = local.dbs["viz"]["db_port"]
               viz_db_username      = local.dbs["viz"]["db_username"]
               viz_db_password      = local.dbs["viz"]["db_password"]
+            })
+          },
+          {
+            path        = "/deploy_files/setup_wrds_location3_db_foreign_tables_on_viz_db.sh"
+            permissions = "0700"
+            owner       = "ec2-user:ec2-user"
+            content     = templatefile("${path.module}/scripts/utils/setup_foreign_tables.tftpl", {
+              db_name             = local.dbs["viz"]["db_name"]
+              db_host             = local.dbs["viz"]["db_host"]
+              db_port             = local.dbs["viz"]["db_port"]
+              db_username         = local.dbs["viz"]["db_username"]
+              db_password         = local.dbs["viz"]["db_password"]
+              db_schema           = "external"
+              foreign_db_name     = local.dbs["location"]["db_name"]
+              foreign_db_host     = local.dbs["location"]["db_host"]
+              foreign_db_port     = local.dbs["location"]["db_port"]
+              foreign_db_username = local.dbs["location"]["db_username"]
+              foreign_db_password = local.dbs["location"]["db_password"]
+              foreign_schema      = "public"
+              foreign_server      = "wrds_location"
+              user_mappings       = [jsondecode(var.viz_proc_admin_rw_secret_string)["username"]]
+              expect_task_token   = true
             })
           }
         ]
