@@ -176,9 +176,9 @@ def create_sd_file(
 	m = aprx.listMaps()[0]
 
 	if service_public:
-		service_description = service_description + experimental_addition
+		service_description = service_description
 
-	service_summary = service_summary
+	service_summary = service_summary + f" ({service_summary_suffix})"
 	
 	# Create MapImageSharingDraft and set service properties
 	arcpy.AddMessage(f"Creating MapImageSharingDraft and setting service properties for {sd_service_name}...")
