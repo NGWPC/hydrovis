@@ -90,54 +90,58 @@ def update_db_sd_files(changed_services):
     services_data = get_service_metadata()
         
     for service_name in changed_services:
-        service_data = [item for item in services_data if item['service'] == service_name]
-        if not service_data:
+        try:
+            service_data = [item for item in services_data if item['service'] == service_name]
+            if not service_data:
+                raise Exception(f"Metadata not found for {service_name}")
+
+            service_data = service_data[0]
+            publish_flag_key = f"published_flags/{service_data['egis_server']}/{service_data['egis_folder']}/{service_name}/{service_name}"
+            sd_key = f"viz_sd_files/{service_name}.sd"
+            
+            if "static" not in service_name:
+                if check_s3_file_existence(fim_output_bucket, publish_flag_key):
+                    print(f"Deleting publish flag for {service_name}")
+                    S3_CLIENT.delete_object(Bucket=fim_output_bucket, Key=publish_flag_key)
+                if check_s3_file_existence(deployment_bucket, sd_key):
+                    print(f"Deleting sd file for {service_name}")
+                    S3_CLIENT.delete_object(Bucket=deployment_bucket, Key=sd_key)
+
+                continue
+
+            temp_aprx = arcpy.mp.ArcGISProject(baseline_aprx_path)
+            temp_aprx.importDocument(service_data['mapx'])
+            temp_aprx_fpath = os.path.join(sd_folder, f'{service_name}.aprx')
+            temp_aprx.saveACopy(temp_aprx_fpath)
+            aprx = arcpy.mp.ArcGISProject(temp_aprx_fpath)
+            
+            sd_file, upload = create_sd_file(aprx, service_name, sd_folder, conn_str, service_data)
+
+            if not sd_file:
+                continue
+
+            del temp_aprx
+            del aprx
+            os.remove(temp_aprx_fpath)
+
+            if upload:
+                print(f"Uploading {sd_file} to {deployment_bucket}")
+                S3_CLIENT.upload_file(
+                sd_file, deployment_bucket, sd_key,
+                ExtraArgs={"ServerSideEncryption": "aws:kms"}
+                )
+
+            print(f"Publishing {service_name}...")
+            success = publish_service(service_name, sd_file, service_data)
+
+            if success:
+                S3_CLIENT.upload_file(str(EMPTY_FILE), fim_output_bucket, publish_flag_key, ExtraArgs={'ServerSideEncryption': 'aws:kms'})
+                print(f"---> Created publish flag {publish_flag_key} on {fim_output_bucket}.")
+        except Exception as e:
             FAILED_LIST.append(service_name)
-            print(f"*************\nMetadata not found for {service_name}\n*************")
-            continue
-
-        service_data = service_data[0]
-        publish_flag_key = f"published_flags/{service_data['egis_server']}/{service_data['egis_folder']}/{service_name}/{service_name}"
-        sd_key = f"viz_sd_files/{service_name}.sd"
-        
-        if "static" not in service_name:
-            if check_s3_file_existence(fim_output_bucket, publish_flag_key):
-                print(f"Deleting publish flag for {service_name}")
-                S3_CLIENT.delete_object(Bucket=fim_output_bucket, Key=publish_flag_key)
-            if check_s3_file_existence(deployment_bucket, sd_key):
-                print(f"Deleting sd file for {service_name}")
-                S3_CLIENT.delete_object(Bucket=deployment_bucket, Key=sd_key)
-
-            continue
-
-        temp_aprx = arcpy.mp.ArcGISProject(baseline_aprx_path)
-        temp_aprx.importDocument(service_data['mapx'])
-        temp_aprx_fpath = os.path.join(sd_folder, f'{service_name}.aprx')
-        temp_aprx.saveACopy(temp_aprx_fpath)
-        aprx = arcpy.mp.ArcGISProject(temp_aprx_fpath)
-        
-        sd_file, upload = create_sd_file(aprx, service_name, sd_folder, conn_str, service_data)
-
-        if not sd_file:
-            continue
-
-        del temp_aprx
-        del aprx
-        os.remove(temp_aprx_fpath)
-
-        if upload:
-            print(f"Uploading {sd_file} to {deployment_bucket}")
-            S3_CLIENT.upload_file(
-               sd_file, deployment_bucket, sd_key,
-               ExtraArgs={"ServerSideEncryption": "aws:kms"}
-            )
-
-        print(f"Publishing {service_name}...")
-        success = publish_service(service_name, sd_file, service_data)
-
-        if success:
-            S3_CLIENT.upload_file(str(EMPTY_FILE), fim_output_bucket, publish_flag_key, ExtraArgs={'ServerSideEncryption': 'aws:kms'})
-            print(f"---> Created publish flag {publish_flag_key} on {fim_output_bucket}.")
+            print("\nvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
+            print(e)
+            print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n")
 
 def create_sd_file(aprx, service_name, sd_folder, conn_str, service_data):
     sd_service_name = f"{service_name}{consts.SERVICE_NAME_TAG}"
@@ -321,14 +325,7 @@ def create_sd_file(aprx, service_name, sd_folder, conn_str, service_data):
 
     sddraft_output_filename = sddraft_mod_xml_file
 
-    try:
-        arcpy.StageService_server(sddraft_output_filename, sd_output_filename)
-    except Exception as e:
-        FAILED_LIST.append(service_name)
-        print("\nvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
-        print(e)
-        print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n")
-        return False, False
+    arcpy.StageService_server(sddraft_output_filename, sd_output_filename)
 
     file2 = open(sd_creation_file,"w+")
     file2.close()
