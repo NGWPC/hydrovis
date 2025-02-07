@@ -7,10 +7,19 @@ description: "*****THIS IS AN EXPERIMENTAL SERVICE*****\n\nThis experimental map
   downstream through the National Water Model (NWM) stream network. Forecast inundation
   extents are available for an area that includes 30% of the U.S. population but will
   be expanded later as described in the Story Map below.\n\nhttps://storymaps.arcgis.com/stories/c7ae8422207241b5873fff38a22cf66b\n
-  \nBoundary of 30% Area: https://maps.water.noaa.gov/server/rest/services/reference/static_public_fim_domain/MapServer\n
-  \nShown are sections of river downstream of RFC forecast points whose forecast reaches
-  action status or greater as depicted in the following service:\n\nhttps://maps.water.noaa.gov/server/rest/services/rfc/rfc_based_5day_max_streamflow/MapServer\n
-  \nHigh water thresholds (regionally varied) and Annual Exceedance Probabilities
+  \nBoundary of 30% Area: https://maps.water.noaa.gov/server/rest/services/reference/static_public_fim_domain/MapServer
+  \n\nRFC-Based 5-Day Max Streamflow Forecast depicts the maximum forecast streamflow over the next 5 days derived from
+  the official RFC forecast routed downstream through the NWM stream network. Maximum
+  streamflows are available downstream of RFC forecast points whose forecast reaches
+  action status or greater. Updated Hourly.\n\nAlso shown is the RFC Max Value Forecast 
+  which depicts Advanced Hydrologic Prediction Service (AHPS) RFC forecast points with
+  forecasts at or above action stage. Circles represent forecast points where stages are 
+  changing by less than +/- 5% over the entire forecast period. Upward-pointing triangles
+  represent forecast points where a greater than 5% increase in stage is expected sometime 
+  during the forecast. If stage increases greater than 5% are not expected, downward-pointing
+  triangles represent forecast points where a greater than 5% decrease in stage is expected 
+  sometime during the forecast. Forecast points are colored by their maximum forecast flood category. 
+   \n\nUpdated every 5 minutes.\n\nHigh water thresholds (regionally varied) and Annual Exceedance Probabilities
   (AEPs) are derived using the 40-year NWM reanalysis simulation which is available
   via the NOAA Open Data Dissemination Program (NODD). \n\nForecast inundation extents
   do not fully capture coastal processes. The service below depicts the boundary of

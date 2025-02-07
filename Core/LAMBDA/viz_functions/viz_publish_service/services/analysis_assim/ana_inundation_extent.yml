@@ -11,10 +11,13 @@ description: "*****THIS IS AN EXPERIMENTAL SERVICE***** \n\nThis experimental ma
   (AEPs) are derived using the 40-year NWM reanalysis simulation which is available
   via the NOAA Open Data Dissemination Program (NODD). Forecast inundation extents
   do not fully capture coastal processes. The service below depicts the boundary of
-  this coastal area. \n\nUpdated hourly.\n\nShown are sections of river with flow
-  at or above a predetermined high water threshold as depicted in the following service:\n
-  \nhttps://maps.water.noaa.gov/server/rest/services/nwm/ana_high_flow_magnitude/MapServer\n
-  \nLink to graphical web page: https://www.weather.gov/owp/operations\n\nLink to
+  this coastal area. \n\nUpdated hourly.\n\nAlso depicted is the magnitude of the 
+  National Water Model (NWM) streamflow forecast where the NWM is signaling high water. 
+  This service is derived from the analysis and assimilation configuration of the NWM over 
+  Contiguous U.S. Shown are reaches with flow at or above high water thresholds. 
+  Reaches are colored by the annual exceedance probability (AEP) of their current flow. 
+  High water thresholds (regionally varied) and AEPs were derived using the 40-year NWM v3.0 reanalysis simulation. 
+  \n\nUpdated hourly.\n\nLink to graphical web page: https://www.weather.gov/owp/operations\n\nLink to
   documentation: https://www.weather.gov/media/owp/operations/Public_Handbook_V2.3_%20NWC_Visualization_Services.pdf\n
   \nFor feedback or questions please email nwps.webmaster@noaa.gov"
 tags: national water model, nwm, ana, conus, fim, inundation, extent
