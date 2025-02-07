@@ -1,5 +1,5 @@
 service: static_bridge_centroids_noaa
-title: Bridge Locations
+summary: Bridge Locations
 description: 'location of OSM, Open Street Map, bridges'
 tags: nws, flood, categorical, hand, fim, osm, inundation, bridges
 credits: National Water Model, NOAA/NWS National Water Center, OpenStreetMap Foundation
