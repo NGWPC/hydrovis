@@ -1,5 +1,5 @@
 -- HUC10 Hotpsot Layer for Rapid Onset Flooding - Alaska
-DROP TABLE IF EXISTS publish.srf_15hr_rapid_onset_flooding_hucs_ak;
+DROP TABLE IF EXISTS publish.srf_15hr_rapid_onset_flooding_ak_hucs;
 SELECT
 	hucs.huc10,
 	TO_CHAR(hucs.huc10, 'fm0000000000') AS huc10_str,
