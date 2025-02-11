@@ -29,9 +29,7 @@
       "CIMPATH=nwm_short_range_rate_of_change_forecast___alaska/3_hours___percent_change_in_discharge.xml",
       "CIMPATH=nwm_short_range_rate_of_change_forecast___alaska/6_hours___percent_change_in_discharge.xml",
       "CIMPATH=nwm_short_range_rate_of_change_forecast___alaska/9_hours___percent_change_in_discharge.xml",
-      "CIMPATH=nwm_short_range_rate_of_change_forecast___alaska/12_hours___percent_change_in_discharge.xml",
-      "CIMPATH=b3523274a1a0430ea19f6c81f24e7d7f.xml",
-      "CIMPATH=57fabda0e6a9405ebaced5070441a4bb.xml"
+      "CIMPATH=nwm_short_range_rate_of_change_forecast___alaska/12_hours___percent_change_in_discharge.xml"
     ],
     "defaultViewingMode" : "Map",
     "mapType" : "Map",
@@ -4930,97 +4928,9 @@
       },
       "scaleSymbols" : true,
       "snappable" : true
-    },
-    {
-      "type" : "CIMVectorTileLayer",
-      "name" : "World Topographic Map",
-      "uRI" : "CIMPATH=b3523274a1a0430ea19f6c81f24e7d7f.xml",
-      "sourceModifiedTime" : {
-        "type" : "TimeInstant"
-      },
-      "metadataURI" : "CIMPATH=Metadata/15794ba172a768d085c6d3e84dd4e4ba.xml",
-      "useSourceMetadata" : true,
-      "layerElevation" : {
-        "type" : "CIMLayerElevationSurface",
-        "mapElevationID" : "{ED015DF1-830B-402A-9B4A-D04AC66F0CB4}"
-      },
-      "layerType" : "BasemapBackground",
-      "showLegends" : true,
-      "visibility" : true,
-      "displayCacheType" : "Permanent",
-      "maxDisplayCacheAge" : 5,
-      "showPopups" : true,
-      "serviceLayerID" : -1,
-      "refreshRate" : -1,
-      "refreshRateUnit" : "esriTimeUnitsSeconds",
-      "blendingMode" : "Alpha",
-      "dataConnection" : {
-        "type" : "CIMVectorTileDataConnection",
-        "uRI" : "https://cdn.arcgis.com/sharing/rest/content/items/7dc6cea0b1764a1f9af2e679f642f0f5/resources/styles/root.json"
-      }
-    },
-    {
-      "type" : "CIMTiledServiceLayer",
-      "name" : "World Hillshade",
-      "uRI" : "CIMPATH=57fabda0e6a9405ebaced5070441a4bb.xml",
-      "sourceModifiedTime" : {
-        "type" : "TimeInstant"
-      },
-      "metadataURI" : "CIMPATH=Metadata/ef92018a2d4090e582983c9554607b30.xml",
-      "useSourceMetadata" : true,
-      "description" : "Elevation/World_Hillshade",
-      "layerElevation" : {
-        "type" : "CIMLayerElevationSurface",
-        "mapElevationID" : "{ED015DF1-830B-402A-9B4A-D04AC66F0CB4}"
-      },
-      "layerType" : "BasemapBackground",
-      "showLegends" : true,
-      "visibility" : true,
-      "displayCacheType" : "Permanent",
-      "maxDisplayCacheAge" : 5,
-      "showPopups" : true,
-      "serviceLayerID" : -1,
-      "refreshRate" : -1,
-      "refreshRateUnit" : "esriTimeUnitsSeconds",
-      "blendingMode" : "Alpha",
-      "serviceConnection" : {
-        "type" : "CIMAGSServiceConnection",
-        "objectName" : "Elevation/World_Hillshade",
-        "objectType" : "MapServer",
-        "url" : "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer",
-        "serverConnection" : {
-          "type" : "CIMInternetServerConnection",
-          "anonymous" : true,
-          "hideUserProperty" : true,
-          "url" : "https://services.arcgisonline.com/arcgis/services"
-        }
-      },
-      "transparentColor" : {
-        "type" : "CIMRGBColor",
-        "values" : [
-          254,
-          254,
-          254,
-          100
-        ]
-      },
-      "backgroundColor" : {
-        "type" : "CIMRGBColor",
-        "values" : [
-          254,
-          254,
-          254,
-          100
-        ]
-      }
     }
   ],
   "binaryReferences" : [
-    {
-      "type" : "CIMBinaryReference",
-      "uRI" : "CIMPATH=Metadata/15794ba172a768d085c6d3e84dd4e4ba.xml",
-      "data" : "<?xml version=\"1.0\"?>\r\n<metadata xml:lang=\"en\"><Esri><CreaDate>20240821</CreaDate><CreaTime>18183500</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce></Esri><dataIdInfo><idCitation><resTitle>World Topographic Map</resTitle></idCitation><idAbs></idAbs><idCredit></idCredit><idPurp></idPurp><resConst><Consts><useLimit></useLimit></Consts></resConst></dataIdInfo></metadata>\r\n"
-    },
     {
       "type" : "CIMBinaryReference",
       "uRI" : "CIMPATH=Metadata/40b9ca40b78e341cd230416787b280b4.xml",
@@ -5030,11 +4940,6 @@
       "type" : "CIMBinaryReference",
       "uRI" : "CIMPATH=Metadata/a23173dff8919e226ab4bb52cebbb578.xml",
       "data" : "<?xml version=\"1.0\"?>\r\n<metadata xml:lang=\"en\"><Esri><CreaDate>20220822</CreaDate><CreaTime>20242700</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce></Esri><dataIdInfo><idCitation><resTitle>Map</resTitle></idCitation></dataIdInfo><Binary><Thumbnail><Data EsriPropertyType=\"PictureX\">/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a\r\nHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy\r\nMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCADIASwDAREA\r\nAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA\r\nAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3\r\nODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm\r\np6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA\r\nAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx\r\nBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK\r\nU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3\r\nuLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+gAo\r\nAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgA\r\noAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACg\r\nAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgBuRu2559KV1ew\r\nW6jqYBQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAgzk5x7UALQAUAFABQA0E5ORgDp\r\n70AGBnOBnpmgCOWGOZQrqDg5B7g+ooeqsNOzuPXcM5xjPB7/AI0Owh2RnFAC0AJnkj0oARiQpIGS\r\n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\r\n0KkYUAFADAFyWAGT1IpWV7ju9h9MQUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFAB\r\nQAUAFADV3bRuxu746UAOoAKACgAoAKAIZVJAZc5U5GO/tScFJq4XaTAIpYyMgz0B4PFVqtExadh7\r\nosi7XUMp7EZFIY1Yo1JIjUE9cD/PqaNhtt7jmDEfKcH36UCFChQAB0GBQ9XcBpAEm7vjByeg+lF+\r\ngW6jxjHGMe1AC0AFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAxkVh8wB\r\nGQefagL2H0ANyd2McY60AOoAKACgAoAKACgAoAKACgBpUFs4GcdaAGxggfMMHPbpTYElIAoAKACg\r\nAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAKACgAoAYFAJIzz7mkopO42x9MQUAFAB\r\nQAUAFABQAUAFABQAwenJ9zRawXH0AFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQA\r\nUAFABQAUAFADVUKMAk9+Tmm3cSVh1IYUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAF\r\nABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUA\r\nFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAUAFABQAU\r\nAFABQAUAFABQAUAFABQAUAFABQB//9k=</Data></Thumbnail></Binary></metadata>\r\n"
-    },
-    {
-      "type" : "CIMBinaryReference",
-      "uRI" : "CIMPATH=Metadata/ef92018a2d4090e582983c9554607b30.xml",
-      "data" : "<?xml version=\"1.0\"?>\r\n<metadata xml:lang=\"en\"><Esri><CreaDate>20240821</CreaDate><CreaTime>18183500</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce></Esri><dataIdInfo><idCitation><resTitle>World Hillshade</resTitle></idCitation><idAbs>Elevation/World_Hillshade</idAbs><idCredit></idCredit><idPurp></idPurp><resConst><Consts><useLimit></useLimit></Consts></resConst></dataIdInfo></metadata>\r\n"
     },
     {
       "type" : "CIMBinaryReference",
