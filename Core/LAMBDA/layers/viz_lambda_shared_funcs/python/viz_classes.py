@@ -8,8 +8,7 @@ import pathlib
 try:
     import fsspec
 except:
-    import boto3
-    from botocore.exceptions import ClientError
+    print("fsspec not found, will fall back to boto3")
 
 class RequiredTableNotUpdated(Exception):
     """ This is a custom exception to report back to the AWS Step Function that a required table does not exist or has not yet been updated with the current reference time. """
@@ -107,7 +106,6 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                     cur.execute(sql)
             except Exception as e:
                 raise e
-        self.connection.close()
                 
     ###################################                
     def sql_to_dataframe(self, sql, return_geodataframe=False):
@@ -143,7 +141,6 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                     rows = cur.fetchone()[0]
             except Exception as e:
                 raise e
-        self.connection.close()
 
         return rows
     
@@ -303,8 +300,7 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                 if data_reftime != reference_time: # table reference time matches current reference time
                     issues_encountered.append(f'Table {table} has unexpected reftime. Expected {reference_time} but found {data_reftime}.')
                     continue
-        connection.close()
-        
+
         if issues_encountered:
             if raise_if_false:
                 raise RequiredTableNotUpdated(' '.join(issues_encountered))
@@ -415,6 +411,8 @@ class s3_file:
                 files = cls.fs.ls(f"{bucket}/{prefix}", detail=True)
                 return [f for f in files if f['type'] == 'file']
             except:
+                import boto3
+                
                 s3 = boto3.client('s3')
                 files = []
                 paginator = s3.get_paginator('list_objects_v2')
@@ -443,6 +441,9 @@ class s3_file:
         try:
             return self.fs.exists(f"{self.bucket}/{self.key}")
         except:
+            import boto3
+            from botocore.exceptions import ClientError
+
             s3_resource = boto3.resource('s3')
             try:
                 s3_resource.Object(self.bucket, self.key).load()

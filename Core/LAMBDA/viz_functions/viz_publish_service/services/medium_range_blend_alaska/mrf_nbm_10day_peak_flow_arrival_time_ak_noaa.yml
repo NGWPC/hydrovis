@@ -1,4 +1,4 @@
-service: mrf_nbm_10day_peak_flow_arrival_time_alaska_noaa
+service: mrf_nbm_10day_peak_flow_arrival_time_ak_noaa
 summary: Medium-Range NBM 10 Day Peak Flow Arrival Time Forecast for Alaska
 description: Depicts expected peak flow arrival times derived from the operational National Water 
   Model (NWM) medium-range NBM forecast for Alaska. Reaches are colored by the time at which 

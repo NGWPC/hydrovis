@@ -2485,7 +2485,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%fim_performance_catchments_1_2_1",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,hydroid,geom,huc8,contingency_tot_area_km2,csi,far,tpr,tnr,ppv,npv,bal_acc,mcc,equitable_threat_score,prevalence,bias,f1_score,masked_perc,mag,bench,version from hydrovis.reference.fim_performance_catchments",
+          "sqlQuery" : "select oid,hydroid,geom,huc8,contingency_tot_area_km2,csi,far,tpr,tnr,ppv,npv,bal_acc,mcc,equitable_threat_score,prevalence,bias,f1_score,masked_perc,mag,bench,model_version,fim_version from hydrovis.reference.fim_performance_catchments",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,

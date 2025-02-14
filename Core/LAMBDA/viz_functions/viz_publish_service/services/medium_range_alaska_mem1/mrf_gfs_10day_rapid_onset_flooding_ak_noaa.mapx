@@ -9758,7 +9758,7 @@
           "zeroPad" : true
         },
         "showInAscendingOrder" : true,
-        "heading" : "flood_start_hour",
+        "heading" : "Rapid Onset Flooding Arrival Time",
         "sampleSize" : 10000,
         "useDefaultSymbol" : true,
         "defaultSymbolPatch" : "Default",
@@ -10025,7 +10025,7 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "nwm_vers",
+            "alias" : "NWM Version",
             "fieldName" : "nwm_vers",
             "numberFormat" : {
               "type" : "CIMNumericFormat",
@@ -19398,7 +19398,7 @@
           "zeroPad" : true
         },
         "showInAscendingOrder" : true,
-        "heading" : "flood_length",
+        "heading" : "Flood Duration",
         "sampleSize" : 10000,
         "useDefaultSymbol" : true,
         "defaultSymbolPatch" : "Default",
@@ -20718,7 +20718,7 @@
           "zeroPad" : true
         },
         "showInAscendingOrder" : false,
-        "heading" : "nwm_waterway_length_flooded_percent",
+        "heading" : "Waterway Length Flooded",
         "sampleSize" : 10000,
         "defaultSymbolPatch" : "Default",
         "defaultSymbol" : {

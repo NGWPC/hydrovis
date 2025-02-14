@@ -372,21 +372,6 @@
             "readOnly" : true,
             "visible" : false,
             "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "ESRI_OID",
-            "fieldName" : "ESRI_OID",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "readOnly" : true,
-            "visible" : false,
-            "searchMode" : "Exact"
           }
         ],
         "dataConnection" : {
@@ -401,7 +386,7 @@
             "wkid" : 102100,
             "latestWkid" : 3857
           },
-          "oIDFields" : "feature_id",
+          "oIDFields" : "oid",
           "geometryType" : "esriGeometryPolyline",
           "queryFields" : [
             {

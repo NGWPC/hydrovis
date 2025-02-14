@@ -71,7 +71,7 @@ resource "aws_instance" "license_manager" {
   user_data_replace_on_change = true
 
   lifecycle {
-    ignore_changes = [ami, tags]
+    ignore_changes = [ami]
   }
 
   tags = {

@@ -75,6 +75,11 @@ data "archive_file" "schism_processing_zip" {
   }
 
   source {
+    content  = file("${path.module}/conda-linux-64.lock")
+    filename = "conda-linux-64.lock"
+  }
+
+  source {
     content  = file("${path.module}/Dockerfile")
     filename = "Dockerfile"
   }

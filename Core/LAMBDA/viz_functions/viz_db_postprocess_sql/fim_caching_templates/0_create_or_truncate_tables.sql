@@ -23,7 +23,7 @@ CREATE TABLE {db_fim_table}
 	forecast_stage_ft double precision,
     rc_discharge_cfs double precision,
     rc_previous_discharge_cfs double precision,
-    rc_stage_ft integer,
+    rc_stage_ft double precision,
     rc_previous_stage_ft integer,
     max_rc_stage_ft double precision,
     max_rc_discharge_cfs double precision,
@@ -37,7 +37,7 @@ DROP TABLE IF EXISTS {db_fim_table}_geo;
 
 CREATE TABLE {db_fim_table}_geo (
     hand_id integer,
-    rc_stage_ft integer,
+    rc_stage_ft double precision,
     geom geometry(geometry, 3857)
 );
 
