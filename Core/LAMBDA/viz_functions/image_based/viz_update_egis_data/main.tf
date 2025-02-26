@@ -38,7 +38,7 @@ data "archive_file" "viz_service_zip" {
 
   source {
     content  = file("${path.module}/../../../layers/viz_lambda_shared_funcs/python/viz_classes.py")
-    filename = "viz_classes.py"
+    filename = "code/viz_classes.py"
   }
 
   source {
@@ -105,8 +105,8 @@ resource "aws_codebuild_project" "viz_codebuild" {
 
   environment {
     compute_type                = "BUILD_GENERAL1_SMALL"
-    image                       = "aws/codebuild/standard:6.0"
-    type                        = "LINUX_CONTAINER"
+    image                       = "aws/codebuild/amazonlinux-aarch64-standard:3.0"
+    type                        = "ARM_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = true
 
