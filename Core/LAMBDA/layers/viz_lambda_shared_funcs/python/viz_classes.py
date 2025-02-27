@@ -4,11 +4,11 @@ import json
 import re
 import urllib.parse
 import inspect
+import pathlib
 try:
     import fsspec
 except:
-    import boto3
-    from botocore.exceptions import ClientError
+    print("fsspec not found, will fall back to boto3")
 
 class RequiredTableNotUpdated(Exception):
     """ This is a custom exception to report back to the AWS Step Function that a required table does not exist or has not yet been updated with the current reference time. """
@@ -98,7 +98,7 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
     ###################################
     def execute_sql(self, sql):
         if sql.endswith('.sql') and os.path.exists(sql):
-            sql = open(sql, 'r').read()
+            sql = pathlib.Path(sql).read_text()
         with self.connection:
             try:
                 with self.connection.cursor() as cur:
@@ -106,12 +106,11 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                     cur.execute(sql)
             except Exception as e:
                 raise e
-        self.connection.close()
                 
     ###################################                
     def sql_to_dataframe(self, sql, return_geodataframe=False):
         if sql.endswith(".sql"):
-            sql = open(sql, 'r').read()
+            sql = pathlib.Path(sql).read_text()
             
         db_engine = self.engine
         if not return_geodataframe:
@@ -142,7 +141,6 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                     rows = cur.fetchone()[0]
             except Exception as e:
                 raise e
-        self.connection.close()
 
         return rows
     
@@ -223,16 +221,16 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
         issues_encountered = []
         # Determine if arg is file or raw SQL string
         if os.path.exists(sql_path_or_str):
-            sql = open(sql_path_or_str, 'r').read()
+            sql = pathlib.Path(sql_path_or_str).read_text()
         else:
             sql = sql_path_or_str
         
         for word, replacement in sql_replace.items():
             sql = re.sub(word, replacement, sql, flags=re.IGNORECASE).replace('utc', 'UTC')
         
-        output_tables = set(re.findall('(?<=INTO )\w+\.\w+', sql, flags=re.IGNORECASE)) 
-        input_tables = set(re.findall('(?<=FROM |JOIN )\w+\.\w+', sql, flags=re.IGNORECASE))
-        check_tables = [t for t in input_tables if t not in output_tables]
+        output_tables = set(re.findall(r'(?<=INTO\s)\w+\.\w+', sql, flags=re.IGNORECASE)) 
+        input_tables = set(re.findall(r'(?<=FROM\s|JOIN\s)\w+\.\w+', sql, flags=re.IGNORECASE))
+        check_tables = input_tables - output_tables
 
         if not check_tables:
             return True
@@ -302,8 +300,7 @@ class database: #TODO: Should we be creating a connection/engine upon initializa
                 if data_reftime != reference_time: # table reference time matches current reference time
                     issues_encountered.append(f'Table {table} has unexpected reftime. Expected {reference_time} but found {data_reftime}.')
                     continue
-        connection.close()
-        
+
         if issues_encountered:
             if raise_if_false:
                 raise RequiredTableNotUpdated(' '.join(issues_encountered))
@@ -414,6 +411,8 @@ class s3_file:
                 files = cls.fs.ls(f"{bucket}/{prefix}", detail=True)
                 return [f for f in files if f['type'] == 'file']
             except:
+                import boto3
+                
                 s3 = boto3.client('s3')
                 files = []
                 paginator = s3.get_paginator('list_objects_v2')
@@ -442,6 +441,9 @@ class s3_file:
         try:
             return self.fs.exists(f"{self.bucket}/{self.key}")
         except:
+            import boto3
+            from botocore.exceptions import ClientError
+
             s3_resource = boto3.resource('s3')
             try:
                 s3_resource.Object(self.bucket, self.key).load()

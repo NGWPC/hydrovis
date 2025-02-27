@@ -1857,13 +1857,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Viz",
-            "fieldName" : "viz",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -1876,7 +1869,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%stage_based_catfim_1",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,ahps_lid,magnitude,huc8,interval_stage,name,wfo,rfc,state,county,stage,stage_uni,s_src,viz,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
+          "sqlQuery" : "select oid,ahps_lid,magnitude,huc8,interval_stage,name,wfo,rfc,state,county,stage,stage_uni,s_src,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -1968,12 +1961,6 @@
               "name" : "s_src",
               "type" : "esriFieldTypeString",
               "alias" : "s_src",
-              "length" : 60000
-            },
-            {
-              "name" : "viz",
-              "type" : "esriFieldTypeString",
-              "alias" : "viz",
               "length" : 60000
             },
             {
@@ -2600,13 +2587,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "viz",
-            "fieldName" : "viz",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -2619,7 +2599,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%stage_based_catfim",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,ahps_lid,magnitude,fim_version,model_version,huc8,interval_stage,name,wfo,rfc,state,county,q,q_uni,q_src,stage,stage_uni,s_src,wrds_time,nrldb_time,nwis_time,lat,lon,dtm_adj_ft,dadj_w_ft,dadj_w_m,lid_alt_ft,lid_alt_m,viz,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
+          "sqlQuery" : "select oid,ahps_lid,magnitude,fim_version,model_version,huc8,interval_stage,name,wfo,rfc,state,county,q,q_uni,q_src,stage,stage_uni,s_src,wrds_time,nrldb_time,nwis_time,lat,lon,dtm_adj_ft,dadj_w_ft,dadj_w_m,lid_alt_ft,lid_alt_m,geom from hydrovis.reference.stage_based_catfim",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -2794,12 +2774,6 @@
               "name" : "lid_alt_m",
               "type" : "esriFieldTypeDouble",
               "alias" : "lid_alt_m"
-            },
-            {
-              "name" : "viz",
-              "type" : "esriFieldTypeString",
-              "alias" : "viz",
-              "length" : 60000
             },
             {
               "name" : "geom",
@@ -3299,13 +3273,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Viz",
-            "fieldName" : "viz",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -3318,7 +3285,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%stage_based_catfim_1",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,ahps_lid,magnitude,huc8,interval_stage,name,wfo,rfc,state,county,stage,stage_uni,s_src,viz,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
+          "sqlQuery" : "select oid,ahps_lid,magnitude,huc8,interval_stage,name,wfo,rfc,state,county,stage,stage_uni,s_src,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -3410,12 +3377,6 @@
               "name" : "s_src",
               "type" : "esriFieldTypeString",
               "alias" : "s_src",
-              "length" : 60000
-            },
-            {
-              "name" : "viz",
-              "type" : "esriFieldTypeString",
-              "alias" : "viz",
               "length" : 60000
             },
             {
@@ -4042,13 +4003,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "viz",
-            "fieldName" : "viz",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -4061,7 +4015,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%stage_based_catfim",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,ahps_lid,magnitude,fim_version,model_version,huc8,interval_stage,name,wfo,rfc,state,county,q,q_uni,q_src,stage,stage_uni,s_src,wrds_time,nrldb_time,nwis_time,lat,lon,dtm_adj_ft,dadj_w_ft,dadj_w_m,lid_alt_ft,lid_alt_m,viz,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
+          "sqlQuery" : "select oid,ahps_lid,magnitude,fim_version,model_version,huc8,interval_stage,name,wfo,rfc,state,county,q,q_uni,q_src,stage,stage_uni,s_src,wrds_time,nrldb_time,nwis_time,lat,lon,dtm_adj_ft,dadj_w_ft,dadj_w_m,lid_alt_ft,lid_alt_m,geom from hydrovis.reference.stage_based_catfim",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -4236,12 +4190,6 @@
               "name" : "lid_alt_m",
               "type" : "esriFieldTypeDouble",
               "alias" : "lid_alt_m"
-            },
-            {
-              "name" : "viz",
-              "type" : "esriFieldTypeString",
-              "alias" : "viz",
-              "length" : 60000
             },
             {
               "name" : "geom",
@@ -4741,13 +4689,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Viz",
-            "fieldName" : "viz",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -4760,7 +4701,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%stage_based_catfim_1",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,ahps_lid,magnitude,huc8,interval_stage,name,wfo,rfc,state,county,stage,stage_uni,s_src,viz,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
+          "sqlQuery" : "select oid,ahps_lid,magnitude,huc8,interval_stage,name,wfo,rfc,state,county,stage,stage_uni,s_src,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -4852,12 +4793,6 @@
               "name" : "s_src",
               "type" : "esriFieldTypeString",
               "alias" : "s_src",
-              "length" : 60000
-            },
-            {
-              "name" : "viz",
-              "type" : "esriFieldTypeString",
-              "alias" : "viz",
               "length" : 60000
             },
             {
@@ -5484,13 +5419,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "viz",
-            "fieldName" : "viz",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -5503,7 +5431,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%stage_based_catfim",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,ahps_lid,magnitude,fim_version,model_version,huc8,interval_stage,name,wfo,rfc,state,county,q,q_uni,q_src,stage,stage_uni,s_src,wrds_time,nrldb_time,nwis_time,lat,lon,dtm_adj_ft,dadj_w_ft,dadj_w_m,lid_alt_ft,lid_alt_m,viz,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
+          "sqlQuery" : "select oid,ahps_lid,magnitude,fim_version,model_version,huc8,interval_stage,name,wfo,rfc,state,county,q,q_uni,q_src,stage,stage_uni,s_src,wrds_time,nrldb_time,nwis_time,lat,lon,dtm_adj_ft,dadj_w_ft,dadj_w_m,lid_alt_ft,lid_alt_m,geom from hydrovis.reference.stage_based_catfim",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -5678,12 +5606,6 @@
               "name" : "lid_alt_m",
               "type" : "esriFieldTypeDouble",
               "alias" : "lid_alt_m"
-            },
-            {
-              "name" : "viz",
-              "type" : "esriFieldTypeString",
-              "alias" : "viz",
-              "length" : 60000
             },
             {
               "name" : "geom",
@@ -6174,13 +6096,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Viz",
-            "fieldName" : "viz",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -6193,7 +6108,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%stage_based_catfim_1",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,ahps_lid,magnitude,huc8,interval_stage,name,wfo,rfc,state,county,stage,stage_uni,s_src,viz,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
+          "sqlQuery" : "select oid,ahps_lid,magnitude,huc8,interval_stage,name,wfo,rfc,state,county,stage,stage_uni,s_src,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -6285,12 +6200,6 @@
               "name" : "s_src",
               "type" : "esriFieldTypeString",
               "alias" : "s_src",
-              "length" : 60000
-            },
-            {
-              "name" : "viz",
-              "type" : "esriFieldTypeString",
-              "alias" : "viz",
               "length" : 60000
             },
             {
@@ -6917,13 +6826,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "viz",
-            "fieldName" : "viz",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -6936,7 +6838,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%stage_based_catfim",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,ahps_lid,magnitude,fim_version,model_version,huc8,interval_stage,name,wfo,rfc,state,county,q,q_uni,q_src,stage,stage_uni,s_src,wrds_time,nrldb_time,nwis_time,lat,lon,dtm_adj_ft,dadj_w_ft,dadj_w_m,lid_alt_ft,lid_alt_m,viz,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
+          "sqlQuery" : "select oid,ahps_lid,magnitude,fim_version,model_version,huc8,interval_stage,name,wfo,rfc,state,county,q,q_uni,q_src,stage,stage_uni,s_src,wrds_time,nrldb_time,nwis_time,lat,lon,dtm_adj_ft,dadj_w_ft,dadj_w_m,lid_alt_ft,lid_alt_m,geom from hydrovis.reference.stage_based_catfim",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -7111,12 +7013,6 @@
               "name" : "lid_alt_m",
               "type" : "esriFieldTypeDouble",
               "alias" : "lid_alt_m"
-            },
-            {
-              "name" : "viz",
-              "type" : "esriFieldTypeString",
-              "alias" : "viz",
-              "length" : 60000
             },
             {
               "name" : "geom",
@@ -7770,13 +7666,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "viz",
-            "fieldName" : "viz",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -7789,7 +7678,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%stage_based_catfim",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,ahps_lid,magnitude,fim_version,model_version,huc8,interval_stage,name,wfo,rfc,state,county,q,q_uni,q_src,stage,stage_uni,s_src,wrds_time,nrldb_time,nwis_time,lat,lon,dtm_adj_ft,dadj_w_ft,dadj_w_m,lid_alt_ft,lid_alt_m,viz,geom,fim_version,model_version from hydrovis.reference.stage_based_catfim",
+          "sqlQuery" : "select oid,ahps_lid,magnitude,fim_version,model_version,huc8,interval_stage,name,wfo,rfc,state,county,q,q_uni,q_src,stage,stage_uni,s_src,wrds_time,nrldb_time,nwis_time,lat,lon,dtm_adj_ft,dadj_w_ft,dadj_w_m,lid_alt_ft,lid_alt_m,geom from hydrovis.reference.stage_based_catfim",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -7964,12 +7853,6 @@
               "name" : "lid_alt_m",
               "type" : "esriFieldTypeDouble",
               "alias" : "lid_alt_m"
-            },
-            {
-              "name" : "viz",
-              "type" : "esriFieldTypeString",
-              "alias" : "viz",
-              "length" : 60000
             },
             {
               "name" : "geom",

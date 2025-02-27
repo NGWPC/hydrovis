@@ -96,7 +96,7 @@ def create_sd_file(
 	m = aprx.listMaps()[0]
 
 	for layer in m.listLayers():
-		if not layer.connectionProperties:
+		if not hasattr(layer, 'connectionProperties') or not layer.connectionProperties:
 			continue
 
 		layerCIM = layer.getDefinition('V2')
@@ -137,7 +137,7 @@ def create_sd_file(
 
 	arcpy.AddMessage('Updating the connectionProperties of each table...')
 	for table in m.listTables():
-		if not table.connectionProperties:
+		if not hasattr(table, 'connectionProperties') or not table.connectionProperties:
 			continue
 
 		tableCIM = table.getDefinition('V2')
@@ -175,20 +175,10 @@ def create_sd_file(
 
 	m = aprx.listMaps()[0]
 
-	# ???
-	experimental_addition = """
-		<br><br>The NWS is accepting comments through December 31, 2022 on the Experimental NWC Visualization Services. 
-		This service is one of many Experimental NWC Visualization Services. 
-		Please provide feedback on the Experimental NWC Visualization Services at: https://www.surveymonkey.com/r/Exp_NWCVisSvcs_2022
-		<br><br>Link to graphical web page: https://www.weather.gov/owp/operations
-		<br><br>Link to data download (shapefile): TBD
-		<br><br>Link to metadata: https://nws.weather.gov/products/PDD/SDD_ExpNWCVisualizationServices_2022.pdf
-	"""
-	
 	if service_public:
-		service_description = service_description + experimental_addition
+		service_description = service_description
 
-	service_summary = service_summary + service_summary_suffix
+	service_summary = service_summary + f" ({service_summary_suffix})"
 	
 	# Create MapImageSharingDraft and set service properties
 	arcpy.AddMessage(f"Creating MapImageSharingDraft and setting service properties for {sd_service_name}...")

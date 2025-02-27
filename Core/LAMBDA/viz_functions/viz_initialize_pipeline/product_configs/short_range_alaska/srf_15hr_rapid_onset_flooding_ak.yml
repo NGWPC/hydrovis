@@ -20,6 +20,11 @@ db_max_flows:
 postprocess_sql:
   - sql_file: srf_15hr_rapid_onset_flooding_ak
     target_table: publish.srf_15hr_rapid_onset_flooding_ak
+
+product_summaries:
+  - sql_file:  hucs
+    target_table:
+      - publish.srf_15hr_rapid_onset_flooding_ak_hucs
   
 services:
   - srf_15hr_rapid_onset_flooding_ak_noaa

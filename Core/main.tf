@@ -29,6 +29,10 @@ provider "aws" {
       CreatedBy = "Terraform"
     })
   }
+
+  ignore_tags {
+    key_prefixes = ["QSConfig"]
+  }
 }
 
 provider "aws" {
@@ -42,6 +46,10 @@ provider "aws" {
       CreatedBy = "Terraform"
     })
   }
+
+  ignore_tags {
+    key_prefixes = ["QSConfig"]
+  }
 }
 
 provider "aws" {
@@ -49,6 +57,10 @@ provider "aws" {
   region = local.env.region
   profile = local.env.environment
   shared_credentials_files = ["/cloud/aws/credentials"]
+
+  ignore_tags {
+    key_prefixes = ["QSConfig"]
+  }
 }
 
 ###################### STAGE 1 ######################

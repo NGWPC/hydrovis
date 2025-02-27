@@ -16,12 +16,11 @@ SELECT
     mgc.max_rc_discharge_cfs,
     mgc.model_version,
     '{fim_version}' as fim_version,
-    '{reference_time}' as reference_time,
+    fs.reference_time,
     'Ras2FIM' AS prc_method
 FROM ras2fim.geocurves gc
 JOIN {db_fim_table}_flows fs ON fs.feature_id = gc.feature_id
 JOIN ras2fim.max_geocurves mgc ON gc.feature_id = mgc.feature_id
-JOIN {db_fim_table} fim ON fs.hand_id = fim.hand_id
 WHERE gc.discharge_cfs >= fs.discharge_cfs 
     AND gc.previous_discharge_cfs < fs.discharge_cfs;
 

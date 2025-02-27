@@ -10,6 +10,8 @@ The map depicts the inundation extent of the peak National Water Model (NWM) str
 <br><br>
 <a>https://storymaps.arcgis.com/stories/c7ae8422207241b5873fff38a22cf66b</a>
 <br><br>
+Also depicted is the magnitude of the peak of the NWM streamflow forecast over the next 5 days where the NWM is signaling high water. This service is derived from the medium-range NBM configuration of the NWM over the contiguous U.S. Shown are reaches with peak flow at or above high water thresholds. Reaches are colored by annual exceedance probability (AEP) of their forecast peak flow.
+<br><br>
 Boundary of 30% Area: <a>https://maps.water.noaa.gov/server/rest/services/reference/static_public_fim_domain/MapServer</a>
 <br><br>
 Shown are sections of river with flow at or above a predetermined high water threshold as depicted in the following service:

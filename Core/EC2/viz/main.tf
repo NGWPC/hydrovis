@@ -276,7 +276,7 @@ resource "aws_instance" "viz_pipeline" {
   key_name               = "hv-${var.environment}-ec2-key-pair-${var.region}"
 
   lifecycle {
-    ignore_changes = [ami, tags]
+    ignore_changes = [ami]
   }
 
   tags = {
@@ -332,7 +332,7 @@ resource "aws_instance" "viz_fileshare" {
   key_name               = "hv-${var.environment}-ec2-key-pair-${var.region}"
 
   lifecycle {
-    ignore_changes = [ami, tags]
+    ignore_changes = [ami]
   }
 
   tags = {

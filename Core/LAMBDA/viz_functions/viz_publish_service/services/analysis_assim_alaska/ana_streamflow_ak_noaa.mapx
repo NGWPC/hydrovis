@@ -61,10 +61,10 @@
       }
     },
     "defaultExtent" : {
-      "xmin" : -18061191.9705277383,
-      "ymin" : 7381751.47884553671,
-      "xmax" : -15334655.2674543317,
-      "ymax" : 9417724.30079118162,
+      "xmin" : -17044391.351171419,
+      "ymin" : 8277645.61039676424,
+      "xmax" : -15824993.7166156862,
+      "ymax" : 9178257.86334721185,
       "spatialReference" : {
         "wkid" : 102100,
         "latestWkid" : 3857
@@ -732,6 +732,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 1",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -764,6 +765,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 2",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -796,6 +798,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 3",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -828,6 +831,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 4",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -860,6 +864,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 5",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -892,6 +897,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 6",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -924,6 +930,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 7",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -956,6 +963,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 8",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -988,6 +996,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 9",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -1020,6 +1029,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 10",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -1052,6 +1062,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 11",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -1084,6 +1095,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 12",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -1116,6 +1128,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 13",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -1148,6 +1161,7 @@
                   {
                     "type" : "CIMSolidStroke",
                     "enable" : true,
+                    "name" : "Group 14",
                     "capStyle" : "Round",
                     "joinStyle" : "Round",
                     "lineStyle3D" : "Strip",
@@ -1257,7 +1271,6 @@
           "zeroPad" : true
         },
         "showInAscendingOrder" : false,
-        "heading" : "streamflow",
         "sampleSize" : 10000,
         "defaultSymbolPatch" : "Default",
         "defaultSymbol" : {
@@ -1268,6 +1281,7 @@
               {
                 "type" : "CIMSolidStroke",
                 "enable" : true,
+                "name" : "Group 15",
                 "capStyle" : "Round",
                 "joinStyle" : "Round",
                 "lineStyle3D" : "Strip",
@@ -1349,7 +1363,66 @@
       "scaleSymbols" : true,
       "snappable" : true,
       "symbolLayerDrawing" : {
-        "type" : "CIMSymbolLayerDrawing"
+        "type" : "CIMSymbolLayerDrawing",
+        "symbolLayers" : [
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 1"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 2"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 3"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 4"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 5"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 6"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 7"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 8"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 9"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 10"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 11"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 12"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 13"
+          },
+          {
+            "type" : "CIMSymbolLayerIdentifier",
+            "symbolLayerName" : "Group 14"
+          }
+        ],
+        "useSymbolLayerDrawing" : true
       }
     }
   ],

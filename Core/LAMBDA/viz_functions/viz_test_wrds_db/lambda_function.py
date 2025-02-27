@@ -49,7 +49,7 @@ def lambda_handler(event, context):
                 if table not in IGNORE_TABLES:
                     sql = re.sub(f'external.{table}', f'test_external.{table}', sql, flags=re.IGNORECASE)
             
-            into_matches = re.findall('INTO ([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)', sql, flags=re.IGNORECASE)
+            into_matches = re.findall('(?<!INSERT\s)INTO ([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)', sql, flags=re.IGNORECASE)
             for into_match in into_matches:
                 table = '.'.join(into_match)
                 reference_matches = re.findall(f'(FROM|JOIN) {table}', sql, flags=re.IGNORECASE)
@@ -61,7 +61,7 @@ def lambda_handler(event, context):
                     # to point to this automated_test schema as well
                     into_replace = f'INTO automated_test.{into_match[0]}_{into_match[1]}'
                     sql = re.sub(f'(FROM|JOIN) {table}\\b', f'\g<1> automated_test.{into_match[0]}_{into_match[1]}', sql, flags=re.IGNORECASE)
-                sql = re.sub(f'INTO {table}\\b', into_replace, sql, flags=re.IGNORECASE)
+                sql = re.sub(f'(?<!INSERT\s)INTO {table}\\b', into_replace, sql, flags=re.IGNORECASE)
                 sql = re.sub(f'DROP TABLE IF EXISTS {table}\\b;?', '', sql, flags=re.IGNORECASE)
 
             print(f"Executing {fname.name} in test environment...")

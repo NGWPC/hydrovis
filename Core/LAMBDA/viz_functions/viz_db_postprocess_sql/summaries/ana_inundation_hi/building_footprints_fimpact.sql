@@ -1,5 +1,9 @@
 --------------- Building Footprints ---------------
 DROP TABLE IF EXISTS publish.ana_inundation_building_footprints_hi;
+CREATE INDEX IF NOT EXISTS idx_building_geom ON external.building_footprints_fema USING GIST (geom);
+CREATE INDEX IF NOT EXISTS idx_inundation_hi_geo_geom ON fim_ingest.ana_inundation_hi_geo USING GIST (geom);
+ANALYZE external.building_footprints_fema;
+ANALYZE fim_ingest.ana_inundation_hi_geo;
 SELECT
 	buildings.build_id,
     buildings.occ_cls,

@@ -1,5 +1,5 @@
 -- HUC10 Hotpsot Layer for Rapid Onset Flooding - Alaska
-DROP TABLE IF EXISTS publish.srf_15hr_rapid_onset_flooding_hucs_ak;
+DROP TABLE IF EXISTS publish.srf_15hr_rapid_onset_flooding_ak_hucs;
 SELECT
 	hucs.huc10,
 	TO_CHAR(hucs.huc10, 'fm0000000000') AS huc10_str,
@@ -13,8 +13,8 @@ SELECT
 	to_char('1900-01-01 00:00:00'::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC') AS reference_time,
 	to_char(now()::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC') AS update_time,
 	hucs.geom
-INTO publish.srf_15hr_rapid_onset_flooding_hucs_ak
+INTO publish.srf_15hr_rapid_onset_flooding_ak_hucs
 FROM derived.huc10s_alaska AS hucs
-JOIN derived.featureid_huc_crosswalk AS crosswalk ON hucs.huc10 = crosswalk.huc10
+JOIN derived.featureid_huc_crosswalk_ak AS crosswalk ON hucs.huc10 = crosswalk.huc10
 JOIN publish.srf_15hr_rapid_onset_flooding_ak AS rof ON crosswalk.feature_id = rof.feature_id
 GROUP BY hucs.huc10, hucs.low_order_reach_count, hucs.total_low_order_reach_length, hucs.total_low_order_reach_miles, hucs.geom

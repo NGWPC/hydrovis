@@ -396,3 +396,13 @@ service_data AS (
 SELECT *
 INTO publish.rfc_max_forecast
 FROM service_data;
+
+INSERT INTO publish.rfc_max_forecast (
+	is_record_forecast,
+	generation_time, 
+	update_time
+) VALUES (
+	TRUE,
+	to_char('1900-01-01 00:00:00'::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC'), 
+	to_char(now()::timestamp without time zone, 'YYYY-MM-DD HH24:MI:SS UTC')
+);
