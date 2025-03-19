@@ -160,10 +160,82 @@ resource "aws_s3_bucket_policy" "hydrovis" {
   )
 }
 
+
+resource "aws_s3_bucket_lifecycle_configuration" "lifecycle_config" {
+  bucket = aws_s3_bucket.hydrovis.id
+
+  rule {
+    id     = "daily-lifecycle-rule"
+    status = "Enabled"
+
+    # # Optional filter to apply rule to subset of objects
+    # filter {
+    #   prefix = "documents/"  # Optional: specify path prefix
+    #   # Alternatively, you can use tag-based filtering
+    #   # tag {
+    #   #   key   = "document-type"
+    #   #   value = "important"
+    #   # }
+    # }
+
+    # Frequently accessed to infrequently accessed transition after 60 days
+    transition {
+      days          = 60
+      storage_class = "STANDARD_IA"
+    }
+
+    # Transition to Glacier after 365 days
+    transition {
+      days          = 365
+      storage_class = "GLACIER"
+    }
+
+    # Transition to Deep Archive after 730 days
+    transition {
+      days          = 730
+      storage_class = "DEEP_ARCHIVE"
+    }
+
+    # Expiration rule: This is if we want to expire objects after a period of time
+    expiration {
+      days = 1825 # Objects expire after 5 years for example
+    }
+  }
+
+  # Custom rules for different object sets
+  rule {
+    id     = "logs-lifecycle"
+    status = "Enabled"
+
+    filter {
+      prefix = "logs/"
+    }
+
+    # Shorter lifecycle for logs
+    transition {
+      days          = 15
+      storage_class = "STANDARD_IA"
+    }
+
+    transition {
+      days          = 45
+      storage_class = "GLACIER"
+    }
+
+    expiration {
+      days = 90
+    }
+  }
+}
+
 output "bucket" {
   value = aws_s3_bucket.hydrovis
 }
 
 output "key" {
   value = aws_kms_key.hydrovis-s3
+}
+
+output "lifecycle_config" {
+  value = try(aws_s3_bucket_lifecycle_configuration.lifecycle_config, "")
 }
