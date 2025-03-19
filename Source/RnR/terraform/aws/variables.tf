@@ -3,6 +3,12 @@ variable "rnr_s3_bucket" {
   type        = string
 }
 
+variable "rfc_geopackage_data" {
+  description = "Directory location of the target rfc_geopackage_data in the specified rnr_s3_bucket. Expected options: replace-and-route/rfc-geopackages/ or rnr_shortest_paths/"
+  type        = string
+  default     = "replace-and-route/rfc-geopackages/"
+}
+
 variable "region" {
   description = "The AWS region where resources will be deployed"
   type        = string
@@ -38,8 +44,8 @@ variable "ebs_volume_size" {
 }
 
 variable "extra_policy_arn" {
-  type    = string
-  default = ""
+  type        = string
+  default     = ""
   description = "Optional extra IAM policy to attach to the created role"
 }
 

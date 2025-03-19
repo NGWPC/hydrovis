@@ -139,8 +139,8 @@ resource "aws_instance" "replace_n_route" {
               # Clone the specified Git repository and branch
               git clone -b ${var.git_branch} ${var.git_repo_url} hydrovis
 
-              # Sync Hydrofabric Geo Package data version 20.1 from S3 
-              aws s3 sync s3://${var.rnr_s3_bucket}/replace-and-route/rfc-geopackages/ /app/hydrovis/Source/RnR/data/rfc_geopackage_data
+              # Sync Hydrofabric Geo Package data from S3 
+              aws s3 sync s3://${var.rnr_s3_bucket}/${rfc_geopackage_data} /app/hydrovis/Source/RnR/data/rfc_geopackage_data
               aws s3 cp s3://${var.rnr_s3_bucket}/config.ini /app/hydrovis/Source/RnR/src/rnr/app/core/
 
               # Determine the Docker Compose file to use based on the variable
