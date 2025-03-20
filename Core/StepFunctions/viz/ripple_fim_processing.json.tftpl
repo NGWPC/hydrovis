@@ -1,0 +1,84 @@
+{
+  "StartAt": "CreateFlowsFile and Recreate Table",
+  "States": {
+    "CreateFlowsFile and Recreate Table": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "FunctionName": "${ripple_fim_data_prep_arn}",
+        "Payload": {
+          "input_table": "cache.max_flows_srf",
+          "output_table": "dev.leonard_ripple_max_flows_srf"
+        }
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "List of Ripple Models to create FIMS for"
+    },
+    "List of Ripple Models to create FIMS for": {
+      "Type": "Map",
+      "MaxConcurrency": 20,
+      "ItemReader": {
+        "Resource": "arn:aws:states:::s3:getObject",
+        "ReaderConfig": {
+          "InputType": "CSV",
+          "CSVHeaderLocation": "FIRST_ROW",
+          "MaxItems": 100,
+          "CSVDelimiter": "COMMA"
+        },
+        "Parameters": {
+          "Bucket": "hv-vpp-dev-ripple",
+          "Key": "dev_temp/LorneLeonard/LAMBDA_WORKSPACE/ripple_model_max_flows_srf.csv"
+        }
+      },
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "Mode": "DISTRIBUTED",
+          "ExecutionType": "STANDARD"
+        },
+        "StartAt": "Execute Ripple Docker Image",
+        "States": {
+          "Execute Ripple Docker Image": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "OutputPath": "$.Payload",
+            "Parameters": {
+              "Payload.$": "$",
+              "FunctionName": "${ripple_fim_processing_arn}"
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "Lambda.ServiceException",
+                  "Lambda.AWSLambdaException",
+                  "Lambda.SdkClientException",
+                  "Lambda.TooManyRequestsException"
+                ],
+                "IntervalSeconds": 1,
+                "MaxAttempts": 3,
+                "BackoffRate": 2,
+                "JitterStrategy": "FULL"
+              }
+            ],
+            "End": true
+          }
+        }
+      },
+      "End": true,
+      "ToleratedFailurePercentage": 50
+    }
+  }
+}

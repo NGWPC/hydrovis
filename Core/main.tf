@@ -694,6 +694,8 @@ module "viz-step-functions" {
   schism_fim_datasets_bucket        = module.s3.buckets["deployment"].bucket
   email_sns_topics                  = module.sns.email_sns_topics
   viz_processing_pipeline_log_group = module.cloudwatch.viz_processing_pipeline_log_group.name
+  ripple_fim_data_prep_arn          = module.viz-lambda-functions.ripple_fim_data_prep.arn
+  ripple_fim_processing_arn         = module.viz-lambda-functions.ripple_fim_processing.arn
 }
 
 module "rnr-step-functions" {

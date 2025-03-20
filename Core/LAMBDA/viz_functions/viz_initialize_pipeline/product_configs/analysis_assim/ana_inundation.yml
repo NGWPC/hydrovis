@@ -26,7 +26,11 @@ fim_configs:
     postprocess:
       sql_file: ana_inundation
       target_table: publish.ana_inundation
-  
+  - name: ana_ripple
+    flows_table: cache.max_flows_ana
+    target_table: dev.leonard_ripple_max_flows_ana
+    fim_type: ripple
+
 product_summaries:
   - sql_file:  public_subset
     target_table:
