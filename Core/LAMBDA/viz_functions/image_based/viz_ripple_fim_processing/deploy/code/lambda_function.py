@@ -290,6 +290,7 @@ def lambda_handler(event, context):
     env_db_database = os.getenv('VIZ_DB_DATABASE')  #vizprocessing
     env_db_schema = os.getenv('VIZ_DB_SCHEMA')      #dev
     env_db_tablename = "leonard_flow_test_lamb"  # os.getenv('VIZ_DB_TABLE')    #leonard_flow_test_lamb
+    #env_db_tablename = os.getenv('VIZ_OUT_DB_TABLE_PREFIX') 
     env_SRID = os.getenv('VIZ_SRID')                #3857
 
     #TODO
