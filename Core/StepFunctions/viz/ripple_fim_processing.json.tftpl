@@ -1,16 +1,18 @@
 {
-  "StartAt": "CreateFlowsFile and Recreate Table",
+  "StartAt": "Pass",
   "States": {
+    "Pass": {
+      "Type": "Pass",
+      "Next": "CreateFlowsFile and Recreate Table",
+      "InputPath": "$.fim_config"
+    },
     "CreateFlowsFile and Recreate Table": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
       "OutputPath": "$.Payload",
       "Parameters": {
         "FunctionName": "${ripple_fim_data_prep_arn}",
-        "Payload": {
-          "input_table": "cache.max_flows_srf",
-          "output_table": "dev.leonard_ripple_max_flows_srf"
-        }
+        "Payload": "$"
       },
       "Retry": [
         {

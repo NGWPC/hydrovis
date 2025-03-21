@@ -716,6 +716,8 @@ resource "aws_lambda_function" "viz_ripple_fim_data_prep" {
       VIZ_DB_HOST     = var.viz_db_host
       VIZ_DB_USERNAME = jsondecode(var.viz_db_user_secret_string)["username"]
       VIZ_DB_PASSWORD = jsondecode(var.viz_db_user_secret_string)["password"]
+      VIZ_OUT_SRID    = "3857"
+      VIZ_OUT_S3_BUCKET_LOCATION = "s3://hv-vpp-dev-ripple/dev_temp/LorneLeonard/LAMBDA_WORKSPACE/"
     }
   }
   s3_bucket        = aws_s3_object.ripple_fim_data_prep_zip_upload.bucket

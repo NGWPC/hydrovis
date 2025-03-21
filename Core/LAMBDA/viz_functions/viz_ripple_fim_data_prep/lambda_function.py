@@ -290,7 +290,13 @@ def create_ripple_model_input_file(
     
 
 def lambda_handler(event, context):
+    arg_input_flow_schema_table = event['flows_table'] #TODO ERROR CHECKING
+    arg_output_flow_schema_table = event['target_table'] #TODO ERROR CHECKING
 
+    main(arg_input_flow_schema_table, arg_output_flow_schema_table)
+
+
+def main(input_flows_table, output_schema_table):
     console_debugging = True
     ########################################################################################
     ## [1-0-0] Check environmental variables configured by Lambda Function
@@ -328,15 +334,13 @@ def lambda_handler(event, context):
 #   "output_table": "dev.leonard_ripple_max_flows_srf"
 # }
 
-    arg_input_flow_schema_table = event['input_table'] #TODO ERROR CHECKING
-    input_table_split = arg_input_flow_schema_table.split('.')
+    input_table_split = input_flows_table.split('.')
     env_in_flow_db_schema = input_table_split[0]
     env_in_flow_list = input_table_split[1]
     print(env_in_flow_db_schema)
     print(env_in_flow_list)
 
-    arg_output_flow_schema_table = event['output_table'] #TODO ERROR CHECKING
-    output_table_split = arg_output_flow_schema_table.split('.')
+    output_table_split = output_schema_table.split('.')
     env_out_db_schema = output_table_split[0]
     #flow_table_list = [output_table_split[1]] #TODO GET RID OF LIST
     flow_table_list = [env_in_flow_list] #TODO GET RID OF LIST
