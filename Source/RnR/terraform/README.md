@@ -14,16 +14,19 @@ Only the AWS code has been run in NGWPC dev environments, and multiple considera
 - Appropriate, configured cloud provider credentials. This does interact with IAM, so it requires Admin level privileges.
 - An existing VPC and subnet in the AWS region you plan to deploy.
 - Available Rocky 9 AMI. A similar RHEL or CentOS based AMI should work with minor changes to the user_data. An Ubuntu based AMI would require more with a change to APT based package management.
-- S3 Bucket containing the required Hydrofabric Geo Package data version 20.1 and the database config file.
+- S3 Bucket containing the required Hydrofabric Geo Package data and the database config file.
 
 ## Base Configuration and Deploy
 
 ### S3 Bucket & Contents
 
-#### Hydrofabric Geo Package data version 20.1
-For the application to run appropriate Hydrofabric Geo Package data version 20.1 must be provided in the specified location in the target S3 bucket.
+#### Hydrofabric Geo Package data 
+For the application to run, appropriate Hydrofabric Geo Package data must be provided in a specified location in the target S3 bucket.
 
-s3://${var.rnr_s3_bucket}/rfc_geopackage_data/ 
+s3://${var.rnr_s3_bucket}/${var.rfc_geopackage_data}/ 
+
+Currently we expect var.rfc_geopackage_data to be either "replace-and-route/rfc-geopackages/" or "rnr_shortest_paths/", but the variable isn't restricted to set values and should be set appropriately for your given environment.
+
 
 #### Database Config File
 For deploys that are not targetting a local Postgres DB container, an accurate config.ini must be placed in the appropriate location in S3 for the code to be able to pull it securely on deploy.  Additionally, the terraform variable: use_external_db must be set to false.
@@ -41,7 +44,7 @@ password = pass123
 
 ### Configuration (variables)
 
-To streamline the deployment process and avoid being prompted for every variable, you can create a terraform.tfvars file to predefine values for the target-specific variables in your Terraform configuration. This file allows you to set values for variables such as region, vpc_id, subnet_id, instance_type, rocky_linux_ami_id, git_repo_url, git_branch, and rnr_s3_bucket. By populating the terraform.tfvars file with these values, Terraform will automatically use them during the deployment, ensuring consistency across environments and eliminating the need for manual input. 
+To streamline the deployment process and avoid being prompted for every variable, you can create a terraform.tfvars file to predefine values for the target-specific variables in your Terraform configuration. This file allows you to set values for variables such as region, vpc_id, subnet_id, instance_type, rocky_linux_ami_id, git_repo_url, git_branch, rnr_s3_bucket, and rfc_geopackage_data. By populating the terraform.tfvars file with these values, Terraform will automatically use them during the deployment, ensuring consistency across environments and eliminating the need for manual input. 
 
 Simply create the terraform.tfvars file in the root directory of your Terraform project, and add entries like region = "us-west-2", vpc_id = "vpc-xxxxxx", etc., corresponding to the variables you want to set. A common practice in Terraform to manage different configurations for various environments such as development, staging, and production is to create multiple tfvars files and target them per environment. For each environment, create a separate .tfvars file. For example:
 
@@ -103,6 +106,10 @@ We've only been working with AWS thus far, so we'll focus on that configuration.
     rnr_s3_bucket = "ngwpc-rnr-test":
     - Purpose: Defines the name of the S3 bucket where the application will store and retrieve data. In particular, the code sources required Hydrofabric Geo Package data version 20.1 from this bucket and database connection config details. This terraform creates a role with appropriate access granted to the bucket name provided here. Note that this will only work if the bucket is in the same account as your deployment. Modifications will need to be made to support multi-account architectures.
     - Details: This S3 bucket is specific to the test environment and is used by Replace and Route to manage files and configurations.
+
+    rfc_geopackage_data = "replace-and-route/rfc-geopackages/" or "rnr_shortest_paths/"
+    - Purpose: Definines the location of the rfc geaopackage data one specifically wants to use when running RnR.
+    - Details: Originally this always pointed at "replace-and-route/rfc-geopackages/", but a variable was added to support future functionality leveraging "rnr_shortest_paths/".
     
     extra_policy_arn = "arn:aws:iam::xxxxxxxxx:policy/AWSAccelerator-SessionManagerLogging":
     - Purpose: Adds an additional IAM policy to the instance role.
