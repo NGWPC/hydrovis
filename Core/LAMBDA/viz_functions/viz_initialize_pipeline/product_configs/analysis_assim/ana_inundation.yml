@@ -29,6 +29,7 @@ fim_configs:
   - name: ana_ripple
     flows_table: cache.max_flows_ana
     target_table: dev.leonard_ripple_max_flows_ana
+    map_file: ripple_model_max_flows_ana.csv
     fim_type: ripple
 
 product_summaries:

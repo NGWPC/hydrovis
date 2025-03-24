@@ -5,23 +5,46 @@ from viz_classes import database
 import boto3
 import os
 import json
-
 import tempfile
 from urllib.parse import urlparse
 import logging
-
-#03-18-25
 import pandas as pd
-#import fsspec
-#import s3fs
+import traceback
 
 s3 = boto3.resource('s3') 
 s3_client = boto3.client('s3')
 
 
-
 class MissingS3FileException(Exception):
     """ my custom exception class """
+
+#Helper function to check values from event inputs
+def check_event_input(value):
+    """
+    Checks if the variable is a valid string.
+
+    Parameters:
+        variable: value to parse.
+
+    Returns:
+        bool: True if exists, False otherwise
+    """
+    result = True
+
+    if not value.strip():
+        return False
+    if len(value) == 0:
+        return False    
+    if not value:
+        return False  
+    if value is None:
+        return False    
+ 
+    str_len = len(value)
+    if str_len > 100:
+        result = False
+
+    return result
 
 def parse_s3_url_GET_bucket_key(url):
     """Parses an S3 URL into bucket name and object key."""
@@ -56,7 +79,7 @@ def check_environment_value(variable):
     Checks if the variable is a valid string.
 
     Parameters:
-        variable: value to prase.
+        variable: value to parse.
 
     Returns:
         bool: True if exists, False otherwise
@@ -96,7 +119,6 @@ def create_drop_ripple_table(arg_db_type, arg_db_schema, arg_db_tablename, arg_S
     db_tablename = arg_db_tablename
     viz_SRID = arg_SRID
 
-    #viz_db = database(db_type="viz")
     viz_db = database(db_type=input_db_type)
     sql_cmd = f"DROP TABLE IF EXISTS {db_schema}.{db_tablename};"
     resp = viz_db.execute_sql(sql_cmd) 
@@ -154,7 +176,6 @@ def create_flow_file(arg_db_type, arg_db_schema, arg_db_tablename, arg_flow_file
     flow_file_key = arg_flow_file_key
 
     viz_db = database(db_type=input_db_type)
-    #viz_db = database(db_type="viz")
     
     #TODO make columns a variable if locations etc change
     query = f'SELECT feature_id, discharge_cfs FROM {db_schema}.{db_tablename};' 
@@ -212,33 +233,25 @@ def create_flow_file(arg_db_type, arg_db_schema, arg_db_tablename, arg_flow_file
 #  7) TODO check no spaces in model S3 bucket paths
 
 def create_ripple_model_input_file(
-        #03-18-25 arg_db_type,               #i.e. viz
-        #03-18-25 arg_db_schema,             #i.e. dev
-        #03-18-25 arg_db_tablename,          #i.e. leonard_ripple_model_list (Table name stored with model)
         arg_input_s3_model_csv_url, # S3 Url to csv file for ripple_model_list (Table name stored with model)
-        arg_flow_file_s3_fullpath, #i.e. full path of flow file in S3 bucket
-        arg_output_file_bucket,    #i.e. bucket location where to place this file
-        arg_output_file_key,       #i.e. bucket folder only (Based on env variable)
-        arg_output_file_name):     #i.e. Name of model file name created by this function
+        arg_flow_file_s3_fullpath,  #i.e. full path of flow file in S3 bucket
+        arg_output_file_bucket,     #i.e. bucket location where to place this file
+        arg_output_file_key,        #i.e. bucket folder only (Based on env variable)
+        arg_output_file_name,       #i.e. Name of model file name created by this function
+        arg_output_schema,          #Schema for destination output table
+        arg_output_table_name):   
 
     #TODO error checking
     result = True
-    #03-18-25 input_db_type = arg_db_type
-    #03-18-25 input_db_schema = arg_db_schema
-    #03-18-25 input_db_tablename = arg_db_tablename
+
     input_s3_model_csv_url = arg_input_s3_model_csv_url
     flow_s3_full_filename_path = arg_flow_file_s3_fullpath
     output_file_bucket = arg_output_file_bucket
     output_file_key = arg_output_file_key
     output_model_file = arg_output_file_name
 
-    #03-18-25 viz_db = database(db_type=input_db_type)
+    destination_schema_table_name = arg_output_schema + "." + arg_output_table_name
     
-    #TODO Provide pagination
-    #03-18-25 query = f'SELECT * FROM {input_db_schema}.{input_db_tablename};'  
-    #03-18-25 result_df = viz_db.sql_to_dataframe(query) 
-    #03-18-25 Moving from database table to csv file for TF usage
-
     #TODO Look at other HV code and follow existing patterns
     #TODO error checking
     #Issues with ffspec, then sf3, then aiobotocore
@@ -263,11 +276,11 @@ def create_ripple_model_input_file(
     whitespace_remover(result_df)
     #result_df = result_df.apply(lambda x: x.astype(str).str.replace(" ", ""))
 
+    result_df['destination_schema_table_name'] = destination_schema_table_name
     result_df['maxFlowTable'] = flow_s3_full_filename_path
     result_df.to_csv(tmp_ouput_path, index=False)
 
     print("Uploading output CSV file to S3")
-    #output_model_file = f"{input_db_schema}.{input_db_tablename}.csv" 
     output_bucket_model_file = str(output_file_key) + "/" + str(output_model_file)
 
     try:
@@ -277,7 +290,6 @@ def create_ripple_model_input_file(
         
     except Exception as e:
         print(f"--- ERROR with uploading s3://{output_file_bucket}/{output_bucket_model_file}")
-        #03-18-25 print(f"--- ERROR from table {input_db_schema}.{input_db_tablename}")
         print(f"--- ERROR from model S3 file {input_s3_model_csv_url}")
         result = False
 
@@ -285,72 +297,109 @@ def create_ripple_model_input_file(
     if os.path.exists(str(tmp_ouput_path)):
         os.remove(tmp_ouput_path)
 
-    #03-18-25 del viz_db
     return result    
     
-
 def lambda_handler(event, context):
-    arg_input_flow_schema_table = event['flows_table'] #TODO ERROR CHECKING
-    arg_output_flow_schema_table = event['target_table'] #TODO ERROR CHECKING
 
-    main(arg_input_flow_schema_table, arg_output_flow_schema_table)
+    try:
+        arg_input_flow_schema_table = ""
+        arg_output_flow_schema_table = ""
+        arg_output_map_file = ""
 
+        try:
+            arg_input_flow_schema_table = event['flows_table']
+        except KeyError:
+            return {
+                'statusCode': 9000,
+                'message': f"[Step:0-0-1] Flows Table argument missing. {event}"
+            }
+        
+        try:
+            arg_output_flow_schema_table = event['target_table']
+        except KeyError:
+            return {
+                'statusCode': 9001,
+                'message': f"[Step:0-0-2] Target Table argument missing. {event}"
+            }
+        
+        try:
+            arg_output_map_file = event['map_file']
+        except KeyError:
+            return {
+                'statusCode': 9002,
+                'message': f"[Step:0-0-3] Map file argument missing. {event}"
+            }
+                    
+        test1 = check_event_input(arg_input_flow_schema_table)
+        if test1 == False:
+            return {
+                'statusCode': 9003,
+                'message': f"[Step:0-0-4] Flows Table argument missing. {event}"
+            }            
 
-def main(input_flows_table, output_schema_table):
+        test2 = check_event_input(arg_output_flow_schema_table)
+        if test2 == False:
+            return {
+                'statusCode': 9004,
+                'message': f"[Step:0-0-5] Flows Table argument missing. {event}"
+            } 
+        
+        test3 = check_event_input(arg_output_map_file)
+        if test3 == False:
+            return {
+                'statusCode': 9005,
+                'message': f"[Step:0-0-6] Flows Table argument missing. {event}"
+            } 
+
+        return main(arg_input_flow_schema_table, arg_output_flow_schema_table, arg_output_map_file)
+    
+    except Exception as e:
+        tmp_str = traceback.print_exc() 
+        return {
+            'statusCode': 9010,
+            'body': json.dumps(f"[lambda_handler] TraceBack -> {tmp_str}.")
+        }          
+    
+def main(input_flows_table, output_schema_table, output_map_file):
+
     console_debugging = True
+
     ########################################################################################
     ## [1-0-0] Check environmental variables configured by Lambda Function
     ########################################################################################
 
-    #Environment variables stored via Lambda Configuration settings
-
-    # This list focuses on inputs to create the flow files required
-    
-#cache.max_flows_srf
-#VIZ_IN_FLOW_DB_SCHEMA=cache
-#VIZ_IN_MAX_FLOW_LIST=max_flows_srf
-
-
     #TODO Decide if batch at once, or one variable at a time from HV Step functions
     #cache.max_flows_[ana|srf|mrf_nbm_[3|5|10]day|mrf_gfs_[3|5|10]day]
-    # flow_table_list = []
-    # #flow_table_list.append("max_flows_ana")          #WORKED
-    # #flow_table_list.append("max_flows_ana_7day")     #WORKED
-    # #flow_table_list.append("max_flows_ana_14day")    #WORKED
-    # #flow_table_list.append("max_flows_mrf_gfs_3day") #WORKED
-    # #flow_table_list.append("max_flows_mrf_gfs_5day") #WORKED
-    # #flow_table_list.append("max_flows_mrf_gfs_10day")#WORKED
-    # flow_table_list.append("max_flows_srf")          #WORKED
-
-    #03-18-25 env_in_flow_db_schema = os.getenv('VIZ_IN_FLOW_DB_SCHEMA')     #cache
-    #03-18-25 env_in_model_db_schema = os.getenv('VIZ_IN_MODEL_DB_SCHEMA')   #dev
-    #03-18-25 env_in_model_db_tablename = os.getenv('VIZ_IN_MODEL_DB_TABLE') #leonard_ripple_model_list
-
-    input_output_prefix = "leonard_ripple_" #03-18-25 Change this value to ripple_ for TI
-
-    #03-18-25 --[Start]----------------------------------------------------------
-# {
-#   "input_table": "cache.max_flows_srf",
-#   "output_table": "dev.leonard_ripple_max_flows_srf"
-# }
 
     input_table_split = input_flows_table.split('.')
+    split_len = len(input_table_split)
+    if split_len != 2:
+        return {
+            'statusCode': 600,
+            'body': json.dumps(f"[Step:0-1-1] Invalid flows table => {input_table_split}")
+        }
+            
     env_in_flow_db_schema = input_table_split[0]
-    env_in_flow_list = input_table_split[1]
-    print(env_in_flow_db_schema)
-    print(env_in_flow_list)
+    env_in_flow_db_table = input_table_split[1]
+
+    if (console_debugging): 
+        print(env_in_flow_db_schema)
+        print(env_in_flow_db_table)
 
     output_table_split = output_schema_table.split('.')
-    env_out_db_schema = output_table_split[0]
-    #flow_table_list = [output_table_split[1]] #TODO GET RID OF LIST
-    flow_table_list = [env_in_flow_list] #TODO GET RID OF LIST
-    print(env_out_db_schema)
-    print(flow_table_list)    
-    #03-18-25 --[End]----------------------------------------------------------
+    split_len = len(output_table_split)
+    if split_len != 2:
+        return {
+            'statusCode': 601,
+            'body': json.dumps(f"[Step:0-1-1] Invalid output table  => {output_table_split}")
+        }
 
-    
-    #03-18-25 env_in_flow_list = os.getenv('VIZ_IN_MAX_FLOW_LIST')  #Parses env string and convert to a list of max flows to process
-                                                          #i.e. max_flows_ana,max_flows_srf
+    output_db_schema = output_table_split[0]
+    output_db_table = output_table_split[1]
+
+    if console_debugging == True: 
+        print(output_db_schema)
+        print(output_db_table)    
 
     ########################################################################################
 
@@ -359,181 +408,117 @@ def main(input_flows_table, output_schema_table):
     env_out_db_username = os.getenv('VIZ_DB_USERNAME')          #viz_proc_admin_rw_user
     env_out_db_password = os.getenv('VIZ_DB_PASSWORD')          #
     env_out_db_database = os.getenv('VIZ_DB_DATABASE')          #vizprocessing
-    #03-18-25 env_out_db_schema = os.getenv('VIZ_OUT_DB_SCHEMA')          #dev
-    #03-18-25 env_out_db_tablename = os.getenv('VIZ_OUT_DB_TABLE')        #leonard_flow_test_lamb
     env_out_viz_SRID = os.getenv('VIZ_OUT_SRID')                #3857
     env_out_S3_bucket = os.getenv('VIZ_OUT_S3_BUCKET_LOCATION') #s3://hv-vpp-dev-ripple/dev_temp/LorneLeonard/LAMBDA_WORKSPACE/
 
-    ########################################################################################
-
     if not check_environment_value(env_out_db_host):
         return {
-            'statusCode': 600,
+            'statusCode': 610,
             'body': json.dumps(f"[Step:0-1-1] Invalid output database host.")
         }
     if not check_environment_value(env_out_db_username):
         return {
-            'statusCode': 601,
+            'statusCode': 611,
             'body': json.dumps(f"[Step:0-1-2] Invalid output database username.")
         }
     if not check_environment_value(env_out_db_password):
         return {
-            'statusCode': 602,
+            'statusCode': 612,
             'body': json.dumps(f"[Step:0-1-3] Invalid output database password.")
         }
     if not check_environment_value(env_out_db_database):
         return {
-            'statusCode': 603,
+            'statusCode': 613,
             'body': json.dumps(f"[Step:0-1-4] Invalid output database name.")
         }                                
-    if not check_environment_value(env_out_db_schema):
-        return {
-            'statusCode': 604,
-            'body': json.dumps(f"[Step:0-1-5] Invalid output table schema.")
-        }  
-#03-18-25     
-    # if not check_environment_value(env_out_db_tablename):
-    #     return {
-    #         'statusCode': 605,
-    #         'body': json.dumps(f"[Step:0-1-6] Invalid output table name.")
-    #     } 
     if not check_environment_value(env_out_viz_SRID):
         return {
-            'statusCode': 606,
+            'statusCode': 616,
             'body': json.dumps(f"[Step:0-1-7] Invalid output SRID value.")
         }    
 
-    if not check_environment_value(env_in_flow_db_schema):
-        return {
-            'statusCode': 607,
-            'body': json.dumps(f"[Step:0-1-8] Invalid input table schema.")
-        }  
-      
-#03-18-25 
-    # if not check_environment_value(env_in_model_db_schema):
-    #     return {
-    #         'statusCode': 608,
-    #         'body': json.dumps(f"[Step:0-1-9] Invalid input model table schema.")
-    #     }    
-
-#03-18-25   
-    # if not check_environment_value(env_in_model_db_tablename):
-    #     return {
-    #         'statusCode': 609,
-    #         'body': json.dumps(f"[Step:0-1-10] Invalid input model table name.")
-    #     }      
-  
-    if not check_environment_value(env_in_flow_list):
-        return {
-            'statusCode': 610,
-            'body': json.dumps(f"[Step:0-1-11] Invalid flow list.")
-        }         
-    
-    #03-18-25 env_in_flow_list = os.getenv('VIZ_IN_MAX_FLOW_LIST')  
-    #03-18-25 flow_table_list = env_in_flow_list.split(",")
-    if (console_debugging): print(flow_table_list)
-    len_flow_list = len(flow_table_list)
-    if len_flow_list == 0:
-        return {
-            'statusCode': 200,
-            'body': json.dumps(f'No flow tables to process. Assuming this is desired.')
-        }        
-    if len_flow_list > 10:
-        return {
-            'statusCode': 612,
-            'body': json.dumps(f'Too many flow tables to process. Check string input.')
-        }        
-
-
     # Bad S3 bucket will raise error here
-    # BEWARE: THIS CODE places both flow (Used by flows2fim) and model (used by Ripple pipeline) files
-    #         in the same location
     # REMEMBER this S3 url does not have a fullname, needs to be added below
+    # This S3 path is considered the base folder. It is assumed the subfolders are already in placed.
     output_flow_and_model_file_bucket, output_flow_and_model_file_key = parse_s3_url_GET_bucket_key(env_out_S3_bucket)
-    if (console_debugging): print("Bucket:", output_flow_and_model_file_bucket)
-    if (console_debugging): print("Key:", output_flow_and_model_file_key)
+
+    if console_debugging == True:
+        print("Bucket:", output_flow_and_model_file_bucket)
+        print("Key:", output_flow_and_model_file_key)
 
     ########################################################################################
     ## [2-0-0] Delete existing vector table results in database and recreate tables
-    # TODO TASK
     ########################################################################################
 
-    for viz_out_table in flow_table_list:
-        output_db_type = "viz" #TODO
-        output_db_schema = env_out_db_schema  #dev
-        output_db_tablename = input_output_prefix + viz_out_table   #TODO FIX ME ONCE I KNOW FINAL TABLE NAMES
-        output_SRID = env_out_viz_SRID
-        create_drop_ripple_table(output_db_type, output_db_schema, output_db_tablename, output_SRID)
+    output_db_type = "viz" #TODO
+    output_SRID = env_out_viz_SRID
+    create_drop_ripple_table(output_db_type,   #TODO
+                             output_db_schema, #Provided as function argument output_schema_table
+                             output_db_table,  #Provided as function argument output_schema_table
+                             output_SRID)
 
     ########################################################################################
     ## [3-0-0] Create Ripple flows.csv input file
     ########################################################################################
 
     error_found_flow = False
-    for flow_table in flow_table_list:
-        input_flow_db_type = "viz" #TODO
-        input_flow_db_schema = env_in_flow_db_schema       #cache
-        result = create_flow_file(input_flow_db_type,      #i.e. viz
-                                  input_flow_db_schema,    #i.e. cache
-                                  flow_table,              #i.e. max_flows_srf
-                                  output_flow_and_model_file_bucket, #i.e. bucket location where to place this file
-                                  output_flow_and_model_file_key)    #i.e. key here is the folder location. Does not include file name.
-        if result == False:
-            logging.exception(f"Error creating flow file for {input_flow_db_type} {input_flow_db_schema} {flow_table} {output_flow_and_model_file_bucket} {output_flow_and_model_file_key}")
-            error_found_flow = True
+    input_flow_db_type = "viz" #TODO
+
+    #TI bucket structure
+    output_flow_and_model_file_key_folder = output_flow_and_model_file_key + "/flow_files"
+    result = create_flow_file(input_flow_db_type,                       #i.e. viz
+                                env_in_flow_db_schema,                   #i.e. cache
+                                env_in_flow_db_table,                   #i.e. max_flows_srf
+                                output_flow_and_model_file_bucket,      #i.e. bucket location where to place this file
+                                output_flow_and_model_file_key_folder)  #i.e. key here is the folder location. Does not include file name.
+
+    if result == False:
+        logging.exception(f"Error creating flow file for {input_flow_db_type} {env_in_flow_db_schema} {env_in_flow_db_table} {output_flow_and_model_file_bucket} {output_flow_and_model_file_key_folder}")
+        error_found_flow = True
 
     if error_found_flow == True:
         return {
-            'statusCode': 613,
+            'statusCode': 620,
             'body': json.dumps(f'Error found while creating flow input files.')
         }
     
     ########################################################################################
-    ## [4-0-0] TODO Create unique list of hucs to create for Map Step Function
-    # TODO TASKS
+    ## [4-0-0] Create csv file for Map Step Function
     ########################################################################################
 
     error_found_model = False
-    for flow_table in flow_table_list:
-        #03-18-25 arg_model_db_type = "viz" #TODO
-        #03-18-25 arg_model_db_schema = env_out_db_schema         #dev
-        #03-18-25 arg_in_model_db_tablename = "leonard_ripple_model_list" #TODO
 
-        #TODO TI bucket structure
-        input_s3_model_csv_url = str(env_out_S3_bucket) + "/model_input/ripple_model_list.csv" #Error checking happens in create_ripple_model_input_file function
+    #TI bucket structure
+    input_s3_model_csv_url = str(env_out_S3_bucket) + "/model_lookup_file/ripple_model_list.csv" 
+    #Error checking happens in create_ripple_model_input_file function
 
-        output_flow_db_schema = env_in_flow_db_schema   #cache
-        output_model_name = "ripple_model_" + str(flow_table) + ".csv" #TODO
-
-        flow_full_s3_path = f"s3://{output_flow_and_model_file_bucket}/{output_flow_and_model_file_key}/{output_flow_db_schema}.{flow_table}.csv"
-
+    flow_full_s3_path = f"s3://{output_flow_and_model_file_bucket}/{output_flow_and_model_file_key_folder}/{env_in_flow_db_schema}.{env_in_flow_db_table}.csv"
+    if console_debugging == True:
         print(flow_full_s3_path)
 
-        result = create_ripple_model_input_file(
-                #03-18-25 arg_model_db_type,                 #i.e. viz
-                #03-18-25 arg_model_db_schema,               #i.e. dev
-                #03-18-25 arg_in_model_db_tablename,         #i.e. leonard_ripple_model_list (Table name stored with model)
-                input_s3_model_csv_url,            #i.e. S3 Url to csv file with ripple_model_list (Table name stored with model)
-                flow_full_s3_path,                 #i.e. full path of flow file in S3 bucket
-                output_flow_and_model_file_bucket, #i.e. bucket location where to place this file
-                output_flow_and_model_file_key,    #i.e. bucket folder
-                output_model_name)                 #i.e. name of file to create
-        
-        if result == False:
-            logging.exception(f"Error creating model file for {output_flow_db_schema} {flow_table} {output_flow_and_model_file_bucket} {output_flow_and_model_file_key}")
-            error_found_model = True
+    #TI bucket structure
+    output_ripple_folder = output_flow_and_model_file_key + "/model_files"
+
+    result = create_ripple_model_input_file(
+            input_s3_model_csv_url,            #i.e. S3 Url to csv file with ripple_model_list (Table name stored with model)
+            flow_full_s3_path,                 #i.e. full path of flow file in S3 bucket
+            output_flow_and_model_file_bucket, #i.e. bucket location where to place this file
+            output_ripple_folder,              #i.e. bucket folder
+            output_map_file,                   #i.e. name of file to create
+            output_db_schema,                  #Schema output location used by Ripple image
+            output_db_table)                  #Table output location used by Ripple image
+  
+    if result == False:
+        logging.exception(f"Error creating model file for {env_in_flow_db_schema} {output_db_table} {output_flow_and_model_file_bucket} {output_flow_and_model_file_key}")
+        error_found_model = True
 
     if error_found_model == True:
         return {
-            'statusCode': 614,
+            'statusCode': 630,
             'body': json.dumps(f'Error found while creating model input files.')
         }
     
-
-#TODO check use of slashes for S3 etc
-
-
     return {
         'statusCode': 200,
-        'body': json.dumps(f'Created tables and flow file(s) for Ripples')
+        'body': json.dumps(f'Created tables and flow file for Ripples')
     }

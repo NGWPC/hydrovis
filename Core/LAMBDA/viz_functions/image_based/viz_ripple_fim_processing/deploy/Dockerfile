@@ -53,10 +53,11 @@ COPY code/ ./
 # ENV PROJ_LIB=/root/miniconda3/share/proj
 #Added, different from sanity check
 # RUN chmod o+rx /root
+RUN chmod o+rx lambda_function.py
 
 SHELL ["/usr/local/bin/_dockerfile_shell.sh"]
 
 ENTRYPOINT [ "/usr/local/bin/_entrypoint.sh" ]
 CMD [ \
-    "python", "-m", "awslambdaric", "lambda_function.lambda_handler" \
+    "/opt/conda/bin/python3.12", "-m", "awslambdaric", "lambda_function.lambda_handler" \
 ]

@@ -61,8 +61,6 @@ data "archive_file" "viz_service_zip" {
       VIZ_DB_HOST = var.viz_db_host
       VIZ_DB_USERNAME = jsondecode(var.viz_db_user_secret_string)["username"]
       VIZ_DB_PASSWORD = jsondecode(var.viz_db_user_secret_string)["password"]
-      VIZ_DB_SCHEMA   = "dev"
-      VIZ_OUT_DB_TABLE_PREFIX = "leonard_ripple_"
       VIZ_SRID = "3857"
     })
     filename = "serverless.yml"

@@ -43,7 +43,7 @@
         },
         "Parameters": {
           "Bucket": "hv-vpp-dev-ripple",
-          "Key": "dev_temp/LorneLeonard/LAMBDA_WORKSPACE/ripple_model_max_flows_srf.csv"
+          "Key": "{% 'dev_temp/LorneLeonard/LAMBDA_WORKSPACE/TI-ENV/model_files/' & $states.input.map_file %}"
         }
       },
       "ItemProcessor": {
