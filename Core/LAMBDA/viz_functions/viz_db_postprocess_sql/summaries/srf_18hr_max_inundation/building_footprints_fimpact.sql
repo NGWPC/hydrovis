@@ -96,7 +96,7 @@ SELECT
 	critpoints.oid,
 	critpoints.build_type,
 	critpoints.name,
-	critpoints.geometry,
+	critpoints.geometry as geom,
 	critpoints.city,
 	critpoints.country,
 	critpoints.state,
