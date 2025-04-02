@@ -2643,7 +2643,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "vizprocessing.postgres.%mrf_gfs_3day_max_inundation_critical_infrastructure",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,build_type,name,geometry,city,country,state,population,beds,naics_code,specialty,sourcedate,zipcode,status,trauma,alias,county,naics_desc,alt_name,naicsdescr,helipad,level_,source,type,hydro_id,hydro_id_str,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft from vizprocessing.publish.mrf_gfs_3day_max_inundation_critical_infrastructure",
+          "sqlQuery" : "select oid,build_type,name,geom,city,country,state,population,beds,naics_code,specialty,sourcedate,zipcode,status,trauma,alias,county,naics_desc,alt_name,naicsdescr,helipad,level_,source,type,hydro_id,hydro_id_str,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft from vizprocessing.publish.mrf_gfs_3day_max_inundation_critical_infrastructure",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -9837,7 +9837,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "vizprocessing.postgres.%mrf_gfs_5day_max_inundation_critical_infrastructure",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,build_type,name,geometry,city,country,state,population,beds,naics_code,specialty,sourcedate,zipcode,status,trauma,alias,county,naics_desc,alt_name,naicsdescr,helipad,level_,source,type,hydro_id,hydro_id_str,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft from vizprocessing.publish.mrf_gfs_5day_max_inundation_critical_infrastructure",
+          "sqlQuery" : "select oid,build_type,name,geom,city,country,state,population,beds,naics_code,specialty,sourcedate,zipcode,status,trauma,alias,county,naics_desc,alt_name,naicsdescr,helipad,level_,source,type,hydro_id,hydro_id_str,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft from vizprocessing.publish.mrf_gfs_5day_max_inundation_critical_infrastructure",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -17031,7 +17031,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "vizprocessing.postgres.%mrf_gfs_10day_max_inundation_critical_infrastructure",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,build_type,name,geometry,city,country,state,population,beds,naics_code,specialty,sourcedate,zipcode,status,trauma,alias,county,naics_desc,alt_name,naicsdescr,helipad,level_,source,type,hydro_id,hydro_id_str,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft from vizprocessing.publish.mrf_gfs_10day_max_inundation_critical_infrastructure",
+          "sqlQuery" : "select oid,build_type,name,geom,city,country,state,population,beds,naics_code,specialty,sourcedate,zipcode,status,trauma,alias,county,naics_desc,alt_name,naicsdescr,helipad,level_,source,type,hydro_id,hydro_id_str,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft from vizprocessing.publish.mrf_gfs_10day_max_inundation_critical_infrastructure",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
