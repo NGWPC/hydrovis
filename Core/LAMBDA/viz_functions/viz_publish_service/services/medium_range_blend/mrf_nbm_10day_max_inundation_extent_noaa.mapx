@@ -2680,9 +2680,9 @@
               "length" : 60000
             },
             {
-              "name" : "geometry",
+              "name" : "geom",
               "type" : "esriFieldTypeGeometry",
-              "alias" : "geometry",
+              "alias" : "geom",
               "geometryDef" : {
                 "avgNumPoints" : 0,
                 "geometryType" : "esriGeometryPoint",
@@ -9874,9 +9874,9 @@
               "length" : 60000
             },
             {
-              "name" : "geometry",
+              "name" : "geom",
               "type" : "esriFieldTypeGeometry",
-              "alias" : "geometry",
+              "alias" : "geom",
               "geometryDef" : {
                 "avgNumPoints" : 0,
                 "geometryType" : "esriGeometryPoint",
@@ -17068,9 +17068,9 @@
               "length" : 60000
             },
             {
-              "name" : "geometry",
+              "name" : "geom",
               "type" : "esriFieldTypeGeometry",
-              "alias" : "geometry",
+              "alias" : "geom",
               "geometryDef" : {
                 "avgNumPoints" : 0,
                 "geometryType" : "esriGeometryPoint",

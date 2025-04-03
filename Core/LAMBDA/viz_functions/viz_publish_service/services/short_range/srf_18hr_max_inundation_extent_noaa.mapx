@@ -2681,9 +2681,9 @@
               "length" : 1073741822
             },
             {
-              "name" : "geometry",
+              "name" : "geom",
               "type" : "esriFieldTypeGeometry",
-              "alias" : "geometry",
+              "alias" : "geom",
               "geometryDef" : {
                 "avgNumPoints" : 0,
                 "geometryType" : "esriGeometryPoint",
