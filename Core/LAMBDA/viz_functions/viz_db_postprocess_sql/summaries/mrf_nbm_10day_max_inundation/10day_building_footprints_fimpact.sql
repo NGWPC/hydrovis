@@ -93,7 +93,6 @@ ANALYZE derived.static_public_critical_infrastructure_points_fema;
 CREATE INDEX IF NOT EXISTS idx_fim_geo_geom ON fim_ingest.mrf_nbm_max_inundation_10day_geo USING GIST(geom);
 ANALYZE fim_ingest.mrf_nbm_max_inundation_10day_geo;
 SELECT
-	critpoints.oid,
 	critpoints.build_type,
 	critpoints.name,
 	critpoints.geometry as geom,
