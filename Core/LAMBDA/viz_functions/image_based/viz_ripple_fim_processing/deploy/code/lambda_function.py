@@ -280,8 +280,9 @@ def lambda_handler(event, context):
         #TODO
         env_db_tracking_schema = "dev"
         env_db_tracking_table_name = "leonard_ripple_model_tracker"
-        tracking_input_model_name = ""
-
+        tracking_input_model_name = "LAMBDA_TEST"
+        env_db_schema = "dev" #Using as my dummy for lambda tests
+        env_db_tablename = "leonard_ripple_max_flows_ana" #Using as my dummy for lambda tests
         ####################################
 
         #Decision made to use control file only
@@ -339,6 +340,7 @@ def lambda_handler(event, context):
                 env_db_schema = input_table_split[0]
                 env_db_tablename = input_table_split[1]
 
+                tracking_input_model_name = input_model_name
     #rename these
 
             except Exception as e:
@@ -1055,6 +1057,7 @@ def lambda_handler(event, context):
             with open(output_control_local_path, 'r') as c_file:
                 next(c_file) #Skip Header
                 for line in c_file:
+                    logger.debug(f"[Step:3-XX] {line}")
                     split_line = line.split(',')
                     cf_reach_id = split_line[0].rstrip()
                     cf_flow = split_line[1].rstrip()
@@ -1072,7 +1075,7 @@ def lambda_handler(event, context):
                             tmp_floor = math.floor(tmp_float)
                             tmp_control_stage = str(tmp_floor)
 
-                            if math.isclose(tmp_float, 0.5):
+                            if tmp_float % 1 == 0.5: #math.isclose(tmp_float, 0.5):
                                 tmp_control_stage += "_5"
                             else:
                                 tmp_control_stage += "_0"  #Potential logic issue here if intervals change
@@ -1087,6 +1090,9 @@ def lambda_handler(event, context):
                         logger.debug(f"{key_file_check}")
                     #Continue if path exists
                     #Not all the paths exists!!!!
+
+                    logger.debug(f"[Step:3-YY] {key_file_check}")
+                    logger.debug(f"[Step:3-YY] {full_s3_raster_path}")
 
                     try:
 
@@ -1126,24 +1132,24 @@ def lambda_handler(event, context):
                                 df_prj.to_postgis(con=viz_engine,schema=env_db_schema,name=env_db_tablename, if_exists='append')
                             except Exception as e:
                                 traceback_str = traceback.format_exc()
-                                logger.debug(f"[Step:3-1-X] failed to upload vector result to database")
+                                logger.debug(f"[Step:3-1-2] failed to upload vector result to database")
                                 logger.debug(f"{traceback_str} ")
 
                             file_cnt += 1
                         except:
-                            logger.debug(f"[Step:3-1-1] Error with file {full_s3_raster_path}")
+                            logger.debug(f"[Step:3-1-3] Error with file {full_s3_raster_path}")
                             traceback_str = traceback.format_exc()
                             logger.debug(f"{traceback_str}")
                             error_cnt += 1
                     except:
                         #We know files are missing
                         if (console_debugging):
-                            print("[Step:3-1-1] File does not exist:", full_s3_raster_path)
+                            print("[Step:3-1-4] File does not exist:", full_s3_raster_path)
                             traceback_str = traceback.format_exc()
                             logger.debug(f"{traceback_str}")
                         skipped_cnt += 1
 
-            logger.debug(f"[Step:3-1-1] Number of files processed {file_cnt}")
+            logger.debug(f"[Step:3-1-5] Number of files processed {file_cnt} {error_cnt} {skipped_cnt} ")
 
             if upload_tracking:
                 end_time = datetime.now()
