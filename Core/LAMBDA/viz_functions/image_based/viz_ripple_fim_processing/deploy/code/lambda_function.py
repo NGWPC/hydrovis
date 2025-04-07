@@ -1386,7 +1386,8 @@ def lambda_handler(event, context):
         print("Time difference:", time_difference)
         print("[Main end]")
 
-        tracemalloc.stop()
+        if upload_tracking:
+            tracemalloc.stop()
 
         result = {
             "statusCode": 200,  # Replace with the desired status code
