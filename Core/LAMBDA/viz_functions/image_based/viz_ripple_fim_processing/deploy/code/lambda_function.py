@@ -155,12 +155,16 @@ def raster_to_geoparquet(raster_path, input_fid, input_stage, input_extent):
             values.append(val)
 
         gdf = gpd.GeoDataFrame({'feature_id': input_fid, 'stage_ft': input_stage, 'discharge_cfs': input_extent , 'geometry': polygons}, crs=src.crs)
+        
+        # Dissolve all geometries into one
+        dissolved_gdf = gdf.dissolve(by='feature_id')
 
 #03-18-25        gdf = gpd.GeoDataFrame({'FeatureID': input_fid, 'Stage': input_stage, 'Flows': input_extent , 'geometry': polygons}, crs=src.crs)
         #gdf = gpd.GeoDataFrame({'FID': input_fid, 'STAGE': input_stage, 'FLOWS': input_extent , 'geometry': polygons}, crs=src.crs)
         #gdf = gpd.GeoDataFrame({'FID': "X_" + str(input_fid), 'STAGE': "X_" + str(input_stage), 'FLOWS': "X_" + str(input_extent) , 'geometry': polygons}, crs=src.crs)
 
-        return gdf
+        #return gdf
+        return dissolved_gdf
 
        #    dn integer,
         #FeatureID bigint,
