@@ -20,7 +20,7 @@ def fetch_weather_products(headers) -> list[Any]:
     url = "https://api.weather.gov/products"
     headers = {
         'Accept': 'application/ld+json',
-        'User-Agent': '(water.noaa.gov, Tadd.N.Bindas@rtx.com)'
+        'User-Agent': '(water.noaa.gov, user@rtx.com)'
     }
     
     params = {
@@ -53,8 +53,7 @@ def fetch_weather_products(headers) -> list[Any]:
             data_dict = xmltodict.parse(g.serialize(format="pretty-xml"))
             return data_dict['rdf:RDF']['rdf:Description']
         else:
-            # print(f"Error fetching data: {response.status_code}")
-            raise Exception
+            raise httpx.HTTPError(f"Error fetching data: {response.status_code}")
 
 
 async def publish(channel: aio_pika.channel, hml: HML) -> None:
@@ -71,10 +70,10 @@ async def publish(channel: aio_pika.channel, hml: HML) -> None:
                 mandatory=True
             )
         except aio_pika.exceptions.DeliveryError as e:
-            print(f"Message rejected: {e}")
+            raise e("Message rejected")
                 
 
-async def fetch_data():
+async def fetch_data() -> None:
     connection = await aio_pika.connect_robust(
         settings.aio_pika_url,
         heartbeat=30
@@ -89,7 +88,7 @@ async def fetch_data():
         print("Successfully connected to RabbitMQ")
         headers = {
             'Accept': 'application/ld+json',
-            'User-Agent': '(water.noaa.gov, Tadd.N.Bindas@rtx.com)'
+            'User-Agent': '(water.noaa.gov, user@rtx.com)'
         }
         hml_data = fetch_weather_products(headers)
         try:

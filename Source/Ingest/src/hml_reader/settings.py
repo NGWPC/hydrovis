@@ -43,12 +43,3 @@ class Settings(BaseSettings):
             self.rabbitmq_default_host,
             self.rabbitmq_default_port,
         )
-
-        if os.getenv("PIKA_URL") is not None:
-            self.pika_url = os.getenv("PIKA_URL")
-        if os.getenv("REDIS_URL") is not None:
-            self.redis_url = os.getenv("REDIS_URL")
-        if os.getenv("SUBSET_URL") is not None:
-            self.base_subset_url = os.getenv("SUBSET_URL")
-        if os.getenv("TROUTE_URL") is not None:
-            self.base_troute_url = os.getenv("TROUTE_URL")
