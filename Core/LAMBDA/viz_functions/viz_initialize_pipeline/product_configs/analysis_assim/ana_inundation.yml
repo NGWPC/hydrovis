@@ -49,3 +49,4 @@ product_summaries:
 services:
   - ana_inundation_extent
   - ana_inundation_extent_noaa
+  - ana_inundation_ripple_noaa
