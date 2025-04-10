@@ -38,7 +38,12 @@ variable "fim_output_bucket" {
 }
 
 variable "deployment_bucket" {
-  description = "S3 buckets where the lambda zip files will live."
+  description = "S3 bucket where the lambda zip files will live."
+  type        = string
+}
+
+variable "ripple_bucket" {
+  description = "S3 bucket where ripple data lives."
   type        = string
 }
 
@@ -719,7 +724,7 @@ resource "aws_lambda_function" "viz_ripple_fim_data_prep" {
       VIZ_DB_USERNAME = jsondecode(var.viz_db_user_secret_string)["username"]
       VIZ_DB_PASSWORD = jsondecode(var.viz_db_user_secret_string)["password"]
       VIZ_OUT_SRID    = "3857"
-      VIZ_OUT_S3_BUCKET_LOCATION = "s3://hv-vpp-dev-ripple/dev_temp/LorneLeonard/LAMBDA_WORKSPACE/"
+      VIZ_OUT_BUCKET = "${var.ripple_bucket}"
     }
   }
   s3_bucket        = aws_s3_object.ripple_fim_data_prep_zip_upload.bucket

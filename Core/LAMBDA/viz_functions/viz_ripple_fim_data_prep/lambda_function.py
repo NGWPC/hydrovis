@@ -131,12 +131,11 @@ def create_drop_ripple_table(arg_db_type, arg_db_schema, arg_db_tablename, arg_S
 
     sql_cmd = f"CREATE TABLE IF NOT EXISTS {db_schema}.{db_tablename} \
     (\
-        oid integer NOT NULL DEFAULT nextval('{db_schema}.{db_tablename}_id_seq'::regclass),\
         feature_id character(25), \
         discharge_cfs character(25), \
         stage_ft character(25), \
         geom geometry(Polygon,{viz_SRID}),\
-        CONSTRAINT {db_tablename}_pkey PRIMARY KEY (oid)\
+        CONSTRAINT {db_tablename}_pkey PRIMARY KEY (feature_id)\
     )"    
 
     resp = viz_db.execute_sql(sql_cmd) 
@@ -318,57 +317,36 @@ def lambda_handler(event, context):
         try:
             arg_input_flow_schema_table = event['flows_table']
         except KeyError:
-            return {
-                'statusCode': 9000,
-                'message': f"[Step:0-0-1] Flows Table argument missing. {event}"
-            }
+            raise Exception(f"[Step:0-0-1] Flows Table argument missing. {event}")
         
         try:
             arg_output_flow_schema_table = event['target_table']
         except KeyError:
-            return {
-                'statusCode': 9001,
-                'message': f"[Step:0-0-2] Target Table argument missing. {event}"
-            }
+            raise Exception(f"[Step:0-0-2] Target Table argument missing. {event}")
         
         try:
             arg_output_map_file = event['map_file']
         except KeyError:
-            return {
-                'statusCode': 9002,
-                'message': f"[Step:0-0-3] Map file argument missing. {event}"
-            }
+            raise Exception(f"[Step:0-0-3] Map file argument missing. {event}")
                     
         test1 = check_event_input(arg_input_flow_schema_table)
         if test1 == False:
-            return {
-                'statusCode': 9003,
-                'message': f"[Step:0-0-4] Flows Table argument missing. {event}"
-            }            
+            raise Exception(f"[Step:0-0-4] Flows Table argument missing. {event}")
 
         test2 = check_event_input(arg_output_flow_schema_table)
         if test2 == False:
-            return {
-                'statusCode': 9004,
-                'message': f"[Step:0-0-5] Flows Table argument missing. {event}"
-            } 
+            raise Exception(f"[Step:0-0-5] Flows Table argument missing. {event}")
         
         test3 = check_event_input(arg_output_map_file)
         if test3 == False:
-            return {
-                'statusCode': 9005,
-                'message': f"[Step:0-0-6] Flows Table argument missing. {event}"
-            } 
+            raise Exception(f"[Step:0-0-6] Flows Table argument missing. {event}")
 
         return main(arg_input_flow_schema_table, arg_output_flow_schema_table, arg_output_map_file)
     
     except Exception as e:
         tmp_str = traceback.print_exc() 
-        return {
-            'statusCode': 9010,
-            'body': json.dumps(f"[lambda_handler] TraceBack -> {tmp_str}.")
-        }          
-    
+        raise Exception(f"[lambda_handler] TraceBack -> {tmp_str}.")
+
 def main(input_flows_table, output_schema_table, output_map_file):
 
     console_debugging = True
@@ -383,10 +361,7 @@ def main(input_flows_table, output_schema_table, output_map_file):
     input_table_split = input_flows_table.split('.')
     split_len = len(input_table_split)
     if split_len != 2:
-        return {
-            'statusCode': 600,
-            'body': json.dumps(f"[Step:0-1-1] Invalid flows table => {input_table_split}")
-        }
+        raise Exception(f"[Step:0-1-1] Invalid flows table => {input_table_split}")
             
     env_in_flow_db_schema = input_table_split[0]
     env_in_flow_db_table = input_table_split[1]
@@ -398,10 +373,7 @@ def main(input_flows_table, output_schema_table, output_map_file):
     output_table_split = output_schema_table.split('.')
     split_len = len(output_table_split)
     if split_len != 2:
-        return {
-            'statusCode': 601,
-            'body': json.dumps(f"[Step:0-1-1] Invalid output table  => {output_table_split}")
-        }
+        raise Exception(f"[Step:0-1-1] Invalid output table  => {output_table_split}")
 
     output_db_schema = output_table_split[0]
     output_db_table = output_table_split[1]
@@ -418,42 +390,26 @@ def main(input_flows_table, output_schema_table, output_map_file):
     env_out_db_password = os.getenv('VIZ_DB_PASSWORD')          #
     env_out_db_database = os.getenv('VIZ_DB_DATABASE')          #vizprocessing
     env_out_viz_SRID = os.getenv('VIZ_OUT_SRID')                #3857
-    env_out_S3_bucket = os.getenv('VIZ_OUT_S3_BUCKET_LOCATION') #s3://hv-vpp-dev-ripple/dev_temp/LorneLeonard/LAMBDA_WORKSPACE/
+    env_out_S3_bucket = os.getenv('VIZ_OUT_BUCKET') #s3://hv-vpp-dev-ripple/dev_temp/LorneLeonard/LAMBDA_WORKSPACE/
 
     if not check_environment_value(env_out_db_host):
-        return {
-            'statusCode': 610,
-            'body': json.dumps(f"[Step:0-1-1] Invalid output database host.")
-        }
+        raise Exception(f"[Step:0-1-1] Invalid output database host.")
     if not check_environment_value(env_out_db_username):
-        return {
-            'statusCode': 611,
-            'body': json.dumps(f"[Step:0-1-2] Invalid output database username.")
-        }
+        raise Exception(f"[Step:0-1-2] Invalid output database username.")
     if not check_environment_value(env_out_db_password):
-        return {
-            'statusCode': 612,
-            'body': json.dumps(f"[Step:0-1-3] Invalid output database password.")
-        }
+        raise Exception(f"[Step:0-1-3] Invalid output database password.")
     if not check_environment_value(env_out_db_database):
-        return {
-            'statusCode': 613,
-            'body': json.dumps(f"[Step:0-1-4] Invalid output database name.")
-        }                                
+        raise Exception(f"[Step:0-1-4] Invalid output database name.")
     if not check_environment_value(env_out_viz_SRID):
-        return {
-            'statusCode': 616,
-            'body': json.dumps(f"[Step:0-1-7] Invalid output SRID value.")
-        }    
+        raise Exception(f"[Step:0-1-7] Invalid output SRID value.")
 
     # Bad S3 bucket will raise error here
     # REMEMBER this S3 url does not have a fullname, needs to be added below
     # This S3 path is considered the base folder. It is assumed the subfolders are already in placed.
-    output_flow_and_model_file_bucket, output_flow_and_model_file_key = parse_s3_url_GET_bucket_key(env_out_S3_bucket)
+    output_flow_and_model_file_bucket = env_out_S3_bucket
 
     if console_debugging == True:
         print("Bucket:", output_flow_and_model_file_bucket)
-        print("Key:", output_flow_and_model_file_key)
 
     ########################################################################################
     ## [2-0-0] Delete existing vector table results in database and recreate tables
@@ -474,7 +430,7 @@ def main(input_flows_table, output_schema_table, output_map_file):
     input_flow_db_type = "viz" #TODO
 
     #TI bucket structure
-    output_flow_and_model_file_key_folder = output_flow_and_model_file_key + "/flow_files"
+    output_flow_and_model_file_key_folder = "flow_files"
     result = create_flow_file(input_flow_db_type,                       #i.e. viz
                                 env_in_flow_db_schema,                   #i.e. cache
                                 env_in_flow_db_table,                   #i.e. max_flows_srf
@@ -486,10 +442,7 @@ def main(input_flows_table, output_schema_table, output_map_file):
         error_found_flow = True
 
     if error_found_flow == True:
-        return {
-            'statusCode': 620,
-            'body': json.dumps(f'Error found while creating flow input files.')
-        }
+        raise Exception(f'Error found while creating flow input files.')
     
     ########################################################################################
     ## [4-0-0] Create csv file for Map Step Function
@@ -498,7 +451,7 @@ def main(input_flows_table, output_schema_table, output_map_file):
     error_found_model = False
 
     #TI bucket structure
-    input_s3_model_csv_url = str(env_out_S3_bucket) + "/model_lookup_file/ripple_model_list.csv" 
+    input_s3_model_csv_url = f"s3://{env_out_S3_bucket}/model_lookup_file/ripple_model_list.csv" 
     #Error checking happens in create_ripple_model_input_file function
 
     flow_full_s3_path = f"s3://{output_flow_and_model_file_bucket}/{output_flow_and_model_file_key_folder}/{env_in_flow_db_schema}.{env_in_flow_db_table}.csv"
@@ -506,7 +459,7 @@ def main(input_flows_table, output_schema_table, output_map_file):
         print(flow_full_s3_path)
 
     #TI bucket structure
-    output_ripple_folder = output_flow_and_model_file_key + "/model_files"
+    output_ripple_folder = "model_files"
 
     result = create_ripple_model_input_file(
             input_s3_model_csv_url,            #i.e. S3 Url to csv file with ripple_model_list (Table name stored with model)
@@ -522,12 +475,9 @@ def main(input_flows_table, output_schema_table, output_map_file):
         error_found_model = True
 
     if error_found_model == True:
-        return {
-            'statusCode': 630,
-            'body': json.dumps(f'Error found while creating model input files.')
-        }
+        raise Exception(f'Error found while creating model input files.')
     
     return {
         'statusCode': 200,
-        'body': json.dumps(f'Created tables and flow file for Ripples')
+        'message': 'Created tables and flow file for Ripples'
     }

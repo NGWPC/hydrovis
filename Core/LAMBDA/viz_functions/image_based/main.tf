@@ -499,7 +499,7 @@ module "ripple-fim-processing" {
 ####################### OUTPUTS ###################
 
 output "hand_fim_processing" {
-  value = module.hand-fim-processing
+  value = module.hand-fim-processing.hand_fim_processing
 }
 
 output "schism_fim" {

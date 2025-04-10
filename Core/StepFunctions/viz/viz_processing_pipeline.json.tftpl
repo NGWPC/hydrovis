@@ -1227,14 +1227,8 @@
                       "sql_rename_dict.$": "$.sql_rename_dict"
                     }
                   },
-                  "ResultSelector": {
-                    "job_type.$": "$.Output.job_type",
-                    "reference_time.$": "$.Output.reference_time",
-                    "product.$": "$.Output.product",
-                    "fim_config.$": "$.Output.fim_config",
-                    "sql_rename_dict.$": "$.Output.sql_rename_dict"
-                  },
-                  "Next": "Postprocess SQL - FIM Config"
+                  "Next": "Postprocess SQL - FIM Config",
+                  "ResultPath": null
                 }
               }
             },

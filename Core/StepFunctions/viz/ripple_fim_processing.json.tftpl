@@ -1,87 +1,90 @@
 {
-  "StartAt": "Pass",
-  "States": {
-    "Pass": {
-      "Type": "Pass",
-      "Next": "CreateFlowsFile and Recreate Table",
-      "InputPath": "$.fim_config"
-    },
-    "CreateFlowsFile and Recreate Table": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
-      "Output": "{% $states.input['map_file'] %}",
-      "Arguments": {
-        "FunctionName": "${ripple_fim_data_prep_arn}",
-        "Payload": "{% $states.input %}"
-      },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "Lambda.ServiceException",
-            "Lambda.AWSLambdaException",
-            "Lambda.SdkClientException",
-            "Lambda.TooManyRequestsException"
-          ],
-          "IntervalSeconds": 1,
-          "MaxAttempts": 3,
-          "BackoffRate": 2,
-          "JitterStrategy": "FULL"
-        }
-      ],
-      "Next": "List of Ripple Models to create FIMS for",
-      "QueryLanguage": "JSONata",
-    },
-    "List of Ripple Models to create FIMS for": {
-      "Type": "Map",
-      "MaxConcurrency": 20,
-      "ItemReader": {
-        "Resource": "arn:aws:states:::s3:getObject",
-        "ReaderConfig": {
-          "InputType": "CSV",
-          "CSVHeaderLocation": "FIRST_ROW",
-          "MaxItems": 100,
-          "CSVDelimiter": "COMMA"
+    "StartAt": "Pass",
+    "States": {
+        "Pass": {
+            "Type": "Pass",
+            "Next": "CreateFlowsFile and Recreate Table",
+            "InputPath": "$.fim_config"
         },
-        "Parameters": {
-          "Bucket": "${ripple_fim_bucket}",
-          "Key": "{% 'model_files/' & $states.input.map_file %}"
-        }
-      },
-      "ItemProcessor": {
-        "ProcessorConfig": {
-          "Mode": "DISTRIBUTED",
-          "ExecutionType": "STANDARD"
-        },
-        "StartAt": "Execute Ripple Flows2Fim Docker Image",
-        "States": {
-          "Execute Ripple Flows2Fim Docker Image": {
-            "QueryLanguage": "JSONata"
+        "CreateFlowsFile and Recreate Table": {
             "Type": "Task",
             "Resource": "arn:aws:states:::lambda:invoke",
+            "Output": {
+              "map_file_key": "{% 'model_files/' & $states.input.map_file %}",
+              "map_file_bucket": "${ripple_fim_bucket}"
+            },
             "Arguments": {
-              "Payload": "{% $states.input %}",
-              "FunctionName": "${ripple_fim_processing_arn}"
-            }
+                "FunctionName": "${ripple_fim_data_prep_arn}",
+                "Payload": "{% $states.input %}"
+            },
             "Retry": [
-              {
-                "ErrorEquals": [
-                  "Lambda.ServiceException",
-                  "Lambda.AWSLambdaException",
-                  "Lambda.SdkClientException",
-                  "Lambda.TooManyRequestsException"
-                ],
-                "IntervalSeconds": 1,
-                "MaxAttempts": 3,
-                "BackoffRate": 2,
-                "JitterStrategy": "FULL"
-              }
+                {
+                    "ErrorEquals": [
+                        "Lambda.ServiceException",
+                        "Lambda.AWSLambdaException",
+                        "Lambda.SdkClientException",
+                        "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 2,
+                    "JitterStrategy": "FULL"
+                }
             ],
-            "End": true
-          }
+            "Next": "List of Ripple Models to create FIMS for",
+            "QueryLanguage": "JSONata"
+        },
+        "List of Ripple Models to create FIMS for": {
+            "Type": "Map",
+            "MaxConcurrency": 20,
+            "ItemReader": {
+                "Resource": "arn:aws:states:::s3:getObject",
+                "ReaderConfig": {
+                    "InputType": "CSV",
+                    "CSVHeaderLocation": "FIRST_ROW",
+                    "MaxItems": 100,
+                    "CSVDelimiter": "COMMA"
+                },
+                "Parameters": {
+                    "Bucket.$": "$.map_file_bucket",
+                    "Key.$": "$.map_file_key"
+                }
+            },
+            "ItemProcessor": {
+                "ProcessorConfig": {
+                    "Mode": "DISTRIBUTED",
+                    "ExecutionType": "STANDARD"
+                },
+                "StartAt": "Execute Ripple Flows2Fim Docker Image",
+                "States": {
+                    "Execute Ripple Flows2Fim Docker Image": {
+                        "QueryLanguage": "JSONata",
+                        "Type": "Task",
+                        "Resource": "arn:aws:states:::lambda:invoke",
+                        "Arguments": {
+                            "Payload": "{% $states.input %}",
+                            "FunctionName": "${ripple_fim_processing_arn}"
+                        },
+                        "Retry": [
+                            {
+                                "ErrorEquals": [
+                                    "Lambda.ServiceException",
+                                    "Lambda.AWSLambdaException",
+                                    "Lambda.SdkClientException",
+                                    "Lambda.TooManyRequestsException"
+                                ],
+                                "IntervalSeconds": 1,
+                                "MaxAttempts": 3,
+                                "BackoffRate": 2,
+                                "JitterStrategy": "FULL"
+                            }
+                        ],
+                        "End": true
+                    }
+                }
+            },
+            "End": true,
+            "ToleratedFailurePercentage": 50
         }
-      },
-      "End": true,
-      "ToleratedFailurePercentage": 50
     }
-  }
 }
