@@ -28,7 +28,7 @@ fim_configs:
       target_table: publish.ana_inundation
   - name: ana_ripple
     flows_table: cache.max_flows_ana
-    target_table: dev.leonard_ripple_max_flows_ana
+    target_table: publish.ana_inundation_ripple
     map_file: ripple_model_max_flows_ana.csv
     fim_type: ripple
 

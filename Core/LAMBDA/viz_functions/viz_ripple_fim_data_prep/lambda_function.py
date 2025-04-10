@@ -178,8 +178,17 @@ def create_flow_file(arg_db_type, arg_db_schema, arg_db_tablename, arg_flow_file
     viz_db = database(db_type=input_db_type)
     
     #TODO make columns a variable if locations etc change
-    query = f'SELECT feature_id, discharge_cfs FROM {db_schema}.{db_tablename};' 
-    
+    query = f'''
+    SELECT 
+        max_forecast.feature_id, 
+        max_forecast.discharge_cfs 
+    FROM {db_schema}.{db_tablename} max_forecast
+    JOIN derived.recurrence_flows_conus rf ON rf.feature_id = max_forecast.feature_id
+    WHERE 
+        max_forecast.discharge_cfs >= rf.high_water_threshold AND 
+        rf.high_water_threshold > 0::double precision;
+    '''
+
     result_df = viz_db.sql_to_dataframe(query) 
     
     print("Create CSV file from Database")

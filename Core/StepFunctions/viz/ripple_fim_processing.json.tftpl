@@ -9,10 +9,10 @@
     "CreateFlowsFile and Recreate Table": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
-      "OutputPath": "$.Payload",
-      "Parameters": {
+      "Output": "{% $states.input['map_file'] %}",
+      "Arguments": {
         "FunctionName": "${ripple_fim_data_prep_arn}",
-        "Payload": "$"
+        "Payload": "{% $states.input %}"
       },
       "Retry": [
         {
@@ -28,7 +28,8 @@
           "JitterStrategy": "FULL"
         }
       ],
-      "Next": "List of Ripple Models to create FIMS for"
+      "Next": "List of Ripple Models to create FIMS for",
+      "QueryLanguage": "JSONata",
     },
     "List of Ripple Models to create FIMS for": {
       "Type": "Map",
@@ -42,8 +43,8 @@
           "CSVDelimiter": "COMMA"
         },
         "Parameters": {
-          "Bucket": "hv-vpp-dev-ripple",
-          "Key": "{% 'dev_temp/LorneLeonard/LAMBDA_WORKSPACE/TI-ENV/model_files/' & $states.input.map_file %}"
+          "Bucket": "${ripple_fim_bucket}",
+          "Key": "{% 'model_files/' & $states.input.map_file %}"
         }
       },
       "ItemProcessor": {
@@ -51,16 +52,16 @@
           "Mode": "DISTRIBUTED",
           "ExecutionType": "STANDARD"
         },
-        "StartAt": "Execute Ripple Docker Image",
+        "StartAt": "Execute Ripple Flows2Fim Docker Image",
         "States": {
-          "Execute Ripple Docker Image": {
+          "Execute Ripple Flows2Fim Docker Image": {
+            "QueryLanguage": "JSONata"
             "Type": "Task",
             "Resource": "arn:aws:states:::lambda:invoke",
-            "OutputPath": "$.Payload",
-            "Parameters": {
-              "Payload.$": "$",
+            "Arguments": {
+              "Payload": "{% $states.input %}",
               "FunctionName": "${ripple_fim_processing_arn}"
-            },
+            }
             "Retry": [
               {
                 "ErrorEquals": [

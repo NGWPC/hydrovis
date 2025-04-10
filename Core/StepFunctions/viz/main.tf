@@ -26,6 +26,10 @@ variable "schism_fim_datasets_bucket" {
   type        = string
 }
 
+variable "ripple_fim_bucket" {
+  type        = string
+}
+
 variable "optimize_rasters_arn" {
   type        = string
 }
@@ -159,6 +163,7 @@ resource "aws_sfn_state_machine" "ripple_fim_processing_step_function" {
     definition = templatefile("${path.module}/ripple_fim_processing.json.tftpl", {
         ripple_fim_data_prep_arn  = var.ripple_fim_data_prep_arn
         ripple_fim_processing_arn = var.ripple_fim_processing_arn
+        ripple_fim_bucket         = var.ripple_fim_bucket
     })
 }
 
