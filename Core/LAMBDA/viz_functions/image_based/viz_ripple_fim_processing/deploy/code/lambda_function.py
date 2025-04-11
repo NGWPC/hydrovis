@@ -242,9 +242,9 @@ def lambda_handler(event, context):
     try:
         console_debugging = False #True #False #A way to show step messages within testing
 
-        upload_tracking = True #Only use this for testing purposes
+        upload_tracking = False #Only use this for testing purposes
 
-        if upload_tracking:
+        if upload_tracking == True:
             tracemalloc.start()  #FOR TESTING ONLY
 
         ########################################################################################
@@ -253,7 +253,7 @@ def lambda_handler(event, context):
         print(start_time.strftime("%Y-%m-%d %H:%M:%S")) # Output: 2025-02-03 16:40:01
         ########################################################################################
 
-        if (console_debugging):
+        if console_debugging == True:
             print(event)
 
         #######################################################################################################################
