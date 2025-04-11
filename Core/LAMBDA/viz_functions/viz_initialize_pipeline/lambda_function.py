@@ -22,10 +22,8 @@ import datetime
 import time
 import os
 import json
-import isodate
-import pandas as pd
 from viz_classes import s3_file, database # We use some common custom classes in this lambda layer, in addition to the viz_pipeline and configuration classes defined below.
-from viz_lambda_shared_funcs import get_file_tokens, get_formatted_files, gen_dict_extract
+from viz_lambda_shared_funcs import generate_file_list, get_file_tokens, get_formatted_files, gen_dict_extract
 import yaml
 
 SF_ARN__VIZ_PIPELINE = os.environ["SF_ARN__VIZ_PIPELINE"]
@@ -465,40 +463,36 @@ class configuration:
             target_cols = file_group.get('target_cols', self.get_default_target_cols(file_pattern))
             target_keys = target_keys[1:-1].replace(" ","").split(",")
             dependent_on = file_group['dependent_on'] if file_group.get('dependent_on') else ""
-            
-            if target_table not in target_table_input_files:
-                target_table_input_files[target_table] = {
-                    's3_keys': [],
-                    'target_keys': [],
-                    'target_cols': []
-                }
-                
-            new_keys = [key for key in target_keys if key not in target_table_input_files[target_table]['target_keys'] and key]
-            target_table_input_files[target_table]['target_keys'].extend(new_keys)
-            nws_cols = [var for var in target_cols if var not in target_table_input_files[target_table]['target_cols'] and var]
-            target_table_input_files[target_table]['target_cols'].extend(nws_cols)
 
-            if file_window:
-                if not file_window_step:
-                    file_window_step = None
-                reference_dates = pd.date_range(self.reference_time-isodate.parse_duration(file_window), self.reference_time, freq=file_window_step)
+            if target_table in target_table_input_files:
+                _tmp = target_table_input_files[target_table]
+                _s3 = _tmp['s3_keys']
+                _keys = _tmp['target_keys']
+                _cols = _tmp['target_cols']
             else:
-                reference_dates = [self.reference_time]
+                target_table_input_files[target_table] = _tmp = {}
+                _s3 = set()
+                _keys = set()
+                _cols = set()
 
-            token_dict = get_file_tokens(file_pattern)
-    
-            for reference_date in reference_dates:
-                reference_date_files = get_formatted_files(file_pattern, token_dict, reference_date)
+            _keys.update(filter(None, target_keys))
+            _cols.update(filter(None, target_cols))
+            _s3.update(generate_file_list(file_pattern, file_window_step, file_window, self.reference_time))
 
-                new_files = [file for file in reference_date_files if file not in target_table_input_files[target_table]['s3_keys']]
-                target_table_input_files[target_table]['s3_keys'].extend(new_files)
+            _tmp['s3_keys'] = _s3
+            _tmp['target_keys'] = _keys
+            _tmp['target_cols'] = _cols
 
         ingest_sets = []
         for target_table, target_table_metadata in target_table_input_files.items():
-            target_keys = f"({','.join(target_table_metadata['target_keys'])})"
+            _cols = list(target_table_metadata["target_cols"])
+            _s3 = list(target_table_metadata["s3_keys"])
+            _keys = list(target_table_metadata["target_keys"])
+            target_keys = f"({','.join(_keys)})"
             index_name = f"idx_{target_table.split('.')[-1:].pop()}_{target_keys.replace(',', '_')[1:-1]}"
 
-            ingest_file = target_table_metadata["s3_keys"][0]
+            
+            ingest_file = _s3[0]
             if "rnr" in ingest_file:
                 bucket=os.environ['RNR_DATA_BUCKET']
             elif "viz_ingest" in ingest_file or "max_" in ingest_file:
@@ -508,9 +502,9 @@ class configuration:
             
             ingest_sets.append({
                 "target_table": target_table, 
-                "target_cols": target_table_metadata["target_cols"],
-                "ingest_datasets": target_table_metadata["s3_keys"], 
-                "index_columns": target_keys,
+                "target_cols": _cols,
+                "ingest_datasets": _s3, 
+                "index_columns": _keys,
                 "index_name": index_name,
                 "bucket": bucket,
                 "keep_flows_at_or_above": float(os.environ['INGEST_FLOW_THRESHOLD']),
