@@ -201,6 +201,10 @@ data "aws_iam_policy_document" "batch_assume_role" {
 resource "aws_iam_role" "aws_batch_service_role" {
   name               = "aws_batch_service_role"
   assume_role_policy = data.aws_iam_policy_document.batch_assume_role.json
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "aws_batch_service_role" {

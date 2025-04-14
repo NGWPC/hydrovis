@@ -35,8 +35,12 @@ flood_forecasts AS (
 		fcst.valid_time,
 		fcst.pe,
 		fcst.ts,
-		fcst.value,
-		fcst.units
+		CASE
+			WHEN fcst.units = 'KCFS' THEN
+				ROUND(fcst.value::numeric * 1000, 1)
+			ELSE
+				fcst.value
+		END as value
 	FROM wrds_rfcfcst.last_forecast_view fcst
 	JOIN rnr.rfc_max_forecast_copy service
  		ON service.nws_lid = fcst.lid AND service.pe = fcst.pe 

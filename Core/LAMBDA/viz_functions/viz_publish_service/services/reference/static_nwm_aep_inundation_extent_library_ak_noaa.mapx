@@ -156,23 +156,29 @@
         "fieldDescriptions" : [
           {
             "type" : "CIMFieldDescription",
-            "alias" : "oid",
-            "fieldName" : "oid",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "readOnly" : true,
+            "alias" : "NWM Feature ID",
+            "fieldName" : "feature_id",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Branch",
-            "fieldName" : "branch",
+            "alias" : "Hydro ID",
+            "fieldName" : "hydro_id_str",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "USGS HUC8",
+            "fieldName" : "huc8",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "Streamflow (cfs)",
+            "fieldName" : "streamflow_cfs",
             "numberFormat" : {
               "type" : "CIMNumericFormat",
               "alignmentOption" : "esriAlignRight",
@@ -206,23 +212,16 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Hydro ID",
-            "fieldName" : "hydro_id_str",
+            "alias" : "Model Version",
+            "fieldName" : "model_version",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "hydro_id",
-            "fieldName" : "hydro_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "visible" : false,
+            "alias" : "Branch",
+            "fieldName" : "branch",
+            "visible" : true,
             "searchMode" : "Exact"
           },
           {
@@ -234,7 +233,7 @@
               "alignmentOption" : "esriAlignRight",
               "alignmentWidth" : 0,
               "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
+              "roundingValue" : 0
             },
             "visible" : true,
             "searchMode" : "Exact"
@@ -255,55 +254,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Model Version",
-            "fieldName" : "model_version",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "NWM Feature ID",
-            "fieldName" : "feature_id_str",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "feature_id",
-            "fieldName" : "feature_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "Streamflow (cfs)",
-            "fieldName" : "streamflow_cfs",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "USGS HUC8",
-            "fieldName" : "huc8",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -311,8 +261,16 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "reference_time",
-            "fieldName" : "reference_time",
+            "alias" : "oid",
+            "fieldName" : "oid",
+            "numberFormat" : {
+              "type" : "CIMNumericFormat",
+              "alignmentOption" : "esriAlignRight",
+              "alignmentWidth" : 0,
+              "roundingOption" : "esriRoundNumberOfDecimals",
+              "roundingValue" : 0
+            },
+            "readOnly" : true,
             "visible" : false,
             "searchMode" : "Exact"
           }
@@ -323,7 +281,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.aep_fim.%rf_high_water_inundation_ak",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select hydro_id,hydro_id_str,geom,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft,max_rc_stage_ft,max_rc_discharge_cfs,model_version,fim_version,reference_time,huc8,branch,oid from hydrovis.aep_fim.rf_high_water_inundation_ak",
+          "sqlQuery" : "select geom,branch,fim_version,model_version,huc8,fim_stage_ft,max_rc_stage_ft,streamflow_cfs,max_rc_discharge_cfs,hydro_id_str,feature_id_str AS feature_id,oid from hydrovis.aep_fim.rf_high_water_inundation_ak",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -343,17 +301,6 @@
           },
           "queryFields" : [
             {
-              "name" : "hydro_id",
-              "type" : "esriFieldTypeInteger",
-              "alias" : "hydro_id"
-            },
-            {
-              "name" : "hydro_id_str",
-              "type" : "esriFieldTypeString",
-              "alias" : "hydro_id_str",
-              "length" : 60000
-            },
-            {
               "name" : "geom",
               "type" : "esriFieldTypeGeometry",
               "alias" : "geom",
@@ -369,20 +316,27 @@
               }
             },
             {
-              "name" : "feature_id",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "feature_id"
+              "name" : "branch",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "branch"
             },
             {
-              "name" : "feature_id_str",
+              "name" : "fim_version",
               "type" : "esriFieldTypeString",
-              "alias" : "feature_id_str",
-              "length" : 60000
+              "alias" : "fim_version",
+              "length" : 12
             },
             {
-              "name" : "streamflow_cfs",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "streamflow_cfs"
+              "name" : "model_version",
+              "type" : "esriFieldTypeString",
+              "alias" : "model_version",
+              "length" : 20
+            },
+            {
+              "name" : "huc8",
+              "type" : "esriFieldTypeString",
+              "alias" : "huc8",
+              "length" : 8
             },
             {
               "name" : "fim_stage_ft",
@@ -395,38 +349,26 @@
               "alias" : "max_rc_stage_ft"
             },
             {
+              "name" : "streamflow_cfs",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "streamflow_cfs"
+            },
+            {
               "name" : "max_rc_discharge_cfs",
               "type" : "esriFieldTypeDouble",
               "alias" : "max_rc_discharge_cfs"
             },
             {
-              "name" : "model_version",
+              "name" : "hydro_id_str",
               "type" : "esriFieldTypeString",
-              "alias" : "model_version",
-              "length" : 20
+              "alias" : "hydro_id_str",
+              "length" : 15
             },
             {
-              "name" : "fim_version",
+              "name" : "feature_id",
               "type" : "esriFieldTypeString",
-              "alias" : "fim_version",
-              "length" : 60000
-            },
-            {
-              "name" : "reference_time",
-              "type" : "esriFieldTypeString",
-              "alias" : "reference_time",
-              "length" : 60000
-            },
-            {
-              "name" : "huc8",
-              "type" : "esriFieldTypeString",
-              "alias" : "huc8",
-              "length" : 60000
-            },
-            {
-              "name" : "branch",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "branch"
+              "alias" : "feature_id",
+              "length" : 12
             },
             {
               "name" : "oid",
@@ -736,23 +678,29 @@
         "fieldDescriptions" : [
           {
             "type" : "CIMFieldDescription",
-            "alias" : "oid",
-            "fieldName" : "oid",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "readOnly" : true,
+            "alias" : "NWM Feature ID",
+            "fieldName" : "feature_id",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Branch",
-            "fieldName" : "branch",
+            "alias" : "Hydro ID",
+            "fieldName" : "hydro_id_str",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "USGS HUC8",
+            "fieldName" : "huc8",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "Streamflow (cfs)",
+            "fieldName" : "streamflow_cfs",
             "numberFormat" : {
               "type" : "CIMNumericFormat",
               "alignmentOption" : "esriAlignRight",
@@ -786,23 +734,16 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Hydro ID",
-            "fieldName" : "hydro_id_str",
+            "alias" : "Model Version",
+            "fieldName" : "model_version",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "hydro_id",
-            "fieldName" : "hydro_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "visible" : false,
+            "alias" : "Branch",
+            "fieldName" : "branch",
+            "visible" : true,
             "searchMode" : "Exact"
           },
           {
@@ -814,7 +755,7 @@
               "alignmentOption" : "esriAlignRight",
               "alignmentWidth" : 0,
               "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
+              "roundingValue" : 0
             },
             "visible" : true,
             "searchMode" : "Exact"
@@ -835,55 +776,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Model Version",
-            "fieldName" : "model_version",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "NWM Feature ID",
-            "fieldName" : "feature_id_str",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "feature_id",
-            "fieldName" : "feature_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "Streamflow (cfs)",
-            "fieldName" : "streamflow_cfs",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "USGS HUC8",
-            "fieldName" : "huc8",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -891,8 +783,16 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "reference_time",
-            "fieldName" : "reference_time",
+            "alias" : "oid",
+            "fieldName" : "oid",
+            "numberFormat" : {
+              "type" : "CIMNumericFormat",
+              "alignmentOption" : "esriAlignRight",
+              "alignmentWidth" : 0,
+              "roundingOption" : "esriRoundNumberOfDecimals",
+              "roundingValue" : 0
+            },
+            "readOnly" : true,
             "visible" : false,
             "searchMode" : "Exact"
           }
@@ -903,7 +803,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.aep_fim.%rf_2_inundation_ak",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select hydro_id,hydro_id_str,geom,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft,max_rc_stage_ft,max_rc_discharge_cfs,model_version,fim_version,reference_time,huc8,branch,oid from hydrovis.aep_fim.rf_2_inundation_ak",
+          "sqlQuery" : "select geom,branch,fim_version,model_version,huc8,fim_stage_ft,max_rc_stage_ft,streamflow_cfs,max_rc_discharge_cfs,hydro_id_str,feature_id_str AS feature_id,oid from hydrovis.aep_fim.rf_2_inundation_ak",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -923,17 +823,6 @@
           },
           "queryFields" : [
             {
-              "name" : "hydro_id",
-              "type" : "esriFieldTypeInteger",
-              "alias" : "hydro_id"
-            },
-            {
-              "name" : "hydro_id_str",
-              "type" : "esriFieldTypeString",
-              "alias" : "hydro_id_str",
-              "length" : 60000
-            },
-            {
               "name" : "geom",
               "type" : "esriFieldTypeGeometry",
               "alias" : "geom",
@@ -949,20 +838,27 @@
               }
             },
             {
-              "name" : "feature_id",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "feature_id"
+              "name" : "branch",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "branch"
             },
             {
-              "name" : "feature_id_str",
+              "name" : "fim_version",
               "type" : "esriFieldTypeString",
-              "alias" : "feature_id_str",
-              "length" : 60000
+              "alias" : "fim_version",
+              "length" : 12
             },
             {
-              "name" : "streamflow_cfs",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "streamflow_cfs"
+              "name" : "model_version",
+              "type" : "esriFieldTypeString",
+              "alias" : "model_version",
+              "length" : 20
+            },
+            {
+              "name" : "huc8",
+              "type" : "esriFieldTypeString",
+              "alias" : "huc8",
+              "length" : 8
             },
             {
               "name" : "fim_stage_ft",
@@ -975,38 +871,26 @@
               "alias" : "max_rc_stage_ft"
             },
             {
+              "name" : "streamflow_cfs",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "streamflow_cfs"
+            },
+            {
               "name" : "max_rc_discharge_cfs",
               "type" : "esriFieldTypeDouble",
               "alias" : "max_rc_discharge_cfs"
             },
             {
-              "name" : "model_version",
+              "name" : "hydro_id_str",
               "type" : "esriFieldTypeString",
-              "alias" : "model_version",
-              "length" : 20
+              "alias" : "hydro_id_str",
+              "length" : 15
             },
             {
-              "name" : "fim_version",
+              "name" : "feature_id",
               "type" : "esriFieldTypeString",
-              "alias" : "fim_version",
-              "length" : 60000
-            },
-            {
-              "name" : "reference_time",
-              "type" : "esriFieldTypeString",
-              "alias" : "reference_time",
-              "length" : 60000
-            },
-            {
-              "name" : "huc8",
-              "type" : "esriFieldTypeString",
-              "alias" : "huc8",
-              "length" : 60000
-            },
-            {
-              "name" : "branch",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "branch"
+              "alias" : "feature_id",
+              "length" : 12
             },
             {
               "name" : "oid",
@@ -1316,23 +1200,29 @@
         "fieldDescriptions" : [
           {
             "type" : "CIMFieldDescription",
-            "alias" : "oid",
-            "fieldName" : "oid",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "readOnly" : true,
+            "alias" : "NWM Feature ID",
+            "fieldName" : "feature_id",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Branch",
-            "fieldName" : "branch",
+            "alias" : "Hydro ID",
+            "fieldName" : "hydro_id_str",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "USGS HUC8",
+            "fieldName" : "huc8",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "Streamflow (cfs)",
+            "fieldName" : "streamflow_cfs",
             "numberFormat" : {
               "type" : "CIMNumericFormat",
               "alignmentOption" : "esriAlignRight",
@@ -1366,23 +1256,16 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Hydro ID",
-            "fieldName" : "hydro_id_str",
+            "alias" : "Model Version",
+            "fieldName" : "model_version",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "hydro_id",
-            "fieldName" : "hydro_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "visible" : false,
+            "alias" : "Branch",
+            "fieldName" : "branch",
+            "visible" : true,
             "searchMode" : "Exact"
           },
           {
@@ -1394,7 +1277,7 @@
               "alignmentOption" : "esriAlignRight",
               "alignmentWidth" : 0,
               "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
+              "roundingValue" : 0
             },
             "visible" : true,
             "searchMode" : "Exact"
@@ -1415,55 +1298,6 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Model Version",
-            "fieldName" : "model_version",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "NWM Feature ID",
-            "fieldName" : "feature_id_str",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "feature_id",
-            "fieldName" : "feature_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "Streamflow (cfs)",
-            "fieldName" : "streamflow_cfs",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "USGS HUC8",
-            "fieldName" : "huc8",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
@@ -1471,8 +1305,16 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "reference_time",
-            "fieldName" : "reference_time",
+            "alias" : "oid",
+            "fieldName" : "oid",
+            "numberFormat" : {
+              "type" : "CIMNumericFormat",
+              "alignmentOption" : "esriAlignRight",
+              "alignmentWidth" : 0,
+              "roundingOption" : "esriRoundNumberOfDecimals",
+              "roundingValue" : 0
+            },
+            "readOnly" : true,
             "visible" : false,
             "searchMode" : "Exact"
           }
@@ -1483,7 +1325,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.aep_fim.%rf_5_inundation_ak",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select hydro_id,hydro_id_str,geom,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft,max_rc_stage_ft,max_rc_discharge_cfs,model_version,fim_version,reference_time,huc8,branch,oid from hydrovis.aep_fim.rf_5_inundation_ak",
+          "sqlQuery" : "select geom,branch,fim_version,model_version,huc8,fim_stage_ft,max_rc_stage_ft,streamflow_cfs,max_rc_discharge_cfs,hydro_id_str,feature_id_str AS feature_id,oid from hydrovis.aep_fim.rf_5_inundation_ak",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -1503,17 +1345,6 @@
           },
           "queryFields" : [
             {
-              "name" : "hydro_id",
-              "type" : "esriFieldTypeInteger",
-              "alias" : "hydro_id"
-            },
-            {
-              "name" : "hydro_id_str",
-              "type" : "esriFieldTypeString",
-              "alias" : "hydro_id_str",
-              "length" : 60000
-            },
-            {
               "name" : "geom",
               "type" : "esriFieldTypeGeometry",
               "alias" : "geom",
@@ -1529,20 +1360,27 @@
               }
             },
             {
-              "name" : "feature_id",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "feature_id"
+              "name" : "branch",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "branch"
             },
             {
-              "name" : "feature_id_str",
+              "name" : "fim_version",
               "type" : "esriFieldTypeString",
-              "alias" : "feature_id_str",
-              "length" : 60000
+              "alias" : "fim_version",
+              "length" : 12
             },
             {
-              "name" : "streamflow_cfs",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "streamflow_cfs"
+              "name" : "model_version",
+              "type" : "esriFieldTypeString",
+              "alias" : "model_version",
+              "length" : 20
+            },
+            {
+              "name" : "huc8",
+              "type" : "esriFieldTypeString",
+              "alias" : "huc8",
+              "length" : 8
             },
             {
               "name" : "fim_stage_ft",
@@ -1555,38 +1393,26 @@
               "alias" : "max_rc_stage_ft"
             },
             {
+              "name" : "streamflow_cfs",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "streamflow_cfs"
+            },
+            {
               "name" : "max_rc_discharge_cfs",
               "type" : "esriFieldTypeDouble",
               "alias" : "max_rc_discharge_cfs"
             },
             {
-              "name" : "model_version",
+              "name" : "hydro_id_str",
               "type" : "esriFieldTypeString",
-              "alias" : "model_version",
-              "length" : 20
+              "alias" : "hydro_id_str",
+              "length" : 15
             },
             {
-              "name" : "fim_version",
+              "name" : "feature_id",
               "type" : "esriFieldTypeString",
-              "alias" : "fim_version",
-              "length" : 60000
-            },
-            {
-              "name" : "reference_time",
-              "type" : "esriFieldTypeString",
-              "alias" : "reference_time",
-              "length" : 60000
-            },
-            {
-              "name" : "huc8",
-              "type" : "esriFieldTypeString",
-              "alias" : "huc8",
-              "length" : 60000
-            },
-            {
-              "name" : "branch",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "branch"
+              "alias" : "feature_id",
+              "length" : 12
             },
             {
               "name" : "oid",
@@ -1896,23 +1722,29 @@
         "fieldDescriptions" : [
           {
             "type" : "CIMFieldDescription",
-            "alias" : "oid",
-            "fieldName" : "oid",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "readOnly" : true,
+            "alias" : "NWM Feature ID",
+            "fieldName" : "feature_id",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Branch",
-            "fieldName" : "branch",
+            "alias" : "Hydro ID",
+            "fieldName" : "hydro_id_str",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "USGS HUC8",
+            "fieldName" : "huc8",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "Streamflow (cfs)",
+            "fieldName" : "streamflow_cfs",
             "numberFormat" : {
               "type" : "CIMNumericFormat",
               "alignmentOption" : "esriAlignRight",
@@ -1946,23 +1778,16 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Hydro ID",
-            "fieldName" : "hydro_id_str",
+            "alias" : "Model Version",
+            "fieldName" : "model_version",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "hydro_id",
-            "fieldName" : "hydro_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "visible" : false,
+            "alias" : "Branch",
+            "fieldName" : "branch",
+            "visible" : true,
             "searchMode" : "Exact"
           },
           {
@@ -1974,7 +1799,7 @@
               "alignmentOption" : "esriAlignRight",
               "alignmentWidth" : 0,
               "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
+              "roundingValue" : 0
             },
             "visible" : true,
             "searchMode" : "Exact"
@@ -1995,65 +1820,24 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Model Version",
-            "fieldName" : "model_version",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "NWM Feature ID",
-            "fieldName" : "feature_id_str",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "feature_id",
-            "fieldName" : "feature_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "Streamflow (cfs)",
-            "fieldName" : "streamflow_cfs",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "USGS HUC8",
-            "fieldName" : "huc8",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "reference_time",
-            "fieldName" : "reference_time",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "oid",
+            "fieldName" : "oid",
+            "numberFormat" : {
+              "type" : "CIMNumericFormat",
+              "alignmentOption" : "esriAlignRight",
+              "alignmentWidth" : 0,
+              "roundingOption" : "esriRoundNumberOfDecimals",
+              "roundingValue" : 0
+            },
+            "readOnly" : true,
+            "visible" : false,
             "searchMode" : "Exact"
           }
         ],
@@ -2063,7 +1847,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.aep_fim.%rf_10_inundation_ak",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select hydro_id,hydro_id_str,geom,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft,max_rc_stage_ft,max_rc_discharge_cfs,model_version,fim_version,reference_time,huc8,branch,oid from hydrovis.aep_fim.rf_10_inundation_ak",
+          "sqlQuery" : "select geom,branch,fim_version,model_version,huc8,fim_stage_ft,max_rc_stage_ft,streamflow_cfs,max_rc_discharge_cfs,hydro_id_str,feature_id_str AS feature_id,oid from hydrovis.aep_fim.rf_10_inundation_ak",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -2083,17 +1867,6 @@
           },
           "queryFields" : [
             {
-              "name" : "hydro_id",
-              "type" : "esriFieldTypeInteger",
-              "alias" : "hydro_id"
-            },
-            {
-              "name" : "hydro_id_str",
-              "type" : "esriFieldTypeString",
-              "alias" : "hydro_id_str",
-              "length" : 60000
-            },
-            {
               "name" : "geom",
               "type" : "esriFieldTypeGeometry",
               "alias" : "geom",
@@ -2109,20 +1882,27 @@
               }
             },
             {
-              "name" : "feature_id",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "feature_id"
+              "name" : "branch",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "branch"
             },
             {
-              "name" : "feature_id_str",
+              "name" : "fim_version",
               "type" : "esriFieldTypeString",
-              "alias" : "feature_id_str",
-              "length" : 60000
+              "alias" : "fim_version",
+              "length" : 12
             },
             {
-              "name" : "streamflow_cfs",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "streamflow_cfs"
+              "name" : "model_version",
+              "type" : "esriFieldTypeString",
+              "alias" : "model_version",
+              "length" : 20
+            },
+            {
+              "name" : "huc8",
+              "type" : "esriFieldTypeString",
+              "alias" : "huc8",
+              "length" : 8
             },
             {
               "name" : "fim_stage_ft",
@@ -2135,38 +1915,26 @@
               "alias" : "max_rc_stage_ft"
             },
             {
+              "name" : "streamflow_cfs",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "streamflow_cfs"
+            },
+            {
               "name" : "max_rc_discharge_cfs",
               "type" : "esriFieldTypeDouble",
               "alias" : "max_rc_discharge_cfs"
             },
             {
-              "name" : "model_version",
+              "name" : "hydro_id_str",
               "type" : "esriFieldTypeString",
-              "alias" : "model_version",
-              "length" : 20
+              "alias" : "hydro_id_str",
+              "length" : 15
             },
             {
-              "name" : "fim_version",
+              "name" : "feature_id",
               "type" : "esriFieldTypeString",
-              "alias" : "fim_version",
-              "length" : 60000
-            },
-            {
-              "name" : "reference_time",
-              "type" : "esriFieldTypeString",
-              "alias" : "reference_time",
-              "length" : 60000
-            },
-            {
-              "name" : "huc8",
-              "type" : "esriFieldTypeString",
-              "alias" : "huc8",
-              "length" : 60000
-            },
-            {
-              "name" : "branch",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "branch"
+              "alias" : "feature_id",
+              "length" : 12
             },
             {
               "name" : "oid",
@@ -2476,23 +2244,29 @@
         "fieldDescriptions" : [
           {
             "type" : "CIMFieldDescription",
-            "alias" : "oid",
-            "fieldName" : "oid",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "readOnly" : true,
+            "alias" : "NWM Feature ID",
+            "fieldName" : "feature_id",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Branch",
-            "fieldName" : "branch",
+            "alias" : "Hydro ID",
+            "fieldName" : "hydro_id_str",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "USGS HUC8",
+            "fieldName" : "huc8",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "Streamflow (cfs)",
+            "fieldName" : "streamflow_cfs",
             "numberFormat" : {
               "type" : "CIMNumericFormat",
               "alignmentOption" : "esriAlignRight",
@@ -2526,23 +2300,16 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Hydro ID",
-            "fieldName" : "hydro_id_str",
+            "alias" : "Model Version",
+            "fieldName" : "model_version",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "hydro_id",
-            "fieldName" : "hydro_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "visible" : false,
+            "alias" : "Branch",
+            "fieldName" : "branch",
+            "visible" : true,
             "searchMode" : "Exact"
           },
           {
@@ -2554,7 +2321,7 @@
               "alignmentOption" : "esriAlignRight",
               "alignmentWidth" : 0,
               "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
+              "roundingValue" : 0
             },
             "visible" : true,
             "searchMode" : "Exact"
@@ -2575,65 +2342,24 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Model Version",
-            "fieldName" : "model_version",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "NWM Feature ID",
-            "fieldName" : "feature_id_str",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "feature_id",
-            "fieldName" : "feature_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "Streamflow (cfs)",
-            "fieldName" : "streamflow_cfs",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "USGS HUC8",
-            "fieldName" : "huc8",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "reference_time",
-            "fieldName" : "reference_time",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "oid",
+            "fieldName" : "oid",
+            "numberFormat" : {
+              "type" : "CIMNumericFormat",
+              "alignmentOption" : "esriAlignRight",
+              "alignmentWidth" : 0,
+              "roundingOption" : "esriRoundNumberOfDecimals",
+              "roundingValue" : 0
+            },
+            "readOnly" : true,
+            "visible" : false,
             "searchMode" : "Exact"
           }
         ],
@@ -2643,7 +2369,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.aep_fim.%rf_25_inundation_ak",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select hydro_id,hydro_id_str,geom,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft,max_rc_stage_ft,max_rc_discharge_cfs,model_version,fim_version,reference_time,huc8,branch,oid from hydrovis.aep_fim.rf_25_inundation_ak",
+          "sqlQuery" : "select geom,branch,fim_version,model_version,huc8,fim_stage_ft,max_rc_stage_ft,streamflow_cfs,max_rc_discharge_cfs,hydro_id_str,feature_id_str AS feature_id,oid from hydrovis.aep_fim.rf_25_inundation_ak",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -2663,17 +2389,6 @@
           },
           "queryFields" : [
             {
-              "name" : "hydro_id",
-              "type" : "esriFieldTypeInteger",
-              "alias" : "hydro_id"
-            },
-            {
-              "name" : "hydro_id_str",
-              "type" : "esriFieldTypeString",
-              "alias" : "hydro_id_str",
-              "length" : 60000
-            },
-            {
               "name" : "geom",
               "type" : "esriFieldTypeGeometry",
               "alias" : "geom",
@@ -2689,20 +2404,27 @@
               }
             },
             {
-              "name" : "feature_id",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "feature_id"
+              "name" : "branch",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "branch"
             },
             {
-              "name" : "feature_id_str",
+              "name" : "fim_version",
               "type" : "esriFieldTypeString",
-              "alias" : "feature_id_str",
-              "length" : 60000
+              "alias" : "fim_version",
+              "length" : 12
             },
             {
-              "name" : "streamflow_cfs",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "streamflow_cfs"
+              "name" : "model_version",
+              "type" : "esriFieldTypeString",
+              "alias" : "model_version",
+              "length" : 20
+            },
+            {
+              "name" : "huc8",
+              "type" : "esriFieldTypeString",
+              "alias" : "huc8",
+              "length" : 8
             },
             {
               "name" : "fim_stage_ft",
@@ -2715,38 +2437,26 @@
               "alias" : "max_rc_stage_ft"
             },
             {
+              "name" : "streamflow_cfs",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "streamflow_cfs"
+            },
+            {
               "name" : "max_rc_discharge_cfs",
               "type" : "esriFieldTypeDouble",
               "alias" : "max_rc_discharge_cfs"
             },
             {
-              "name" : "model_version",
+              "name" : "hydro_id_str",
               "type" : "esriFieldTypeString",
-              "alias" : "model_version",
-              "length" : 20
+              "alias" : "hydro_id_str",
+              "length" : 15
             },
             {
-              "name" : "fim_version",
+              "name" : "feature_id",
               "type" : "esriFieldTypeString",
-              "alias" : "fim_version",
-              "length" : 60000
-            },
-            {
-              "name" : "reference_time",
-              "type" : "esriFieldTypeString",
-              "alias" : "reference_time",
-              "length" : 60000
-            },
-            {
-              "name" : "huc8",
-              "type" : "esriFieldTypeString",
-              "alias" : "huc8",
-              "length" : 60000
-            },
-            {
-              "name" : "branch",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "branch"
+              "alias" : "feature_id",
+              "length" : 12
             },
             {
               "name" : "oid",
@@ -3056,23 +2766,29 @@
         "fieldDescriptions" : [
           {
             "type" : "CIMFieldDescription",
-            "alias" : "oid",
-            "fieldName" : "oid",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "readOnly" : true,
+            "alias" : "NWM Feature ID",
+            "fieldName" : "feature_id",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Branch",
-            "fieldName" : "branch",
+            "alias" : "Hydro ID",
+            "fieldName" : "hydro_id_str",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "USGS HUC8",
+            "fieldName" : "huc8",
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "Streamflow (cfs)",
+            "fieldName" : "streamflow_cfs",
             "numberFormat" : {
               "type" : "CIMNumericFormat",
               "alignmentOption" : "esriAlignRight",
@@ -3106,23 +2822,16 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Hydro ID",
-            "fieldName" : "hydro_id_str",
+            "alias" : "Model Version",
+            "fieldName" : "model_version",
             "visible" : true,
             "searchMode" : "Exact"
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "hydro_id",
-            "fieldName" : "hydro_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
-            "visible" : false,
+            "alias" : "Branch",
+            "fieldName" : "branch",
+            "visible" : true,
             "searchMode" : "Exact"
           },
           {
@@ -3134,7 +2843,7 @@
               "alignmentOption" : "esriAlignRight",
               "alignmentWidth" : 0,
               "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
+              "roundingValue" : 0
             },
             "visible" : true,
             "searchMode" : "Exact"
@@ -3155,65 +2864,24 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Model Version",
-            "fieldName" : "model_version",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "NWM Feature ID",
-            "fieldName" : "feature_id_str",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "feature_id",
-            "fieldName" : "feature_id",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "Streamflow (cfs)",
-            "fieldName" : "streamflow_cfs",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 6
-            },
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "USGS HUC8",
-            "fieldName" : "huc8",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "reference_time",
-            "fieldName" : "reference_time",
-            "visible" : false,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
             "alias" : "geom",
             "fieldName" : "geom",
             "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "oid",
+            "fieldName" : "oid",
+            "numberFormat" : {
+              "type" : "CIMNumericFormat",
+              "alignmentOption" : "esriAlignRight",
+              "alignmentWidth" : 0,
+              "roundingOption" : "esriRoundNumberOfDecimals",
+              "roundingValue" : 0
+            },
+            "readOnly" : true,
+            "visible" : false,
             "searchMode" : "Exact"
           }
         ],
@@ -3223,7 +2891,7 @@
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.aep_fim.%rf_50_inundation_ak",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select hydro_id,hydro_id_str,geom,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft,max_rc_stage_ft,max_rc_discharge_cfs,model_version,fim_version,reference_time,huc8,branch,oid from hydrovis.aep_fim.rf_50_inundation_ak",
+          "sqlQuery" : "select geom,branch,fim_version,model_version,huc8,fim_stage_ft,max_rc_stage_ft,streamflow_cfs,max_rc_discharge_cfs,hydro_id_str,feature_id_str AS feature_id,oid from hydrovis.aep_fim.rf_50_inundation_ak",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -3243,17 +2911,6 @@
           },
           "queryFields" : [
             {
-              "name" : "hydro_id",
-              "type" : "esriFieldTypeInteger",
-              "alias" : "hydro_id"
-            },
-            {
-              "name" : "hydro_id_str",
-              "type" : "esriFieldTypeString",
-              "alias" : "hydro_id_str",
-              "length" : 60000
-            },
-            {
               "name" : "geom",
               "type" : "esriFieldTypeGeometry",
               "alias" : "geom",
@@ -3269,20 +2926,27 @@
               }
             },
             {
-              "name" : "feature_id",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "feature_id"
+              "name" : "branch",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "branch"
             },
             {
-              "name" : "feature_id_str",
+              "name" : "fim_version",
               "type" : "esriFieldTypeString",
-              "alias" : "feature_id_str",
-              "length" : 60000
+              "alias" : "fim_version",
+              "length" : 12
             },
             {
-              "name" : "streamflow_cfs",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "streamflow_cfs"
+              "name" : "model_version",
+              "type" : "esriFieldTypeString",
+              "alias" : "model_version",
+              "length" : 20
+            },
+            {
+              "name" : "huc8",
+              "type" : "esriFieldTypeString",
+              "alias" : "huc8",
+              "length" : 8
             },
             {
               "name" : "fim_stage_ft",
@@ -3295,38 +2959,26 @@
               "alias" : "max_rc_stage_ft"
             },
             {
+              "name" : "streamflow_cfs",
+              "type" : "esriFieldTypeDouble",
+              "alias" : "streamflow_cfs"
+            },
+            {
               "name" : "max_rc_discharge_cfs",
               "type" : "esriFieldTypeDouble",
               "alias" : "max_rc_discharge_cfs"
             },
             {
-              "name" : "model_version",
+              "name" : "hydro_id_str",
               "type" : "esriFieldTypeString",
-              "alias" : "model_version",
-              "length" : 20
+              "alias" : "hydro_id_str",
+              "length" : 15
             },
             {
-              "name" : "fim_version",
+              "name" : "feature_id",
               "type" : "esriFieldTypeString",
-              "alias" : "fim_version",
-              "length" : 60000
-            },
-            {
-              "name" : "reference_time",
-              "type" : "esriFieldTypeString",
-              "alias" : "reference_time",
-              "length" : 60000
-            },
-            {
-              "name" : "huc8",
-              "type" : "esriFieldTypeString",
-              "alias" : "huc8",
-              "length" : 60000
-            },
-            {
-              "name" : "branch",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "branch"
+              "alias" : "feature_id",
+              "length" : 12
             },
             {
               "name" : "oid",
