@@ -64,7 +64,7 @@ resource "aws_instance" "arcgismonitor" {
   user_data_replace_on_change = true
 
   lifecycle {
-    ignore_changes = [ami]
+    ignore_changes = [ami, tags, root_block_device]
   }
 
   tags = {

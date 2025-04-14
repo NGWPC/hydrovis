@@ -50,8 +50,18 @@ latest_forecast AS (
 		e,
 		p,
 		pe_priority,
-		value,
-		units
+		CASE 
+			WHEN units = 'KCFS' THEN 
+				ROUND(value::numeric * 1000, 1)
+			ELSE
+				value
+		END as value,
+		CASE
+			WHEN units = 'KCFS' THEN 
+				'CFS'
+			ELSE 
+				units
+		END AS units
 	FROM wrds_rfcfcst.last_forecast_view
 	ORDER BY 
 		last_forecast_view.lid, 
@@ -86,16 +96,8 @@ relevant_forecasts AS (
 		main.generation_time,
 		main.product_time,
 		main.valid_time,
-	CASE 
-		WHEN main.units = 'KCFS' 
-		THEN value * 1000
-		ELSE value
-	END as value,
-	CASE
-		WHEN main.units = 'KCFS'
-		THEN 'CFS'
-		ELSE main.units
-	END AS units
+		main.value,
+		main.units
 	FROM latest_forecast main
 	JOIN considerable_forecast_metadata meta
 		ON meta.lid = main.lid AND meta.pe = main.pe AND meta.ts = main.ts AND meta.product_time = main.product_time
@@ -111,11 +113,7 @@ relevant_forecasts AS (
 relevant_thresholds AS (
 	SELECT
 		lid,
-		CASE
-			WHEN units = 'KCFS'
-			THEN 'CFS'
-			ELSE units
-		END as units,
+		units,
 		COALESCE(st.action, ft.action) AS action,
 		COALESCE(st.minor, ft.minor) AS minor,
 		COALESCE(st.moderate, ft.moderate) AS moderate,
@@ -125,7 +123,7 @@ relevant_thresholds AS (
 	LEFT JOIN rnr.stage_thresholds st
 		ON units = 'FT' AND st.nws_station_id = main.lid
 	LEFT JOIN rnr.flow_thresholds ft
-		ON units LIKE '%CFS' AND ft.nws_station_id = main.lid
+		ON units = 'CFS' AND ft.nws_station_id = main.lid
 ),
 
 forecast_max_value AS (
