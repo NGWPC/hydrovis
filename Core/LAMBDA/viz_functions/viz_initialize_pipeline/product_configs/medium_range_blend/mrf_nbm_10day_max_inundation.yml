@@ -44,6 +44,11 @@ fim_configs:
     postprocess:
       sql_file: mrf_nbm_max_inundation_5day
       target_table: publish.mrf_nbm_max_inundation_5day
+  - name: mrf_nbm_max_inundation_5day_ripple
+    flows_table: cache.max_flows_mrf_nbm_5day
+    target_table: publish.mrf_nbm_max_inundation_5day_ripple
+    map_file: ripple_model_max_flows_mrf_nbm_5day.csv
+    fim_type: ripple      
   - name: mrf_nbm_max_inundation_10day
     flows_table: cache.max_flows_mrf_nbm_10day
     target_table: fim_ingest.mrf_nbm_max_inundation_10day
@@ -87,3 +92,4 @@ product_summaries:
 services:
   - mrf_nbm_10day_max_inundation_extent_noaa
   - mrf_nbm_5day_max_inundation_extent
+  - mrf_nbm_5day_max_inundation_extent_rasfim_noaa
