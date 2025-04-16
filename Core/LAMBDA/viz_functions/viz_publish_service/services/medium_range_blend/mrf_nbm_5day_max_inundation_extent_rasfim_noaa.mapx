@@ -4,7 +4,7 @@
   "build" : 26828,
   "mapDefinition" : {
     "type" : "CIMMap",
-    "name" : "NWM FIM Extent Analysis - Ripple",
+    "name" : "NWM Medium-Range Max FIM Extent Forecast - Ripple",
     "uRI" : "CIMPATH=map/map.xml",
     "sourceModifiedTime" : {
       "type" : "TimeInstant",
@@ -26,7 +26,7 @@
       "enableEyeDomeLighting" : true
     },
     "layers" : [
-      "CIMPATH=map/hydrovis_services_ana_inundation_ripple.xml"
+      "CIMPATH=map/hydrovis_services_mrf_nbm_inundation_ripple.xml"
     ],
     "defaultViewingMode" : "Map",
     "mapType" : "Map",
@@ -121,14 +121,14 @@
     {
       "type" : "CIMFeatureLayer",
       "name" : "Inundation Extent - Ripple",
-      "uRI" : "CIMPATH=map/hydrovis_services_ana_inundation_ripple.xml",
+      "uRI" : "CIMPATH=map/hydrovis_services_mrf_nbm_inundation_ripple.xml",
       "sourceModifiedTime" : {
         "type" : "TimeInstant",
         "start" : 978307200000
       },
       "metadataURI" : "CIMPATH=Metadata/b149cc99f67f60e4f116070e3d095a40.xml",
       "useSourceMetadata" : true,
-      "description" : "hydrovis.services.ana_inundation_ripple",
+      "description" : "hydrovis.services.mrf_nbm_inundation_ripple",
       "layerElevation" : {
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{B7DF8F48-2FFC-47F6-BA84-02DDE5205A4D}"
@@ -154,9 +154,9 @@
           "type" : "CIMSqlQueryDataConnection",
           "workspaceConnectionString" : "ENCRYPTED_PASSWORD=00022e6849626f6351367831684b626659496255306152684d54706d32485553696c4a715a676a76774c37305773486665794a594746376f55366d746a616478584e6d592a00;SERVER=rds-egis.hydrovis.internal;INSTANCE=sde:postgresql:rds-egis.hydrovis.internal;DBCLIENT=postgresql;DB_CONNECTION_PROPERTIES=rds-egis.hydrovis.internal;DATABASE=hydrovis;USER=hydrovis;AUTHENTICATION_MODE=DBMS",
           "workspaceFactory" : "SDE",
-          "dataset" : "hydrovis.services.%ana_inundation_ripple",
+          "dataset" : "hydrovis.services.%mrf_nbm_inundation_ripple",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select feature_id,discharge_cfs,stage_ft,geom,oid from hydrovis.services.ana_inundation_ripple",
+          "sqlQuery" : "select feature_id,discharge_cfs,stage_ft,geom,oid from hydrovis.services.mrf_nbm_max_inundation_5day_ripple",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
