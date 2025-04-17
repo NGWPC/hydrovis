@@ -234,7 +234,7 @@ def get_Reaches_file(start_reaches_file, dir_data_inputs,console_debugging ):
         return False
     
     file_size = os.path.getsize(START_REACHES_LOCAL_PATH)
-    if file_size < 30: #Just a header?
+    if file_size <= 0: #Just a header? Some reaches are really small, for now just checking if zero
         print(f"Local reaches file size too small => {START_REACHES_LOCAL_PATH}")
         return False
                     
