@@ -134,9 +134,10 @@ def create_drop_ripple_table(arg_db_type, arg_db_schema, arg_db_tablename, arg_S
         feature_id character(25), \
         discharge_cfs character(25), \
         stage_ft character(25), \
-        geom geometry(Polygon,{viz_SRID}),\
+        geom geometry(MULTIPOLYGON,{viz_SRID}),\
         CONSTRAINT {db_tablename}_pkey PRIMARY KEY (feature_id)\
     )"    
+    # geom geometry(Polygon,{viz_SRID}),\
 
     resp = viz_db.execute_sql(sql_cmd) 
 
