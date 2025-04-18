@@ -38,3 +38,7 @@ variable "ecr_repository_image_tag" {
 variable "profile" {
   type = string
 }
+
+variable "execute_codebuild_function_name" {
+  type = string
+}

@@ -42,3 +42,7 @@ variable "lambda_name" {
 variable "profile" {
   type = string
 }
+
+variable "execute_codebuild_function_name" {
+  type = string
+}

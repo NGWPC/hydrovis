@@ -52,6 +52,7 @@ module "db-ingest" {
   viz_db_user_secret_string = var.viz_db_user_secret_string
   default_tags = var.default_tags
   profile = var.profile
+  execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
 }
 
 resource "aws_lambda_function_event_invoke_config" "viz_db_ingest_destinations" {
@@ -260,7 +261,7 @@ module "hand-fim-processing" {
   fim_version = var.fim_version
   fim_data_bucket = var.fim_data_bucket
   profile = var.profile
-  execute_codebuild_function_name = module.execute-codebuild[0].lambda.function_name
+  execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
 }
 
 #############################
@@ -378,6 +379,7 @@ module "optimize-rasters" {
   ecr_repository_image_tag = local.ecr_repository_image_tag
   lambda_name = "hv-vpp-${var.environment}-${local.optimize_rasters}"
   profile = var.profile
+  execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
 }
 
 #############################
@@ -454,6 +456,7 @@ module "python-preprocessing" {
   viz_authoritative_bucket = var.viz_authoritative_bucket
   default_tags = var.default_tags
   profile = var.profile
+  execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
 }
 
 #######################
@@ -476,6 +479,7 @@ module "raster-processing" {
   ecr_repository_image_tag = local.ecr_repository_image_tag
   lambda_name = "hv-vpp-${var.environment}-${local.raster_processing}"
   profile = var.profile
+  execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
 }
 
 ###########################
@@ -500,6 +504,7 @@ module "schism-fim" {
   viz_db_name                 = var.viz_db_name
   viz_db_host                 = var.viz_db_host
   viz_db_user_secret_string   = var.viz_db_user_secret_string
+  execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
 }
 
 ##################
@@ -557,4 +562,5 @@ module "update-egis-data" {
   viz_cache_bucket = var.viz_cache_bucket
   default_tags = var.default_tags
   profile = var.profile
+  execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
 }

@@ -46,3 +46,7 @@ variable "viz_db_host" {
 variable "viz_db_user_secret_string" {
   type = string
 }
+
+variable "execute_codebuild_function_name" {
+  type = string
+}

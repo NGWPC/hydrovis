@@ -1,25 +1,20 @@
-import json
-import os
-import subprocess
 import time
+import boto3
+
+client = boto3.client('codebuild')
 
 def lambda_handler(event, context):
     project_name = event['project_name']
+    response = client.start_build(projectName=project_name)
+    build_id = response["build"]["id"]
 
-    result = subprocess.run(["aws", "codebuild", "start-build", "--project-name", project_name], capture_output=True, text=True)
-    output = result.stdout
-    json_output = json.loads(output)
-    build_id = json_output["build"]["id"]
-
-    max_wait = 300  # 5 minutes
+    max_wait = 600  # 10 minutes
     total_wait = 0
     iter_sleep = 10
 
     while total_wait < max_wait:
-        result = subprocess.run(["aws", "codebuild", "batch-get-builds", "--ids", build_id], capture_output=True, text=True)
-        output = result.stdout
-        json_output = json.loads(output)
-        build_status = json_output["builds"][0]["buildStatus"]
+        response = client.batch_get_builds(ids=[build_id])
+        build_status = response["builds"][0]["buildStatus"]
         if build_status == "SUCCEEDED":
             break
         elif build_status == "FAILED":
@@ -28,6 +23,6 @@ def lambda_handler(event, context):
         total_wait += 10
 
     if total_wait >= max_wait:
-        raise Exception("Failed to build {PROJECT_NAME} within configured max_wait of {max_wait} seconds")
+        raise Exception("Failed to build {project_name} within configured max_wait of {max_wait} seconds")
 
     print(f"Successfully built {project_name}")

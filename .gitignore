@@ -10,7 +10,10 @@
 !terraform.tfstate.d
 
 # terraform lock files
-.terraform.lock.hcl
+**/*.terraform.lock.hcl
+
+# Ignore zipfiles by default - have to be explicit to break rule
+**/*.zip
 
 # Crash log files
 crash.log
@@ -60,7 +63,6 @@ terraform.rc
 .ipynb_checkpoints
 
 Dev/env.yaml
-Dev/.terraform.lock.hcl
 
 # Ignore pycachefiles
 **/__pycache__/*

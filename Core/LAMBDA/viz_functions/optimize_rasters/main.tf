@@ -107,26 +107,16 @@ resource "aws_codebuild_project" "codebuild" {
   }
 }
 
-resource "null_resource" "viz_optimize_rasters_cluster" {
-  # Changes to any instance of the cluster requires re-provisioning
+resource "aws_lambda_invocation" "execute_codebuild" {
+  function_name = var.execute_codebuild_function_name
+
   triggers = {
-    source_hash = data.archive_file.deploy_zip.output_md5
+    function_update = data.archive_file.deploy_zip.output_md5
   }
 
-  depends_on = [ aws_s3_object.deploy_zip_upload ]
-
-  provisioner "local-exec" {
-    command = "aws codebuild start-build --project-name ${aws_codebuild_project.codebuild.name} --profile ${var.profile} --region ${var.region}"
-  }
-}
-
-resource "time_sleep" "wait_for_viz_optimize_rasters_cluster" {
-  triggers = {
-    function_update = null_resource.viz_optimize_rasters_cluster.triggers.source_hash
-  }
-  depends_on = [null_resource.viz_optimize_rasters_cluster]
-
-  create_duration = "120s"
+  input = jsonencode({
+    project_name = resource.aws_codebuild_project.codebuild.name
+  })
 }
 
 data "aws_lambda_function" "lambda" {

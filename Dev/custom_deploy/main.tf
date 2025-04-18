@@ -24,8 +24,8 @@ module "viz-lambda-functions" {
   rnr_data_bucket                = var.s3_buckets["rnr"].bucket
   deployment_bucket              = var.s3_buckets["deployment"].bucket
   viz_cache_bucket               = var.s3_buckets["fim"].bucket
-  fim_version                    = var.personal_tag
-  hand_version                   = var.personal_tag
+  fim_version                    = var.fim_version
+  hand_version                   = var.hand_version
   lambda_role                    = var.viz_role
   nws_shared_account_nwm_sns     = "unnecessary for developer deploy"
   wrds_db_dump_sns               = "unnecessary for developer deploy"
@@ -59,6 +59,7 @@ module "viz-lambda-functions" {
   five_minute_trigger            = {name="not used", arn="not_used"}
   profile                        = var.profile
   creation_map                   = var.deploy_resources
+  execute_codebuild_function_name_override = lookup(var.deploy_resources, "execute-codebuild", false) ? null : var.lambda_functions["execute-codebuild"].function_name
 }
 
 ################################

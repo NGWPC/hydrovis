@@ -66,3 +66,7 @@ variable "default_tags" {
 variable "profile" {
   type = string
 }
+
+variable "execute_codebuild_function_name" {
+  type = string
+}

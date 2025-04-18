@@ -30,8 +30,8 @@ resource "aws_s3_object" "deploy_zip_upload" {
 resource "aws_lambda_function" "lambda" {
   function_name = local.full_name
   description   = "Lambda function to test the wrds_location3_ondeck db before it is swapped for the live version"
-  timeout       = 300
-  memory_size   = 512
+  timeout       = 600
+  memory_size   = 128
   vpc_config {
     security_group_ids = var.db_lambda_security_groups
     subnet_ids         = var.db_lambda_subnets

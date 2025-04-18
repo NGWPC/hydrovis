@@ -122,33 +122,20 @@ resource "aws_codebuild_project" "codebuild" {
   }
 }
 
-resource "null_resource" "viz_start_build" {
+resource "aws_lambda_invocation" "execute_codebuild" {
+  function_name = var.execute_codebuild_function_name
+
   triggers = {
-    source_hash = data.archive_file.deploy_zip.output_md5
-    source_location = aws_s3_object.deploy_zip_upload.key
+    function_update = data.archive_file.deploy_zip.output_md5
   }
 
-  #depends_on = [ 
-  #  aws_s3_object.viz_service_zip_upload,
-  #  aws_codebuild_project.codebuild
-  # ]
-
-  provisioner "local-exec" {
-    command = "aws codebuild start-build --project-name ${aws_codebuild_project.codebuild.name} --profile ${var.profile} --region ${var.region}"
-  }
-}
-
-resource "time_sleep" "wait_for_viz_build_finish" {
-  triggers = {
-    function_update = null_resource.viz_start_build.triggers.source_hash
-  }
-  depends_on = [null_resource.viz_start_build]
-
-  create_duration = "120s"
+  input = jsonencode({
+    project_name = resource.aws_codebuild_project.codebuild.name
+  })
 }
 
 data "aws_lambda_function" "lambda" {
-  function_name = aws_codebuild_project.codebuild.name
+  function_name = local.viz_lambda_name
 
   depends_on = [
     time_sleep.wait_for_viz_build_finish

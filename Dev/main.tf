@@ -158,6 +158,8 @@ module "custom-deploy" {
   account_id = local.env.account_id
   default_tags = local.tags
   nwm_dataflow_version = local.env.nwm_dataflow_version
+  hand_version = local.env.hand_version
+  fim_version = local.env.fim_version
 }
 #########################################################
 #########################################################

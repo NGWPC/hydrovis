@@ -16,12 +16,14 @@ from viz_classes import database
 FIM_VERSION = os.environ['FIM_VERSION']
 HAND_BUCKET = os.environ['HAND_BUCKET']
 HAND_VERSION = os.environ['HAND_VERSION']
-HAND_PREFIX = f"fim/hand_{HAND_VERSION.replace('.', '_')}/hand_datasets"
+HAND_PREFIX = os.environ.get('HAND_PREFIX_OVERRIDE')  # Optional override for development
+if not HAND_PREFIX:
+    HAND_PREFIX = f"fim/v{FIM_VERSION.replace('.', '_')}/hand_{HAND_VERSION.replace('.', '_')}/hand_datasets"
 
 CACHE_FIM_RESOLUTION_FT = 0.25
 CACHE_FIM_RESOLUTION_ROUNDING = 'up'
 
-CACHED_S3 = fsspec.filesystem('blockcache', target_protocol='s3')
+S3 = fsspec.filesystem('s3')
 
 
 def lambda_handler(event, context):
@@ -87,16 +89,15 @@ def lambda_handler(event, context):
             stage_lookup = s3_csv_to_df(data_bucket, subsetted_data)
             stage_lookup = stage_lookup.set_index('hydro_id')
         else:
-            s3 = fsspec.filesystem('s3')
             # Validate main stem datasets by checking cathment, hand, and rating curves existence for the HUC
             catchment_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/gw_catchments_reaches_filtered_addedAttributes_{branch}.tif'
-            catch_exists = s3.exists(f"s3://{HAND_BUCKET}/{catchment_key}")
+            catch_exists = S3.exists(f"s3://{HAND_BUCKET}/{catchment_key}")
 
             hand_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/rem_zeroed_masked_{branch}.tif'
-            hand_exists = s3.exists(f"s3://{HAND_BUCKET}/{hand_key}")
+            hand_exists = S3.exists(f"s3://{HAND_BUCKET}/{hand_key}")
 
             rating_curve_key = f'{HAND_PREFIX}/{huc8}/branches/{branch}/hydroTable_{branch}.csv'
-            rating_curve_exists = s3.exists(f"s3://{HAND_BUCKET}/{rating_curve_key}")
+            rating_curve_exists = S3.exists(f"s3://{HAND_BUCKET}/{rating_curve_key}")
 
             stage_lookup = pd.DataFrame()
             df_zero_stage_records = pd.DataFrame()
@@ -178,7 +179,7 @@ def create_inundation_catchment_boundary(huc8, branch):
 
     catchment_dataset = None
     try:
-        catchment_dataset = rasterio.open(catchment_url, opener=CACHED_S3)  # open catchment grid from S3  # noqa
+        catchment_dataset = rasterio.open(catchment_url, opener=S3)  # open catchment grid from S3  # noqa
     
         # print("--> Setting up mapping array")
         profile = catchment_dataset.profile  # get the rasterio profile so the output can use the profile and match the input  # noqa
@@ -231,8 +232,8 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
     try:
         print(f"Creating inundation for huc {huc8} and branch {branch}")
         
-        hand_dataset = rasterio.open(f's3://{HAND_BUCKET}/{hand_key}', opener=CACHED_S3)  # open HAND grid from S3
-        catchment_dataset = rasterio.open(f's3://{HAND_BUCKET}/{catchment_key}', opener=CACHED_S3)  # open catchment grid from S3  # noqa
+        hand_dataset = rasterio.open(f's3://{HAND_BUCKET}/{hand_key}', opener=S3)  # open HAND grid from S3
+        catchment_dataset = rasterio.open(f's3://{HAND_BUCKET}/{catchment_key}', opener=S3)  # open catchment grid from S3  # noqa
             
         # print("--> Setting up mapping array")
         catchment_nodata = int(catchment_dataset.nodata)  # get no_data value for catchment raster
@@ -410,7 +411,8 @@ def calculate_stage_values(hydrotable_key, subsetted_streams_bucket, subsetted_s
         'flood_area_above_expected_coeff'
     ]] = df_forecast.apply(lambda row : interpolate_stage(row, df_hydro), axis=1).apply(pd.Series)
     
-    df_forecast = df_forecast.drop(columns=['huc8_branch', 'huc', 'high_water_threshold'])
+    # the high_water_threshold column does not exist for aep/catchment runs, so ignore the potential error
+    df_forecast = df_forecast.drop(columns=['huc8_branch', 'huc', 'high_water_threshold'], errors="ignore")
     df_forecast = df_forecast.set_index('hydro_id')
     
     # print(f"Removing {len(df_forecast[df_forecast['stage_m'].isna()])} reaches with a NaN interpolated stage")
@@ -452,10 +454,13 @@ def interpolate_stage(df_row, df_hydro):
     '''
     hydro_id = df_row['hydro_id']
     forecast = df_row['discharge_cms']
-    high_water_threshold = df_row['high_water_threshold']
-    
+    high_water_threshold = None
+
+    if 'high_water_threshold' in df_row:
+        high_water_threshold = df_row['high_water_threshold']
+
     hydro_mask = df_hydro.hydro_id == hydro_id
-    
+
     # Filter the hydrotable to this hydroid and pull out discharge and stages into arrays
     subset_hydro = df_hydro.loc[hydro_mask, ['discharge_cms', 'stage_m', 'surface_area_m2']]
     if subset_hydro.empty:
@@ -469,8 +474,11 @@ def interpolate_stage(df_row, df_hydro):
     # Get the interpolated stage by using the discharge forecast value against the arrays
     interpolated_stage = round(np.interp(forecast, discharges, stages), 2)
     forecast_interpolated_surface_area_m2 = round(np.interp(forecast, discharges, surface_areas_m2), 2)
-    high_water_interpolated_surface_area_m2 = round(np.interp(high_water_threshold, discharges, surface_areas_m2), 2)
-    flood_area_above_expected_coeff = round(forecast_interpolated_surface_area_m2 / high_water_interpolated_surface_area_m2, 2)
+    if high_water_threshold:
+        high_water_interpolated_surface_area_m2 = round(np.interp(high_water_threshold, discharges, surface_areas_m2), 2)
+        flood_area_above_expected_coeff = round(forecast_interpolated_surface_area_m2 / high_water_interpolated_surface_area_m2, 2)
+    else:
+        flood_area_above_expected_coeff = np.nan
 
     if np.isnan(interpolated_stage):
         print(f"WARNING: Interpolated stage is NaN where hydro_id == {hydro_id}")
