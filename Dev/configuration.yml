@@ -1,0 +1,23 @@
+# See ./README for additional information on context and usage
+account_id: ""  # The 12-digis numebr associated with the nws-diss-hydrovis-dev account (shown at https://noaa-prod.awsapps.com/start)
+profile: ""  # The name of your profile created via sso configure and used in "aws sso login --profile <profile>"
+personal_tag: "your-name"  # This tag will replace "-ti-" in the naming of all your custom resources (e.g. "hv-vpp-your-name-viz-pipeline")
+nwm_dataflow_version: "prod"  # This shouldn't need to be changed
+fim_version: ""  # Only set if you are developing on the hand-fim-processing lambda
+hand_version: "" # Only set if you are developing on the hand-fim-processing lambda
+deploy_resources:  # 
+  viz-pipeline: true  # step function
+  initialize-pipeline: false  # lambdas from here down
+  db-postprocess-sql: false
+  optimize-rasters: false
+  hand-fim-processing: true
+  schism-fim-processing: false
+  raster-processing: false
+  db-ingest: false
+  egis-health-checker: false
+  fim-data-prep: false
+  publish-service: false
+  test-wrds-db: false
+  update-egis-data: false
+  python-preprocessing: false
+  execute-codebuild: true
