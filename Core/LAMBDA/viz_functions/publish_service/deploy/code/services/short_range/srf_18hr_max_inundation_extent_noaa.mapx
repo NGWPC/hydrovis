@@ -2611,12 +2611,12 @@
     {
       "type" : "CIMFeatureLayer",
       "name" : "18 Hours - Estimated Impacted Critical Infrastructure - Heatmap",
-      "uRI" : "CIMPATH=nwm_short_range_max_fim_extent_forecast/s___estimated_impacted_critical_infrastructure___heatmap.xml",
+      "uRI" : "CIMPATH=nwm_short_range_max_fim_extent_forecast/ing_postgres_18hr_max_inundation_critical_infrastructure.xml",
       "sourceModifiedTime" : {
         "type" : "TimeInstant"
       },
       "useSourceMetadata" : true,
-      "description" : "vizprocessing.postgres.18 Hours - Estimated Impacted Critical Infrastructure - Heatmap",
+      "description" : "vizprocessing.postgres.18hr_max_inundation_critical_infrastructure",
       "layerElevation" : {
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{84F61CAA-CD53-4C26-BBF2-C7F7CA71C354}"
@@ -2640,11 +2640,11 @@
         "editable" : true,
         "dataConnection" : {
           "type" : "CIMSqlQueryDataConnection",
-          "workspaceConnectionString" : "ENCRYPTED_PASSWORD=00022e68364562702b334f417050534f366337412f344166364656484246785735746f2f30754948375139454e45775761526f5034665946356d4366776e4d75703152622a00;SERVER=hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;INSTANCE=sde:postgresql:hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DBCLIENT=postgresql;DB_CONNECTION_PROPERTIES=hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DATABASE=vizprocessing;USER=postgres;AUTHENTICATION_MODE=DBMS",
+          "workspaceConnectionString" : "ENCRYPTED_PASSWORD=00022e685543474e364979636442532b667971786e46373050337a4f4461344e7162682b4f476a3354777963357939517762614b3544515467366a4f557449726677706f2a00;SERVER=hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;INSTANCE=sde:postgresql:hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DBCLIENT=postgresql;DB_CONNECTION_PROPERTIES=hv-vpp-ti-viz-processing.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DATABASE=vizprocessing;USER=postgres;AUTHENTICATION_MODE=DBMS",
           "workspaceFactory" : "SDE",
-          "dataset" : "vizprocessing.postgres.%18 Hours - Estimated Impacted Critical Infrastructure - Heatmap",
+          "dataset" : "vizprocessing.postgres.%18hr_max_inundation_critical_infrastructure",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid, build_type, name, geometry, city, country, state, population, beds, naics_code, specialty, sourcedate, zipcode, status, trauma, alias, county, naics_desc, alt_name, naicsdescr, helipad, level_, source, type, hydro_id, hydro_id_str, feature_id, feature_id_str, streamflow_cfs, fim_stage_ft from vizprocessing.publish.srf_18hr_max_inundation_critical_infrastructure",
+          "sqlQuery" : "select oid,build_type,name,geom,city,country,state,population,beds,naics_code,specialty,sourcedate,zipcode,status,trauma,alias,county,naics_desc,alt_name,naicsdescr,helipad,level_,source,type,hydro_id,hydro_id_str,feature_id,feature_id_str,streamflow_cfs,fim_stage_ft from vizprocessing.publish.srf_18hr_max_inundation_critical_infrastructure",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -2672,13 +2672,13 @@
               "name" : "build_type",
               "type" : "esriFieldTypeString",
               "alias" : "build_type",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "name",
               "type" : "esriFieldTypeString",
               "alias" : "name",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "geom",
@@ -2699,19 +2699,19 @@
               "name" : "city",
               "type" : "esriFieldTypeString",
               "alias" : "city",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "country",
               "type" : "esriFieldTypeString",
               "alias" : "country",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "state",
               "type" : "esriFieldTypeString",
               "alias" : "state",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "population",
@@ -2727,13 +2727,13 @@
               "name" : "naics_code",
               "type" : "esriFieldTypeString",
               "alias" : "naics_code",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "specialty",
               "type" : "esriFieldTypeString",
               "alias" : "specialty",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "sourcedate",
@@ -2744,73 +2744,73 @@
               "name" : "zipcode",
               "type" : "esriFieldTypeString",
               "alias" : "zipcode",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "status",
               "type" : "esriFieldTypeString",
               "alias" : "status",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "trauma",
               "type" : "esriFieldTypeString",
               "alias" : "trauma",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "alias",
               "type" : "esriFieldTypeString",
               "alias" : "alias",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "county",
               "type" : "esriFieldTypeString",
               "alias" : "county",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "naics_desc",
               "type" : "esriFieldTypeString",
               "alias" : "naics_desc",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "alt_name",
               "type" : "esriFieldTypeString",
               "alias" : "alt_name",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "naicsdescr",
               "type" : "esriFieldTypeString",
               "alias" : "naicsdescr",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "helipad",
               "type" : "esriFieldTypeString",
               "alias" : "helipad",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "level_",
               "type" : "esriFieldTypeString",
               "alias" : "level_",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "source",
               "type" : "esriFieldTypeString",
               "alias" : "source",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "type",
               "type" : "esriFieldTypeString",
               "alias" : "type",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "hydro_id",
@@ -2821,7 +2821,7 @@
               "name" : "hydro_id_str",
               "type" : "esriFieldTypeString",
               "alias" : "hydro_id_str",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "feature_id",
@@ -2832,7 +2832,7 @@
               "name" : "feature_id_str",
               "type" : "esriFieldTypeString",
               "alias" : "feature_id_str",
-              "length" : 1073741822
+              "length" : 60000
             },
             {
               "name" : "streamflow_cfs",
@@ -3529,10 +3529,7 @@
         "maxPixelIntensityReferenceScale" : 30887910.260900345
       },
       "scaleSymbols" : true,
-      "snappable" : true,
-      "symbolLayerDrawing" : {
-        "type" : "CIMSymbolLayerDrawing"
-      }
+      "snappable" : true
     },
     {
       "type" : "CIMFeatureLayer",
@@ -6740,7 +6737,6 @@
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{84F61CAA-CD53-4C26-BBF2-C7F7CA71C354}"
       },
-      "expanded" : true,
       "layerType" : "Operational",
       "showLegends" : true,
       "visibility" : true,
@@ -6753,7 +6749,7 @@
       "blendingMode" : "Alpha",
       "layers" : [
         "CIMPATH=nwm_short_range_max_fim_analysis/18_hour_max_estimated_impacted_buildings___heatmap.xml",
-        "CIMPATH=nwm_short_range_max_fim_extent_forecast/s___estimated_impacted_critical_infrastructure___heatmap.xml",
+        "CIMPATH=nwm_short_range_max_fim_extent_forecast/ing_postgres_18hr_max_inundation_critical_infrastructure.xml",
         "CIMPATH=nwm_short_range_max_fim_analysis/8_hour_max_estimated_impacted_buildings___huc10_hotspots2.xml",
         "CIMPATH=nwm_short_range_max_fim_analysis/vizprocessing_dev_srf_18hr_max_inundation_counties.xml",
         "CIMPATH=nwm_short_range_max_fim_analysis/r_max_estimated_impacted_buildings__fema_usa_structures_.xml"

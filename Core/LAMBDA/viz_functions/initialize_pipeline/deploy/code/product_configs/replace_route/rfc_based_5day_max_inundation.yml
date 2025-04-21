@@ -25,6 +25,7 @@ product_summaries:
       - publish.rfc_based_5day_max_inundation_building_footprints
       - publish.rfc_based_5day_max_inundation_counties
       - publish.rfc_based_5day_max_inundation_hucs
+      - publish.rfc_based_5day_max_inundation_critical_infrastructure
 
 services:
   - rfc_based_5day_max_inundation_extent
