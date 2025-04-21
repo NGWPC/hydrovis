@@ -139,6 +139,6 @@ data "aws_lambda_function" "lambda" {
   function_name = local.viz_lambda_name
 
   depends_on = [
-    time_sleep.wait_for_viz_build_finish
+    resource.aws_lambda_invocation.execute_codebuild
   ]
 }

@@ -123,6 +123,6 @@ data "aws_lambda_function" "lambda" {
   function_name = var.lambda_name
 
   depends_on = [
-    time_sleep.wait_for_viz_optimize_rasters_cluster
+    resource.aws_lambda_invocation.execute_codebuild
   ]
 }

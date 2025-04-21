@@ -62,7 +62,7 @@ terraform.rc
 # Ignore all jupyter checkpoint folders
 .ipynb_checkpoints
 
-Dev/env.yaml
+Dev/configuration.yml
 
 # Ignore pycachefiles
 **/__pycache__/*

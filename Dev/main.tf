@@ -15,6 +15,7 @@ terraform {
 locals {
   env = yamldecode(file("./configuration.yml"))
   region = "us-east-1"
+  nwm_dataflow_version = "prod"
   tags = {
     "hydrovis-region": local.region
     "noaa:fismaid": "noaa8501"
@@ -157,7 +158,7 @@ module "custom-deploy" {
   profile = local.env.profile
   account_id = local.env.account_id
   default_tags = local.tags
-  nwm_dataflow_version = local.env.nwm_dataflow_version
+  nwm_dataflow_version = local.nwm_dataflow_version
   hand_version = local.env.hand_version
   fim_version = local.env.fim_version
 }
