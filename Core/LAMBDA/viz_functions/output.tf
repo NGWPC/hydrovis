@@ -47,7 +47,7 @@ output "raster_processing" {
 }
 
 output "schism_fim" {
-  value = module.schism-fim
+  value = module.schism-fim[0]
 }
 
 output "test_wrds_db" {
