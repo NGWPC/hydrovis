@@ -47,7 +47,7 @@ output "raster_processing" {
 }
 
 output "schism_fim" {
-  value = module.schism-fim[0]
+  value = length(module.schism-fim) == 1 ? module.schism-fim[0]: null
 }
 
 output "test_wrds_db" {
