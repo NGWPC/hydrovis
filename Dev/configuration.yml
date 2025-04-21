@@ -5,7 +5,7 @@ personal_tag: "your-name"  # No whitespace. This tag will replace "ti" in the na
 nwm_dataflow_version: "prod"  # This shouldn't need to be changed
 fim_version: ""  # Only set if you are developing on the hand-fim-processing lambda
 hand_version: "" # Only set if you are developing on the hand-fim-processing lambda
-deploy_resources:  # 
+deploy_resources:  # Set to true for any resources you want to deploy your own copy of
   viz-pipeline: true  # step function
   initialize-pipeline: false  # lambdas from here down
   db-postprocess-sql: false
