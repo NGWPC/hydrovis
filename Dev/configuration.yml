@@ -9,14 +9,11 @@ deploy_resources:  # Set to true for any resources you want to deploy your own c
   initialize-pipeline: false  # lambdas from here down
   db-postprocess-sql: false
   optimize-rasters: false
-  hand-fim-processing: false
-  schism-fim-processing: false
+  hand-fim-processing: false  # this provides both the lambda and the step-function
+  schism-fim-processing: false # this provides both the lambda and the step-function
   raster-processing: false
   db-ingest: false
-  egis-health-checker: false
   fim-data-prep: false
   publish-service: false
-  test-wrds-db: false
   update-egis-data: false
   python-preprocessing: false
-  execute-codebuild: false
