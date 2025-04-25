@@ -144,3 +144,7 @@ WHERE rating_source = 'NONE'
 "
 
 %{ endif }
+
+%{ if expect_task_token }
+aws stepfunctions send-task-success --region $1 --task-token "$2" --task-output '{"success": true}'
+%{ endif }

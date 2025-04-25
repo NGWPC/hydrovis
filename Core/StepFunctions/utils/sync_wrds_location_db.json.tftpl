@@ -53,6 +53,24 @@
         }
       },
       "Resource": "arn:aws:states:::aws-sdk:ssm:sendCommand.waitForTaskToken",
+      "Next": "Reset WRDS DB foreign tables on VIZ DB"
+    },
+    "Reset WRDS DB foreign tables on VIZ DB": {
+      "Type": "Task",
+      "Parameters": {
+        "DocumentName": "AWS-RunShellScript",
+        "InstanceIds": [
+          "i-054eab9103ce9bfaf"
+        ],
+        "Parameters": {
+          "commands.$": "States.Array(States.Format('. /deploy_files/setup_wrds_location3_db_foreign_tables_on_viz_db.sh ${region} {}', $$.Task.Token))"
+        },
+        "CloudWatchOutputConfig": {
+          "CloudWatchLogGroupName": "/aws/sendcommand",
+          "CloudWatchOutputEnabled": true
+        }
+      },
+      "Resource": "arn:aws:states:::aws-sdk:ssm:sendCommand.waitForTaskToken",
       "Next": "Shutdown Deploy and Test Machines"
     },
     "Shutdown Deploy and Test Machines": {
