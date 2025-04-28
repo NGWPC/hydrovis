@@ -673,6 +673,7 @@ module "viz-lambda-functions" {
   default_tags                   = local.env.tags
   nwm_dataflow_version           = local.env.nwm_dataflow_version
   five_minute_trigger            = module.eventbridge.five_minute_eventbridge
+  profile                        = local.env.environment
 }
 
 module "util-step-functions" {
