@@ -45,9 +45,7 @@ RUN --mount=type=bind,source=conda-linux-64.lock,target=/tmp/conda-linux-64.lock
     find /HV -follow -type f -name '*.a' -delete
 
 # Copy function code
-COPY viz_classes.py \
-    process_schism_fim.py \
-    ./
+COPY code/ ./
 
 ENTRYPOINT [ "conda", "run", "--no-capture-output", "-p", "/HV" ]
 CMD [ \
