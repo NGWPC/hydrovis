@@ -1,7 +1,7 @@
 import os
 import shutil
 import boto3
-import Core.LAMBDA.viz_functions.viz_optimize_rasters.deploy.code.OptimizeRasters as OptimizeRasters
+import OptimizeRasters
 
 from osgeo import gdal
 

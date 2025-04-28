@@ -18,18 +18,18 @@ data "archive_file" "deploy_zip" {
   dynamic "source" {
     for_each = fileset("${path.module}/deploy", "**")
     content {
-      content  = file("${path.module}/deploy/${source.key}")
+      content  = sensitive(file("${path.module}/deploy/${source.key}"))
       filename = source.key
     }
   }
 
   source {
-    content  = file("${path.module}/../../layers/viz_lambda_shared_funcs/python/viz_classes.py")
+    content  = sensitive(file("${path.module}/../../layers/viz_lambda_shared_funcs/python/viz_classes.py"))
     filename = "viz_classes.py"
   }
 
   source {
-    content  = file("${path.module}/../../layers/viz_lambda_shared_funcs/python/viz_lambda_shared_funcs.py")
+    content  = sensitive(file("${path.module}/../../layers/viz_lambda_shared_funcs/python/viz_lambda_shared_funcs.py"))
     filename = "viz_lambda_shared_funcs.py"
   }
 

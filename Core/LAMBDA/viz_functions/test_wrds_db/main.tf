@@ -16,14 +16,14 @@ data "archive_file" "deploy_zip" {
   output_path = "${path.module}/temp/${var.environment}_${var.region}_deploy.zip"
 
   source {
-    content  = file("${path.module}/deploy/code/lambda_function.py")
+    content  = sensitive(file("${path.module}/deploy/code/lambda_function.py"))
     filename = "lambda_function.py"
   }
 
   dynamic "source" {
     for_each = fileset("${path.module}../", "**/*.sql")
     content {
-      content  = file("${path.module}/${source.key}")
+      content  = sensitive(file("${path.module}/${source.key}"))
       filename = "sql_files/${basename(source.key)}"
     }
   }
