@@ -426,9 +426,9 @@ resource "aws_lambda_function_event_invoke_config" "viz_publish_service_destinat
 
 resource "aws_s3_object" "viz_publish_mapx_files" {
   provider = aws.no_tags 
-  for_each    = lookup(var.creation_map, local.publish_service, false) ? fileset("${path.module}/publish_service/deploy/code/services", "**/*.mapx") : []
+  for_each    = lookup(var.creation_map, "all", false) || lookup(var.creation_map, local.publish_service, false) ? fileset("${path.module}/publish_service/deploy/code/services", "**/*.mapx") : []
   bucket      = var.deployment_bucket
-  key         = "viz_mapx/${var.environment}/${reverse(split("/",each.key))[0]}"
+  key         = "viz_mapx_files/${var.environment}/${reverse(split("/",each.key))[0]}"
   source      = "${path.module}/publish_service/deploy/code/services/${each.key}"
   source_hash = filemd5("${path.module}/publish_service/deploy/code/services/${each.key}")
 }
