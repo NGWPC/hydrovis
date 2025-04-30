@@ -1,0 +1,31 @@
+service: rfc_based_5day_max_inundation_extent_noaa
+summary: RFC Based 5-Day Maximum Inundation Forecast
+description: "Depicts maximum inundation extent over the next 5 days derived from
+  the official River Forecast Center (RFC) forecast routed downstream through the
+  National Water Model (NWM) stream network. Maximum streamflows are available downstream
+  of RFC forecast points whose forecast reaches action status or greater.  \n\nSRC
+  Skill: Depicts USGS sites that have an official rating curve, symbolized by the
+  \"skill\" of the synthetic rating curve compared to the official USGS rating curve.
+  Each point is symbolized by the mean difference in Water Surface Elevation (WSE)
+  between the two curves. \n\nEstimated Impacted Buildings: Depicts building footprints
+  that intersect inundation extents. The source of the building data is the FEMA USA
+  Structures dataset: https://gis-fema.hub.arcgis.com/pages/usa-structures (as of
+  August, 2022). Occupancy type data is only available for AL, CA, FL, GA, LA, MS,
+  NC, SC, TX, and VA at this time. Also shown are a relative density heatmap of potentially
+  impacted buildings (based on extent), county, and HUC level summary layers.
+  \n\nEstimated Impacted Critical Infrastructure: Depicts colleges, 
+  fire stations, hospitals, nursing homes, police stations, and schools
+  that intersect inundation extents. The critical infrastructure data is derived
+  from the static FEMA Infrastructure dataset.\n\n
+  Updated every 15 minutes based on RFC Forecast availability\n\nThis service is for
+  internal use only for NOAA employees and requires access to view.  Please do not
+  share externally without prior approval from OWP as this service is experimental
+  and undergoing regular developmental changes. \n\nFor feedback or questions please
+  reach out to GID directly via slack at national-water-center-gid or national-water-center-fim
+  pages or reach out directly to derek.giardino@noaa.gov"
+tags: national water model, nwm, rfc, conus, fim, inundation, extent
+credits: National Water Model, NOAA/NWS National Water Center
+egis_server: server
+egis_folder: rfc
+feature_service: true
+public_service: false
