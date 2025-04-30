@@ -84,35 +84,6 @@ resource "aws_cloudwatch_event_rule" "viz_pipeline_step_function_failure" {
   EOF
 }
 
-###############################################
-##     HAND FIM Processing Step Function     ##
-###############################################
-
-resource "aws_sfn_state_machine" "hand_fim_processing_step_function" {
-    name     = "hv-vpp-${var.environment}-hand-fim-processing"
-    role_arn = var.viz_lambda_role
-
-    definition = templatefile("${path.module}/hand_fim_processing.json.tftpl", {
-        fim_data_prep_arn  = var.fim_data_prep_arn
-        hand_fim_processing_arn = var.hand_fim_processing_arn
-    })
-}
-
-###############################################
-##     RIPPLE FIM Processing Step Function     ##
-###############################################
-
-resource "aws_sfn_state_machine" "ripple_fim_processing_step_function" {
-    name     = "hv-vpp-${var.environment}-ripple-fim-processing"
-    role_arn = var.viz_lambda_role
-
-    definition = templatefile("${path.module}/ripple_fim_processing.json.tftpl", {
-        ripple_fim_data_prep_arn  = var.ripple_fim_data_prep_arn
-        ripple_fim_processing_arn = var.ripple_fim_processing_arn
-        ripple_fim_bucket         = var.ripple_fim_bucket
-    })
-}
-
 resource "aws_cloudwatch_event_target" "viz_pipeline_step_function_failure_sns" {
   count     = contains(local.official_environments, var.environment) ? 1 : 0
   rule        = aws_cloudwatch_event_rule.viz_pipeline_step_function_failure[0].name
