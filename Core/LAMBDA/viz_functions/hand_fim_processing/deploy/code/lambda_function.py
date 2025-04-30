@@ -281,7 +281,7 @@ def create_inundation_output(huc8, branch, stage_lookup, reference_time, input_v
     df_final = df_final.to_crs(3857)
     df_final = df_final.set_crs('epsg:3857')
         
-    df_final = df_final.join(stage_lookup).dropna()
+    df_final = df_final.join(stage_lookup, how="inner")
     
     if df_final.index.has_duplicates:
         # print("dropping duplicates")
@@ -431,7 +431,9 @@ def calculate_stage_values(hydrotable_key, subsetted_streams_bucket, subsetted_s
     df_zero_stage = df_zero_stage.drop(columns=['hydro_id','feature_id'])
 
     df_forecast = df_forecast.join(df_hydro_max)
-    # print(f"{len(df_forecast)} reaches will be processed")
+
+    # Workaround to remove flood_area_above_expected_coeff column for "aep" and "catchment" runs
+    df_forecast = df_forecast.dropna(axis=1, how="all")
      
     return df_forecast, df_zero_stage
 
