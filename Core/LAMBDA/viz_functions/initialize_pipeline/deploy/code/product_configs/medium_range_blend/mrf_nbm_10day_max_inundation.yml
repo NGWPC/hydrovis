@@ -48,7 +48,7 @@ fim_configs:
     flows_table: cache.max_flows_mrf_nbm_5day
     target_table: publish.mrf_nbm_max_inundation_5day_ripple
     map_file: ripple_model_max_flows_mrf_nbm_5day.csv
-    fim_type: ripple      
+    fim_type: ripple 
   - name: mrf_nbm_max_inundation_10day
     flows_table: cache.max_flows_mrf_nbm_10day
     target_table: fim_ingest.mrf_nbm_max_inundation_10day

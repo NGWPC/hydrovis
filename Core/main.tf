@@ -183,7 +183,7 @@ module "s3" {
       module.iam-roles.role_rnr.arn
     ]
     "ripple" = [
-      module.iam-roles.role_viz_pipeline.arn
+      module.iam-roles.role_viz_pipeline.arn,
     ]
     # "ised" = [
     #   # module.iam-users.user_ISEDServiceAccount.arn

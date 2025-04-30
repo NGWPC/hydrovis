@@ -188,6 +188,71 @@ module "execute-codebuild" {
   db_lambda_subnets = var.db_lambda_subnets
 }
 
+
+#############################
+##   RIPPLE FIM DATA PREP  ##
+#############################
+data "archive_file" "ripple_fim_data_prep_zip" {
+  type = "zip"
+
+  source_file = "${path.module}/viz_ripple_fim_data_prep/lambda_function.py"
+
+  output_path = "${path.module}/temp/viz_ripple_fim_data_prep_${var.environment}_${var.region}.zip"
+}
+
+resource "aws_s3_object" "ripple_fim_data_prep_zip_upload" {
+  provider = aws.no_tags  
+  bucket      = var.deployment_bucket
+  key         = "terraform_artifacts/${path.module}/viz_ripple_fim_data_prep.zip"
+  source      = data.archive_file.ripple_fim_data_prep_zip.output_path
+  source_hash = filemd5(data.archive_file.ripple_fim_data_prep_zip.output_path)
+}
+
+resource "aws_lambda_function" "viz_ripple_fim_data_prep" {
+  function_name = "hv-vpp-${var.environment}-viz-ripple-fim-data-prep"
+  description   = "Lambda function to create Ripple flows file and tables."
+  memory_size   = 1024
+  timeout       = 900
+  vpc_config {
+    security_group_ids = var.db_lambda_security_groups
+    subnet_ids         = var.db_lambda_subnets
+  }
+  environment {
+    variables = {
+      VIZ_DB_DATABASE = var.viz_db_name
+      VIZ_DB_HOST     = var.viz_db_host
+      VIZ_DB_USERNAME = jsondecode(var.viz_db_user_secret_string)["username"]
+      VIZ_DB_PASSWORD = jsondecode(var.viz_db_user_secret_string)["password"]
+      VIZ_OUT_SRID    = "3857"
+      VIZ_OUT_BUCKET = "${var.ripple_bucket}"
+    }
+  }
+  s3_bucket        = aws_s3_object.ripple_fim_data_prep_zip_upload.bucket
+  s3_key           = aws_s3_object.ripple_fim_data_prep_zip_upload.key
+  source_code_hash = filebase64sha256(data.archive_file.ripple_fim_data_prep_zip.output_path)
+  runtime          = "python3.9"
+  handler          = "lambda_function.lambda_handler"
+  role             = var.lambda_role
+  layers = [
+    var.psycopg2_sqlalchemy_layer,
+    var.viz_lambda_shared_funcs_layer,
+    var.pandas_layer
+  ]
+  tags = {
+    "Name" = "hv-vpp-${var.environment}-viz-ripple-fim-data-prep"
+  }
+}
+
+resource "aws_lambda_function_event_invoke_config" "viz_ripple_fim_data_prep_destinations" {
+  function_name          = resource.aws_lambda_function.viz_ripple_fim_data_prep.function_name
+  maximum_retry_attempts = 0
+  destination_config {
+    on_failure {
+      destination = var.email_sns_topics["viz_lambda_errors"].arn
+    }
+  }
+}
+
 #############################
 ##      FIM Data Prep      ##
 #############################
@@ -562,5 +627,31 @@ module "update-egis-data" {
   viz_cache_bucket = var.viz_cache_bucket
   default_tags = var.default_tags
   profile = var.profile
+  execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
+}
+
+#######################
+# ripple fim processing
+#######################
+module "ripple-fim-processing" {
+  count = lookup(var.creation_map, "all", false) || lookup(var.creation_map, local.update_egis_data, false) ? 1 : 0
+  source = "./viz_ripple_fim_processing"
+  providers = {
+    aws = aws
+    aws.no_tags = aws.no_tags
+  }
+  environment = var.environment
+  account_id = var.account_id
+  region = var.region
+  ecr_repository_image_tag = local.ecr_repository_image_tag
+  lambda_role = var.lambda_role
+  security_groups = var.db_lambda_security_groups
+  subnets = var.db_lambda_subnets
+  deployment_bucket = var.deployment_bucket
+  viz_db_name = var.viz_db_name
+  viz_db_host = var.viz_db_host
+  viz_db_user_secret_string = var.viz_db_user_secret_string
+  viz_authoritative_bucket = var.viz_authoritative_bucket
+  default_tags = var.default_tags
   execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
 }

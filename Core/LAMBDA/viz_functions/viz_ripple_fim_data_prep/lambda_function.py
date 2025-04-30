@@ -472,7 +472,7 @@ def main(input_flows_table, output_schema_table, output_map_file):
             output_db_table)                  #Table output location used by Ripple image
   
     if result == False:
-        logging.exception(f"Error creating model file for {env_in_flow_db_schema} {output_db_table} {output_flow_and_model_file_bucket} {output_flow_and_model_file_key}")
+        logging.exception(f"Error creating model file for {env_in_flow_db_schema} {output_db_table} {output_flow_and_model_file_bucket} {output_flow_and_model_file_key_folder}")
         error_found_model = True
 
     if error_found_model == True:

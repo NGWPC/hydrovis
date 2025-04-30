@@ -31,7 +31,7 @@ fim_configs:
     target_table: publish.ana_inundation_ripple
     map_file: ripple_model_max_flows_ana.csv
     fim_type: ripple
-
+  
 product_summaries:
   - sql_file:  public_subset
     target_table:

@@ -14,6 +14,10 @@ output "fim_data_prep" {
   value = length(module.fim-data-prep) == 1 ? module.fim-data-prep[0].lambda : null
 }
 
+output "ripple_fim_data_prep" {
+  value = aws_lambda_function.viz_ripple_fim_data_prep
+}
+
 output "hand_fim_processing" {
   value = length(module.hand-fim-processing) == 1 ? module.hand-fim-processing[0].lambda : null
 }
@@ -56,6 +60,10 @@ output "test_wrds_db" {
 
 output "update_egis_data" {
   value = length(module.update-egis-data) == 1 ? module.update-egis-data[0].lambda : null
+}
+
+output "ripple_fim_processing" {
+  value = length(module.ripple-fim-processing) == 1 ? module.ripple-fim-processing[0].lambda : null
 }
 
 output "egis_healthcheck_alarm" {

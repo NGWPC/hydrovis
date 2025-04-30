@@ -26,6 +26,10 @@ variable "schism_fim_datasets_bucket" {
   type        = string
 }
 
+variable "ripple_fim_bucket" {
+  type        = string
+}
+
 variable "optimize_rasters_arn" {
   type        = string
 }
@@ -35,6 +39,14 @@ variable "update_egis_data_arn" {
 }
 
 variable "fim_data_prep_arn" {
+  type        = string
+}
+
+variable "ripple_fim_data_prep_arn" {
+  type        = string
+}
+
+variable "ripple_fim_processing_arn" {
   type        = string
 }
 
