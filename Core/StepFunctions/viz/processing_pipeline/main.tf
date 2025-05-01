@@ -53,6 +53,10 @@ variable "schism_fim_processing_step_function_arn" {
   type = string
 }
 
+variable "zonal_coastal_fim_processing_step_function_arn" {
+  type = string
+}
+
 variable "hand_fim_processing_step_function_arn" {
   type = string
 }
@@ -77,6 +81,7 @@ resource "aws_sfn_state_machine" "step_function" {
       update_egis_data_arn = var.update_egis_data_arn
       publish_service_arn = var.publish_service_arn
       schism_fim_processing_step_function_arn = var.schism_fim_processing_step_function_arn
+      zonal_coastal_fim_processing_step_function_arn = var.zonal_coastal_fim_processing_step_function_arn
       hand_fim_processing_step_function_arn = var.hand_fim_processing_step_function_arn
       viz_processing_pipeline_log_group = var.viz_processing_pipeline_log_group
     }))

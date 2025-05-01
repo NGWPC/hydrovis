@@ -11,6 +11,7 @@ deploy_resources:  # Set to true for any resources you want to deploy your own c
   optimize-rasters: false
   hand-fim-processing: false  # this provides both the lambda and the step-function
   schism-fim-processing: false # this provides both the lambda and the step-function
+  zonal-coastal-fim-processing: false  # this provides both the lambda and the step-function
   raster-processing: false
   db-ingest: false
   fim-data-prep: false

@@ -15,6 +15,7 @@ locals {
   official_environments = ["ti", "uat", "prod"]
   optimize_rasters = "optimize-rasters"
   hand_fim_processing = "hand-fim-processing"
+  zonal_coastal_fim_processing = "zonal-coastal-fim-processing"
   schism_fim_processing = "schism-fim-processing"
   raster_processing = "raster-processing"
   db_ingest = "db-ingest"
@@ -229,6 +230,39 @@ resource "aws_lambda_function_event_invoke_config" "viz_fim_data_prep_destinatio
       destination = var.email_sns_topics["viz_lambda_errors"].arn
     }
   }
+}
+
+##############################
+# ZONAL COASTAL FIM processing
+##############################
+module "zonal-coastal-fim-processing" {
+  count = lookup(var.creation_map, "all", false) || lookup(var.creation_map, local.zonal_coastal_fim_processing, false) ? 1 : 0
+  source = "./zonal_coastal_fim_processing"
+  providers = {
+    aws = aws
+    aws.no_tags = aws.no_tags
+  }
+  environment = var.environment
+  account_id = var.account_id
+  region = var.region
+  ecr_repository_image_tag = local.ecr_repository_image_tag
+  lambda_role = var.lambda_role
+  security_groups = var.db_lambda_security_groups
+  subnets = var.db_lambda_subnets
+  deployment_bucket = var.deployment_bucket
+  viz_db_name = var.viz_db_name
+  viz_db_host = var.viz_db_host
+  viz_db_user_secret_string = var.viz_db_user_secret_string
+  egis_db_host = var.egis_db_host
+  egis_db_name = var.egis_db_name
+  egis_db_user_secret_string = var.egis_db_user_secret_string
+  viz_authoritative_bucket = var.viz_authoritative_bucket
+  default_tags = var.default_tags
+  hand_version = var.hand_version
+  fim_version = var.fim_version
+  fim_data_bucket = var.fim_data_bucket
+  profile = var.profile
+  execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
 }
 
 ############################

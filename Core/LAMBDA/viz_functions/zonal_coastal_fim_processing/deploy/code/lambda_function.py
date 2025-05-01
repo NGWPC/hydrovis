@@ -217,12 +217,15 @@ def lambda_handler(event, context):
         s3_input_path = event["input_s3_netcdf_path"] 
         target_db_table_full = event["target_db_table"]
         reference_time_str = event["reference_time"]
-        output_s3_target_location = event["output_s3_target_location"] # Base S3 path string for output rasters
         extent_attr_name = event.get("extent_attribute_name", "inundated") # Optional field for extent column name
         viz_db_database = os.environ["VIZ_DB_DATABASE"]
         viz_db_host = os.environ["VIZ_DB_HOST"]
         viz_db_username = os.environ["VIZ_DB_USERNAME"]
         viz_db_password = os.environ["VIZ_DB_PASSWORD"]
+        output_s3_target_location = os.environ.get("OUTPUT_S3_TARGET_LOCATION") # Base S3 path string for output rasters
+
+        if output_s3_target_location and not output_s3_target_location.startswith("s3://"):
+            raise ValueError(f"Invalid output_s3_target_location in event: {output_s3_target_location}")
 
         # Parse reference time for use in path construction
         try:
@@ -230,14 +233,6 @@ def lambda_handler(event, context):
             ref_time_ymd_str = reference_date.strftime("%Y%m%d")
         except ValueError as e:
             raise ValueError(f"Could not parse reference_time '{reference_time_str}': {e}")
-
-        # Parse the base S3 output location provided in the event
-        if not output_s3_target_location or not output_s3_target_location.startswith("s3://"):
-            raise ValueError(f"Invalid or missing output_s3_target_location in event: {output_s3_target_location}")
-        parsed_target_uri = urlparse(output_s3_target_location)
-        output_s3_bucket = parsed_target_uri.netloc
-        output_s3_base_prefix = parsed_target_uri.path.lstrip('/')
-        print(f"Output Target Parsed: Bucket='{output_s3_bucket}', Base Prefix='{output_s3_base_prefix}'")
 
     except KeyError as e:
         print(f"FATAL ERROR: Missing required key in event payload or environment variable: {e}")
@@ -287,8 +282,6 @@ def lambda_handler(event, context):
     print(f"  Target PostGIS Table: {target_schema}.{target_table}")
     print(f"  Reference Time: {reference_time_str}")
     print(f"  Output S3 Target: {output_s3_target_location}")
-    print(f"    -> Bucket: {output_s3_bucket}")
-    print(f"    -> Base Prefix: {output_s3_base_prefix}")
     print(f"--- End Configuration ---")
 
     # --- Setup Local Temp Directory ---
@@ -381,38 +374,43 @@ def lambda_handler(event, context):
         print(f"Stage 4 duration: {time.time() - stage_start_time:.2f}s")
 
         # === Stage 5: Construct S3 Output Paths & Upload Rasters ===
-        stage_start_time = time.time()
-        print(f"\n--- Stage 5: Constructing S3 Output Paths & Uploading Rasters ---")
+        if output_s3_target_location:
+            parsed_target_uri = urlparse(output_s3_target_location)
+            output_s3_bucket = parsed_target_uri.netloc
+            output_s3_base_prefix = parsed_target_uri.path.lstrip('/')
+            print(f"Output Target Parsed: Bucket='{output_s3_bucket}', Base Prefix='{output_s3_base_prefix}'")
+            stage_start_time = time.time()
+            print(f"\n--- Stage 5: Constructing S3 Output Paths & Uploading Rasters ---")
 
-        # Define dynamic sub-folder structure: <domain>/<forecast_type>/<YYYYMMDD>
-        dynamic_subfolder_path = f"{domain}/{forecast_type}/{ref_time_ymd_str}"
-        # Combine base prefix (e.g., 'test_lambda_output_tif') with dynamic path
-        full_base_key = os.path.join(output_s3_base_prefix, dynamic_subfolder_path).replace("\\","/")
-        # Use the unique config_name for the output filenames
-        output_base_filename = config_name
+            # Define dynamic sub-folder structure: <domain>/<forecast_type>/<YYYYMMDD>
+            dynamic_subfolder_path = f"{domain}/{forecast_type}/{ref_time_ymd_str}"
+            # Combine base prefix (e.g., 'test_lambda_output_tif') with dynamic path
+            full_base_key = os.path.join(output_s3_base_prefix, dynamic_subfolder_path).replace("\\","/")
+            # Use the unique config_name for the output filenames
+            output_base_filename = config_name
 
-        # Define final S3 keys
-        depth_s3_key = f"{full_base_key}/{output_base_filename}_depth_raster.tif"
-        wse_s3_key = f"{full_base_key}/{output_base_filename}_wse_raster.tif"
+            # Define final S3 keys
+            depth_s3_key = f"{full_base_key}/{output_base_filename}_depth_raster.tif"
+            wse_s3_key = f"{full_base_key}/{output_base_filename}_wse_raster.tif"
 
-        # Construct full S3 URIs
-        output_depth_path_s3 = f"s3://{output_s3_bucket}/{depth_s3_key}"
-        output_wse_path_s3 = f"s3://{output_s3_bucket}/{wse_s3_key}"
-        print(f"  Constructed Output Depth Path S3: {output_depth_path_s3}")
-        print(f"  Constructed Output WSE Path S3: {output_wse_path_s3}")
+            # Construct full S3 URIs
+            output_depth_path_s3 = f"s3://{output_s3_bucket}/{depth_s3_key}"
+            output_wse_path_s3 = f"s3://{output_s3_bucket}/{wse_s3_key}"
+            print(f"  Constructed Output Depth Path S3: {output_depth_path_s3}")
+            print(f"  Constructed Output WSE Path S3: {output_wse_path_s3}")
 
-        # Upload Depth Raster
-        if os.path.exists(depth_local_output):
-            final_depth_path = upload_to_s3(depth_local_output, output_depth_path_s3)
-        else:
-            print(f"  Skipping depth raster upload, local file not found: {depth_local_output}")
+            # Upload Depth Raster
+            if os.path.exists(depth_local_output):
+                final_depth_path = upload_to_s3(depth_local_output, output_depth_path_s3)
+            else:
+                print(f"  Skipping depth raster upload, local file not found: {depth_local_output}")
 
-        # Upload WSE Raster
-        if os.path.exists(wse_local_output):
-            final_wse_path = upload_to_s3(wse_local_output, output_wse_path_s3)
-        else:
-            print(f"  Skipping WSE raster upload, local file not found: {wse_local_output}")
-        print(f"Stage 5 duration: {time.time() - stage_start_time:.2f}s")
+            # Upload WSE Raster
+            if os.path.exists(wse_local_output):
+                final_wse_path = upload_to_s3(wse_local_output, output_wse_path_s3)
+            else:
+                print(f"  Skipping WSE raster upload, local file not found: {wse_local_output}")
+            print(f"Stage 5 duration: {time.time() - stage_start_time:.2f}s")
 
     except Exception as e:
         # Catch-all for errors during the main processing stages
