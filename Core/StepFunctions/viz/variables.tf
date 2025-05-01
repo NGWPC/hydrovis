@@ -88,3 +88,8 @@ variable "hand_fim_processing_step_function_arn_override" {
     type = string
     default = null
 }
+
+variable "ripple_fim_processing_step_function_arn_override" {
+  type = string
+  default = null
+}

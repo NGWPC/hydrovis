@@ -15,7 +15,7 @@ output "fim_data_prep" {
 }
 
 output "ripple_fim_data_prep" {
-  value = aws_lambda_function.viz_ripple_fim_data_prep
+  value = length(module.ripple-fim-data-prep) == 1 ? module.ripple-fim-data-prep[0].lambda : null
 }
 
 output "hand_fim_processing" {

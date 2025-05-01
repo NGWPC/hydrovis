@@ -23,6 +23,7 @@ locals {
   initialize_pipeline = "initialize-pipeline"
   db_postprocess_sql = "db-postprocess-sql"
   fim_data_prep = "fim-data-prep"
+  ripple_fim_data_prep = "ripple-fim-data-prep"
   publish_service = "publish-service"
   test_wrds_db = "test-wrds-db"
   update_egis_data = "update-egis-data"
@@ -193,59 +194,33 @@ module "execute-codebuild" {
 #############################
 ##   RIPPLE FIM DATA PREP  ##
 #############################
-data "archive_file" "ripple_fim_data_prep_zip" {
-  type = "zip"
-
-  source_file = "${path.module}/viz_ripple_fim_data_prep/lambda_function.py"
-
-  output_path = "${path.module}/temp/viz_ripple_fim_data_prep_${var.environment}_${var.region}.zip"
-}
-
-resource "aws_s3_object" "ripple_fim_data_prep_zip_upload" {
-  provider = aws.no_tags  
-  bucket      = var.deployment_bucket
-  key         = "terraform_artifacts/${path.module}/viz_ripple_fim_data_prep.zip"
-  source      = data.archive_file.ripple_fim_data_prep_zip.output_path
-  source_hash = filemd5(data.archive_file.ripple_fim_data_prep_zip.output_path)
-}
-
-resource "aws_lambda_function" "viz_ripple_fim_data_prep" {
-  function_name = "hv-vpp-${var.environment}-viz-ripple-fim-data-prep"
-  description   = "Lambda function to create Ripple flows file and tables."
-  memory_size   = 1024
-  timeout       = 900
-  vpc_config {
-    security_group_ids = var.db_lambda_security_groups
-    subnet_ids         = var.db_lambda_subnets
+module "ripple-fim-data-prep" {
+  count = lookup(var.creation_map, "all", false) || lookup(var.creation_map, local.ripple_fim_data_prep, false) ? 1 : 0
+  source = "./ripple_fim_data_prep"
+  providers = {
+    aws     = aws
+    aws.no_tags = aws.no_tags
   }
-  environment {
-    variables = {
-      VIZ_DB_DATABASE = var.viz_db_name
-      VIZ_DB_HOST     = var.viz_db_host
-      VIZ_DB_USERNAME = jsondecode(var.viz_db_user_secret_string)["username"]
-      VIZ_DB_PASSWORD = jsondecode(var.viz_db_user_secret_string)["password"]
-      VIZ_OUT_SRID    = "3857"
-      VIZ_OUT_BUCKET = "${var.ripple_bucket}"
-    }
-  }
-  s3_bucket        = aws_s3_object.ripple_fim_data_prep_zip_upload.bucket
-  s3_key           = aws_s3_object.ripple_fim_data_prep_zip_upload.key
-  source_code_hash = filebase64sha256(data.archive_file.ripple_fim_data_prep_zip.output_path)
-  runtime          = "python3.9"
-  handler          = "lambda_function.lambda_handler"
-  role             = var.lambda_role
+  environment = var.environment
+  region = var.region
+  deployment_bucket = var.deployment_bucket
+  ripple_bucket = var.ripple_bucket
+  lambda_role = var.lambda_role
+  db_lambda_security_groups = var.db_lambda_security_groups
+  db_lambda_subnets = var.db_lambda_subnets
+  viz_db_host = var.viz_db_host
+  viz_db_name = var.viz_db_name
+  viz_db_user_secret_string = var.viz_db_user_secret_string
   layers = [
     var.psycopg2_sqlalchemy_layer,
     var.viz_lambda_shared_funcs_layer,
     var.pandas_layer
   ]
-  tags = {
-    "Name" = "hv-vpp-${var.environment}-viz-ripple-fim-data-prep"
-  }
 }
 
-resource "aws_lambda_function_event_invoke_config" "viz_ripple_fim_data_prep_destinations" {
-  function_name          = resource.aws_lambda_function.viz_ripple_fim_data_prep.function_name
+resource "aws_lambda_function_event_invoke_config" "ripple_fim_data_prep_destinations" {
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
+  function_name          = module.ripple-fim-data-prep[0].lambda.function_name
   maximum_retry_attempts = 0
   destination_config {
     on_failure {
@@ -636,7 +611,7 @@ module "update-egis-data" {
 #######################
 module "ripple-fim-processing" {
   count = lookup(var.creation_map, "all", false) || lookup(var.creation_map, local.update_egis_data, false) ? 1 : 0
-  source = "./viz_ripple_fim_processing"
+  source = "./ripple_fim_processing"
   providers = {
     aws = aws
     aws.no_tags = aws.no_tags

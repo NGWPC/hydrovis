@@ -34,6 +34,7 @@ module "hand-fim-processing" {
 ##    RIPPLE FIM Processing Step Function    ##
 ###############################################
 module "ripple-fim-processing" {
+  count = var.ripple_fim_processing_step_function_arn_override == null ? 1 : 0
   source = "./ripple_fim_processing"
 
   viz_lambda_role = var.viz_lambda_role
@@ -62,7 +63,7 @@ module "viz-processing-pipeline" {
   publish_service_arn = var.publish_service_arn
   schism_fim_processing_step_function_arn = var.schism_fim_processing_step_function_arn_override != null ? var.schism_fim_processing_step_function_arn_override : module.schism-fim-processing[0].step_function.arn
   hand_fim_processing_step_function_arn = var.hand_fim_processing_step_function_arn_override != null ? var.hand_fim_processing_step_function_arn_override : module.hand-fim-processing[0].step_function.arn
-  ripple_fim_processing_step_function_arn = module.ripple-fim-processing.step_function.arn
+  ripple_fim_processing_step_function_arn = var.ripple_fim_processing_step_function_arn_override != null ? var.ripple_fim_processing_step_function_arn_override : module.ripple-fim-processing[0].step_function.arn
   viz_processing_pipeline_log_group = var.viz_processing_pipeline_log_group
 }
 
