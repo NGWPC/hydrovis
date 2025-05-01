@@ -84,11 +84,11 @@ resource "aws_cloudwatch_event_target" "trigger_pipeline_test_run" {
   }
 }
 
-resource "aws_sfn_state_machine" "trigger_apocalyptic_tests_step_function" {
-  name     = "hv-vpp-${var.environment}-trigger-apocalyptic-tests"
+resource "aws_sfn_state_machine" "trigger_test_event_step_function" {
+  name     = "hv-vpp-${var.environment}-trigger-test-event"
   role_arn = var.role
 
-  definition = templatefile("${path.module}/trigger_apocalyptic_tests.json.tftpl", {
+  definition = templatefile("${path.module}/trigger_test_event.json.tftpl", {
     deployment_bucket = var.deployment_bucket
   })
 }
