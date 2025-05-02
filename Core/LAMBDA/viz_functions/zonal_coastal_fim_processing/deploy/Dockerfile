@@ -26,7 +26,7 @@ COPY conda-linux-64.lock /app/conda-linux-64.lock
 RUN conda create --name coastal_fim_vis --file /app/conda-linux-64.lock
 
 # Install DuckDB and some troublesome dependencies not working in the lock file (investigate later)
-RUN /opt/conda/bin/conda run -n coastal_fim_vis pip install duckdb==1.1.3 s3fs awslambdaric boto3
+RUN /opt/conda/bin/conda run -n coastal_fim_vis pip install duckdb==1.1.3 s3fs awslambdaric
 
 # Install DuckDB spatial extension into the environment
 RUN /opt/conda/bin/conda run -n coastal_fim_vis python -c "import duckdb; duckdb.sql('INSTALL spatial'); duckdb.sql('LOAD spatial')"
