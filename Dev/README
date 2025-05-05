@@ -1,7 +1,7 @@
 # DEPLOY PERSONAL DEVELOPER VERSIONS OF AWS VIZ-PIPELINE RESOURCES
 
 1. Edit the configuration.yml file adjacent to this README. There are inline notes to help.
-2. Right click this file on the left and select "Open in Integrated Terminal
+2. Open terminal to this file locaiton. (If using VSCode: Right click this file on the left and select "Open in Integrated Terminal".)
 3. Execute `aws sso login --profile <profile_name>` to log into your AWS account via the command line
 4. Execute `terraform init` (like `git init` this should only be needed this one time and never again)
 5. Execute `terraform apply` (this is the command you'll keep coming back to when deploying code updates)
