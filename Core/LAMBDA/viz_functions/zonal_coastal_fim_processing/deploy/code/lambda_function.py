@@ -44,6 +44,9 @@ except Exception as e_db:
     traceback.print_exc()
     raise e_db
 
+# Define DuckDB spatial extension path globally
+ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
+
 # --- Helper Functions ---
 def vectorize_binary_extent(raster_path):
     """
@@ -209,16 +212,17 @@ def lambda_handler(event, context):
         print(f"Ensuring DuckDB spatial extension is loaded for: {efs_duckdb_path}...")
         with duckdb.connect(efs_duckdb_path, read_only=False) as con:
             try:
-                con.execute("LOAD spatial;")
-                print("  Spatial extension already loaded.")
-            except Exception:
-                print(f"  Failed to load spatial extension, attempting install...")
+                con.execute(f"LOAD '{ext_path}';")
+                print(f"DuckDB spatial extension loaded from: {ext_path}")
+            except Exception as load_err:
+                print(f"DuckDB spatial extension failed to be loaded from: {ext_path}. Attempting to install...")
                 try:
-                    con.execute("INSTALL spatial;")
-                    con.execute("LOAD spatial;")
-                    print("  Installed and loaded spatial extension.")
+                    con.execute("SET home_directory='/tmp';")
+                    con.execute(f"INSTALL '{ext_path}';")
+                    con.execute(f"LOAD '{ext_path}';")
+                    print(f"DuckDB spatial extension installed and loaded from: {ext_path}")
                 except Exception as install_err:
-                    print(f"  WARNING: Failed to install/load DuckDB spatial extension: {install_err}")
+                    print(f"Failed to install/load DuckDB spatial extension from: {ext_path}. Error: {install_err}")
     except Exception as e:
         print(f"WARNING: Error during DuckDB spatial extension check: {e}")
 
@@ -275,8 +279,8 @@ def lambda_handler(event, context):
             # === Stage 3: Run zonal_fim.py ===
             stage_start_time = time.time()
             print(f"\n--- Stage 3: Running zonal_fim.py ---")
-            python_executable = "/opt/conda/envs/coastal_fim_vis/bin/python" 
-            zonal_fim_script = "/var/task/zonal_fim.py"
+            python_executable = "/opt/conda/bin/python"
+            zonal_fim_script = "/home/code/zonal_fim.py"
 
             cmd = [
                 python_executable, zonal_fim_script,

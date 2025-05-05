@@ -2,9 +2,10 @@
 
 import duckdb
 import ibis
+import os
 from ibis import _
 
-
+ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
 def estimate(database_path: str, table_name: str) -> None:
     """
     The `estimate` function processes spatial data stored in a DuckDB database to compute 
@@ -45,10 +46,10 @@ def estimate(database_path: str, table_name: str) -> None:
     data_conn = ibis.duckdb.connect(database_path)
     # out_data_conn = ibis.duckdb.connect(output_database_path)
     try:
-        data_conn.raw_sql('LOAD spatial')
-    except: 
-        data_conn.raw_sql('INSTALL spatial')
-        data_conn.raw_sql('LOAD spatial')    
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")  
     # out_data_conn.raw_sql(f"ATTACH '{database_path}' AS compute_db;")
     # Compute WSE based on barycentric weights for all elements
     data_conn.raw_sql(
@@ -90,4 +91,4 @@ def estimate(database_path: str, table_name: str) -> None:
 
     data_conn.con.close()
     # out_data_conn.con.close()
-    return 
+    return

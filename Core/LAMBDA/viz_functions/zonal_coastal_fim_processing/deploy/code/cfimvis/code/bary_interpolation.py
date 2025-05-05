@@ -10,8 +10,9 @@ import zarr
 from affine import Affine
 import json
 from numcodecs import Blosc, Zlib
+import os
 # from osgeo import gdal, osr
-
+ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
 def interpolate(database_path: str) -> None:
     """
     The `interpolate` function processes spatial data to generate a raster file representing 
@@ -53,10 +54,10 @@ def interpolate(database_path: str) -> None:
     # out_data_conn = ibis.duckdb.connect(output_database_path)
     for conn in [data_conn]:
         try:
-            conn.raw_sql('LOAD spatial')
+            conn.raw_sql(f"LOAD '{ext_path}'")
         except:
-            conn.raw_sql('INSTALL spatial')
-            conn.raw_sql('LOAD spatial')
+            conn.raw_sql(f"INSTALL '{ext_path}'")
+            conn.raw_sql(f"LOAD '{ext_path}'")
 
     # out_data_conn.raw_sql(f"ATTACH '{database_path}' AS compute_db;")
 
@@ -154,10 +155,10 @@ def make_wse_depth_rasters(database_path: str, generate_wse: bool=False, generat
     # out_data_conn = ibis.duckdb.connect(output_database_path)
     for conn in [data_conn]:
         try:
-            conn.raw_sql('LOAD spatial')
+            conn.raw_sql(f"LOAD '{ext_path}'")
         except:
-            conn.raw_sql('INSTALL spatial')
-            conn.raw_sql('LOAD spatial')
+            conn.raw_sql(f"INSTALL '{ext_path}'")
+            conn.raw_sql(f"LOAD '{ext_path}'")
     flags = [generate_depth, generate_wse]
     # flag_count = sum(flags)
     for i, flag in enumerate(flags):

@@ -15,6 +15,7 @@ import numpy as np
 from tqdm import tqdm
 import os
 
+ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
 def add_point_geo(database_path: str, table_name: str, lat_col_nam: str, long_col_name: str) -> None:
     """
     Adds a 'geometry' column to a specified table and populates it with points 
@@ -31,7 +32,11 @@ def add_point_geo(database_path: str, table_name: str, lat_col_nam: str, long_co
           populated with point geometries created from the latitude and longitude values.
     """
     data_conn = ibis.duckdb.connect(database_path)
-    data_conn.raw_sql('LOAD spatial')
+    try:
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
     data_conn.raw_sql(
         f""" 
         ALTER TABLE {table_name} ADD COLUMN geometry GEOMETRY; 
@@ -59,7 +64,11 @@ def write_to_database(database_path: str, table_name: str, df: pd.DataFrame([])=
     
     # Connect to the database
     data_conn = ibis.duckdb.connect(database_path)
-    data_conn.raw_sql('LOAD spatial')
+    try:
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
 
     # Handle DataFrames
     if df is not None and not isinstance(df, gpd.GeoDataFrame):
@@ -111,7 +120,11 @@ def get_none_overlapping(dem_path: str, database_path: str, point_gdf_table: str
         - Metadata about the CRS of the involved datasets stored in a 'metadata' table.
     """
     data_conn = ibis.duckdb.connect(database_path)
-    data_conn.raw_sql('LOAD spatial')
+    try:
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
 
     # Vectorize raster
     with rasterio.open(dem_path) as src:
@@ -201,10 +214,10 @@ def extract_elevation(dem_path: str, database_path: str) -> gpd.GeoDataFrame([])
     """
     data_conn = ibis.duckdb.connect(database_path)
     try:
-        data_conn.raw_sql('LOAD spatial')
-    except: 
-        data_conn.raw_sql('INSTALL spatial')
-        data_conn.raw_sql('LOAD spatial')
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
     point_gdf = data_conn.table("nodes").execute()
     point_gdf = point_gdf.set_crs('EPSG:4326')
 
@@ -266,7 +279,11 @@ def mask_nodes(database_path: str, table_name:str, masked_table_name:str) -> Non
           whose 'node_id' matches any 'node_id_1', 'node_id_2', or 'node_id_3' in the 'masked_elements' table.
     """
     data_conn = ibis.duckdb.connect(database_path)
-    data_conn.raw_sql('LOAD spatial')
+    try:
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
     data_conn.raw_sql(
         f"""
         CREATE OR REPLACE TABLE '{masked_table_name}' AS
@@ -298,7 +315,11 @@ def add_elevation(database_path: str, table_name:str, elevation_table:str) -> No
         - Only nodes with non-null elevation values are retained in the resulting table.
     """
     data_conn = ibis.duckdb.connect(database_path)
-    data_conn.raw_sql('LOAD spatial')
+    try:
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
     data_conn.raw_sql(
         f"""
         CREATE OR REPLACE TABLE '{table_name}' AS

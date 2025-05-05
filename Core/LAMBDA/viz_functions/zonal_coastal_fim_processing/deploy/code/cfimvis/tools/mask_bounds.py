@@ -8,6 +8,7 @@ import rasterio
 from rasterio.mask import mask
 
 ibis.options.interactive = True
+ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
 
 def create_general_mask(database_path: str,
                         schisim_table_name: str, state_table_name: str,
@@ -56,10 +57,10 @@ def create_general_mask(database_path: str,
     # Create a single mask
     mask_conn = ibis.duckdb.connect(database_path)
     try:
-        mask_conn.raw_sql('LOAD spatial')
-    except: 
-        mask_conn.raw_sql('INSTALL spatial')
-        mask_conn.raw_sql('LOAD spatial')
+        mask_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        mask_conn.raw_sql(f"INSTALL '{ext_path}'")
+        mask_conn.raw_sql(f"LOAD '{ext_path}'")
     sch_b = mask_conn.table(schisim_table_name).execute()
     sch_b = sch_b.set_crs("EPSG:4326")
     state = mask_conn.table(state_table_name).execute()
@@ -176,10 +177,10 @@ def filter_valid_elements(data_database_path: str, table_name:str) -> None:
     """
     data_conn = ibis.duckdb.connect(data_database_path)
     try:
-        data_conn.raw_sql('LOAD spatial')
-    except: 
-        data_conn.raw_sql('INSTALL spatial')
-        data_conn.raw_sql('LOAD spatial')
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
   
     # Also filter for null values in elevation (points outside domain)
     data_conn.raw_sql(
@@ -212,10 +213,10 @@ def mask_raster(mask_database_path: str, raster_path: str) -> None:
     # Load mask
     mask_conn = ibis.duckdb.connect(mask_database_path)
     try:
-        mask_conn.raw_sql('LOAD spatial')
-    except: 
-        mask_conn.raw_sql('INSTALL spatial')
-        mask_conn.raw_sql('LOAD spatial')
+        mask_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        mask_conn.raw_sql(f"INSTALL '{ext_path}'")
+        mask_conn.raw_sql(f"LOAD '{ext_path}'")
     mask_gdf = mask_conn.table('step_5').execute()
     mask_gdf = mask_gdf.set_crs("EPSG:4326")
 
@@ -253,10 +254,10 @@ def filter_nodes(database_path: str) -> None:
     """
     data_conn = ibis.duckdb.connect(database_path)
     try:
-        data_conn.raw_sql('LOAD spatial')
-    except: 
-        data_conn.raw_sql('INSTALL spatial')
-        data_conn.raw_sql('LOAD spatial')
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
 
     data_conn.raw_sql(
         """
