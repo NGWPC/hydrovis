@@ -2,11 +2,15 @@ import os
 import boto3
 import base64
 import json
+import sys
+
 import time
 import re
 import urllib.parse
 from datetime import datetime, timedelta
 from botocore.exceptions import ClientError
+
+sys.path.append(os.path.abspath('..'))
 
 class MissingS3FileException(Exception):
     """ my custom exception class """
@@ -541,7 +545,7 @@ def move_data_to_another_db(origin_db, dest_db, origin_table, dest_table, stage=
 
 def check_if_file_exists(bucket, file, download=False):
     import requests
-    from .viz_classes import s3_file
+    from viz_classes import s3_file
     import xarray as xr
     import tempfile
     

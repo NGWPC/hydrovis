@@ -3,10 +3,13 @@ import boto3
 import os
 import json
 import re
+import sys
+
 import urllib.parse
 import inspect
 from botocore.exceptions import ClientError
 
+sys.path.append(os.path.abspath('..'))
 
 class RequiredTableNotUpdated(Exception):
     """ This is a custom exception to report back to the AWS Step Function that a required table does not exist or has not yet been updated with the current reference time. """
