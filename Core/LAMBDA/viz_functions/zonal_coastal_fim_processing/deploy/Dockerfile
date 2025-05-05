@@ -1,49 +1,57 @@
-# Use AWS Lambda Python 3.9 base image
-FROM public.ecr.aws/lambda/python:3.9
+FROM mambaorg/micromamba AS micromamba
 
-# Install Miniconda and required system tools
-RUN yum install -y wget bzip2 && \
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
-    bash miniconda.sh -b -p /opt/conda && \
-    rm miniconda.sh
+# Create conda environment for hydrovis
+RUN --mount=type=bind,source=conda-linux-64.lock,target=/tmp/conda.lock \
+    micromamba install -y --file /tmp/conda.lock && \
+    micromamba clean -afy
 
-# Add conda to the PATH
-ENV PATH="/opt/conda/bin:${PATH}"   
+RUN find /opt/conda -regex '^.*\(__pycache__\|\.py[co]\)$' -delete && \
+    find /opt/conda -follow -type f -name '*.a' -delete
+RUN rm -rf /opt/conda/man /opt/conda/share/man /opt/conda/share/doc && \
+    rm -rf /opt/conda/include && \
+    rm -rf /opt/conda/share/bash-completion && \
+    rm -rf /opt/conda/share/info && \
+    rm -rf /opt/conda/share/examples && \
+    rm -rf /opt/conda/conda-meta
 
-# Install Development Tools and cmake3
-RUN yum groupinstall "Development Tools" -y && \
-    yum install -y cmake3 && \
-    ln -s /usr/bin/cmake3 /usr/bin/cmake
+USER root
+# Install curl and gzip
+RUN apt-get update && \
+    apt-get install -y curl gzip && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set working directory in the container
-WORKDIR /app
+# Installing duckdb spatial extension    
+RUN mkdir -p /opt/duckdb_extensions && \
+    curl http://extensions.duckdb.org/v1.2.2/linux_amd64/spatial.duckdb_extension.gz \
+      -o /opt/duckdb_extensions/spatial.duckdb_extension.gz && \
+    gzip -d /opt/duckdb_extensions/spatial.duckdb_extension.gz
 
-# Copy code directory into the container
-COPY code /app/code
 
-# Install dependencies via conda-linux-64.lock
-COPY conda-linux-64.lock /app/conda-linux-64.lock
-RUN conda create --name coastal_fim_vis --file /app/conda-linux-64.lock
+FROM public.ecr.aws/amazonlinux/amazonlinux:2023-minimal AS alinux
 
-# Install DuckDB and some troublesome dependencies not working in the lock file (investigate later)
-RUN /opt/conda/bin/conda run -n coastal_fim_vis pip install duckdb==1.1.3 s3fs awslambdaric boto3
+ENV MAMBA_ROOT_PREFIX="/opt/conda"
+ENV MAMBA_EXE="/bin/micromamba"
+# Prevent Python from writing bytecode files
+ENV PYTHONDONTWRITEBYTECODE=1
+# Prevent python from buffering stdout
+ENV PYTHONUNBUFFERED=1
 
-# Install DuckDB spatial extension into the environment
-RUN /opt/conda/bin/conda run -n coastal_fim_vis python -c "import duckdb; duckdb.sql('INSTALL spatial'); duckdb.sql('LOAD spatial')"
+# Copy micromamba environment
+COPY --from=micromamba --chown=root "$MAMBA_EXE" "$MAMBA_EXE"
+COPY --from=micromamba --chown=root /opt/conda /opt/conda
+COPY --from=micromamba --chown=root /usr/local/bin/_*.sh /usr/local/bin/
+COPY --from=micromamba --chown=root /opt/duckdb_extensions /opt/duckdb_extensions
+ENV DUCKDB_SPATIAL_EXTENSION_PATH="/opt/duckdb_extensions/spatial.duckdb_extension"
 
-# Set default environment to the one created for subsequent RUN commands
-SHELL ["conda", "run", "-n", "coastal_fim_vis", "/bin/bash", "-c"]
+WORKDIR /home/code
 
-# Set working directory for Lambda runtime
-WORKDIR /var/task
+# Copy function code
+COPY code/ ./
 
-# Copy all code into /var/task
-COPY code/ /var/task/
+SHELL ["/usr/local/bin/_dockerfile_shell.sh"]
 
-# Copy bootstrap.sh
-COPY bootstrap.sh /var/task/bootstrap.sh
-RUN chmod +x /var/task/bootstrap.sh
+ENTRYPOINT [ "/usr/local/bin/_entrypoint.sh" ]
 
-# Set the ENTRYPOINT to the bootstrap script and the CMD to specify handler.
-ENTRYPOINT ["/var/task/bootstrap.sh"]
-CMD ["lambda_function.lambda_handler"]
+CMD [ \
+    "python", "-m", "awslambdaric", "lambda_function.lambda_handler" \
+]

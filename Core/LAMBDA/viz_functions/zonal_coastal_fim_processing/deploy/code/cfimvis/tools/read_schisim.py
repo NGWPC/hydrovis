@@ -8,6 +8,9 @@ import xarray as xr
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Tuple
+import os
+
+ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
 
 # ----------------- Read 2dm file
 def read_2dm(file_path: str) -> Tuple[List[List[float]], List[List[int]], pd.DataFrame, pd.DataFrame]:
@@ -207,6 +210,11 @@ def crosswalk_nodes(database_path: str) -> None:
         - A new or updated 'nodes' table 
     """
     data_conn = ibis.duckdb.connect(database_path)
+    try:
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
     data_conn.raw_sql(
         """
         CREATE OR REPLACE TABLE nodes AS
@@ -257,7 +265,11 @@ def mask_elements(database_path: str) -> None:
           exists in the 'masked_coverage_fraction' table.
     """
     data_conn = ibis.duckdb.connect(database_path)
-    data_conn.raw_sql('LOAD spatial')
+    try:
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
     data_conn.raw_sql(
         f"""
         CREATE OR REPLACE TABLE masked_elements AS

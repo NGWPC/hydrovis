@@ -15,7 +15,7 @@ import zipfile
 import io
 import os
 
-
+ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
 def convert_elements_file(zip_file_path: str, output_folder_path: str, save_parqeut: bool=True) -> None:
     """
     Unzips a shapefile zip file, processes its contents, and saves the data as a GeoPackage and optionally as a Parquet file.
@@ -66,10 +66,10 @@ def exctract_mask(mask_database_path: str, output_folder_path: str) -> None:
     """
     mask_conn = ibis.duckdb.connect(mask_database_path)
     try:
-        mask_conn.raw_sql('LOAD spatial')
-    except:
-        mask_conn.raw_sql('INSTALL spatial')
-        mask_conn.raw_sql('LOAD spatial')
+        mask_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        mask_conn.raw_sql(f"INSTALL '{ext_path}'")
+        mask_conn.raw_sql(f"LOAD '{ext_path}'")
 
     geopackage_path = output_folder_path+'/ElementPolygons.gpkg'  
     mask_table = mask_conn.table("step_5")
@@ -191,6 +191,11 @@ def setup_crosswalk_table(database_path: str, node_id_path: str) -> None:
         None
     """
     data_conn = ibis.duckdb.connect(database_path)
+    try:
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
     
     cross_walk = pd.read_csv(node_id_path, header=None, names=['node_id_gr3'])
     cross_walk.reset_index(inplace=True)

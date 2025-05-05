@@ -9,7 +9,7 @@ import numpy as np
 import os
 import shutil
 
-
+ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
 def calculate_slope(vertex: np.ndarray, other_vertex1: np.ndarray, other_vertex2: np.ndarray) -> float:
     """
     The `calculate_slope` function calculates the average slope at a given vertex relative to two other vertices. 
@@ -170,10 +170,10 @@ def compute_3d_barycentric(database_path: str, node_table_name: str, element_tab
     """
     data_conn = ibis.duckdb.connect(database_path)
     try:
-        data_conn.raw_sql('LOAD spatial')
-    except: 
-        data_conn.raw_sql('INSTALL spatial')
-        data_conn.raw_sql('LOAD spatial')
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
     nodes_df = data_conn.table(node_table_name).execute()
     node_coords_dict = nodes_df.set_index('node_id')[['long', 'lat', 'elevation']].to_dict('index')
     triangles_df = data_conn.table(element_table_name).execute()

@@ -4,6 +4,9 @@ import duckdb
 import ibis
 from ibis import _
 import rasterio
+import os
+
+ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
 
 def read_zonal_outputs(database_path: str, zonal_output_path: str) -> None:
     """
@@ -17,7 +20,11 @@ def read_zonal_outputs(database_path: str, zonal_output_path: str) -> None:
     and creates or replaces a table named 'z_w' with the contents of the zonal output file.
     """
     data_conn = ibis.duckdb.connect(database_path)
-    data_conn.raw_sql('LOAD spatial')
+    try:
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
     data_conn.raw_sql(
         f"""
         CREATE OR REPLACE TABLE z_w AS 
@@ -40,7 +47,11 @@ def filter_masked(database_path: str) -> None:
     and ensures that the 'elevation' column is not null or NaN. 
     """
     data_conn = ibis.duckdb.connect(database_path)
-    data_conn.raw_sql('LOAD spatial')
+    try:
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        data_conn.raw_sql(f"INSTALL '{ext_path}'")
+        data_conn.raw_sql(f"LOAD '{ext_path}'")
     data_conn.raw_sql(
         """CREATE OR REPLACE TABLE masked_coverage_fraction AS
         SELECT * FROM coverage_fraction AS cf

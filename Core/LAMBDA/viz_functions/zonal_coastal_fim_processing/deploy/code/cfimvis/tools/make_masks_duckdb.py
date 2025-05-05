@@ -5,6 +5,7 @@ import ibis
 import shutil
 from pathlib import Path
 
+ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
 def make_masks_duckdb(zip_folder_path: str, duckdb_path: str) -> None:
     """
     Extracts shapefiles from zipped archives in a folder and saves them as tables in a DuckDB database.
@@ -32,8 +33,11 @@ def make_masks_duckdb(zip_folder_path: str, duckdb_path: str) -> None:
         
     # Spinup to the DuckDB database
     mask_conn = ibis.duckdb.connect(duckdb_path)
-    mask_conn.raw_sql('INSTALL spatial')
-    mask_conn.raw_sql('LOAD spatial')
+    try:
+        mask_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception:
+        mask_conn.raw_sql(f"INSTALL '{ext_path}'")
+        mask_conn.raw_sql(f"LOAD '{ext_path}'")
 
     # Temporary extraction folder
     extraction_path = os.path.join(zip_folder_path, "temp_extracted")

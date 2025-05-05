@@ -17,6 +17,22 @@ module "schism-fim-processing" {
   db_postprocess_sql_arn = var.db_postprocess_sql_arn
 }
 
+########################################################
+##     Zonal Coastal FIM Processing Step Function     ##
+########################################################
+module "zonal-coastal-fim-processing" {
+  count = var.zonal_coastal_fim_processing_step_function_arn_override == null ? 1 : 0
+  source = "./zonal_coastal_fim_processing"
+
+  viz_lambda_role = var.viz_lambda_role
+  environment = var.environment
+  schism_fim_job_definition_arn = var.schism_fim_job_definition_arn
+  schism_fim_job_queue_arn = var.schism_fim_job_queue_arn
+  schism_fim_datasets_bucket = var.schism_fim_datasets_bucket
+  optimize_rasters_arn = var.optimize_rasters_arn
+  db_postprocess_sql_arn = var.db_postprocess_sql_arn
+}
+
 ###############################################
 ##     HAND FIM Processing Step Function     ##
 ###############################################
@@ -48,6 +64,7 @@ module "viz-processing-pipeline" {
   update_egis_data_arn = var.update_egis_data_arn
   publish_service_arn = var.publish_service_arn
   schism_fim_processing_step_function_arn = var.schism_fim_processing_step_function_arn_override != null ? var.schism_fim_processing_step_function_arn_override : module.schism-fim-processing[0].step_function.arn
+  zonal_coastal_fim_processing_step_function_arn = var.zonal_coastal_fim_processing_step_function_arn_override != null ? var.zonal_coastal_fim_processing_step_function_arn_override : module.zonal-coastal-fim-processing[0].step_function.arn
   hand_fim_processing_step_function_arn = var.hand_fim_processing_step_function_arn_override != null ? var.hand_fim_processing_step_function_arn_override : module.hand-fim-processing[0].step_function.arn
   viz_processing_pipeline_log_group = var.viz_processing_pipeline_log_group
 }
