@@ -132,7 +132,7 @@
       },
       "metadataURI" : "CIMPATH=Metadata/215e8255da3e00bfd3d0a22ffe2c75dc.xml",
       "useSourceMetadata" : true,
-      "description" : "hydrovis.reference.nws_flood_categorical_hand_fim_sites",
+      "description" : "hydrovis.reference.stage_based_catfim",
       "layerElevation" : {
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{019DF820-BDA4-4783-84EF-8DA6118FA665}"

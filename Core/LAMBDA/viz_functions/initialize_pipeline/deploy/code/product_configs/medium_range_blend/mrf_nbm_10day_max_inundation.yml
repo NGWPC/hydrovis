@@ -83,7 +83,15 @@ product_summaries:
       - publish.mrf_nbm_max_inundation_10day_counties
       - publish.mrf_nbm_max_inundation_10day_hucs
       - publish.mrf_nbm_10day_max_inundation_critical_infrastructure
-
+  - sql_file:  3day_bridge_threats
+    target_table:
+      - publish.mrf_nbm_max_inundation_3day_bridge_threats
+  - sql_file:  5day_bridge_threats
+    target_table:
+      - publish.mrf_nbm_max_inundation_5day_bridge_threats
+  - sql_file:  10day_bridge_threats
+    target_table:
+      - publish.mrf_nbm_max_inundation_10day_bridge_threats
 services:
   - mrf_nbm_10day_max_inundation_extent_noaa
   - mrf_nbm_5day_max_inundation_extent
