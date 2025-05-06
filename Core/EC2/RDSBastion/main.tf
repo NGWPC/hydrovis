@@ -198,7 +198,7 @@ locals {
 resource "aws_instance" "rds-bastion" {
   ami                    = data.aws_ami.linux.id
   iam_instance_profile   = var.ec2_instance_profile_name
-  instance_type          = "m5.large"
+  instance_type          = "m5.2xlarge"
   availability_zone      = var.ec2_instance_availability_zone
   vpc_security_group_ids = var.ec2_instance_sgs
   subnet_id              = var.ec2_instance_subnet
@@ -355,7 +355,7 @@ data "cloudinit_config" "startup" {
       db_password = local.dbs["viz"]["db_password"]
 
       s3_bucket   = data.aws_s3_objects.viz_db_dumps.bucket
-      s3_key_list = data.aws_s3_objects.viz_db_dumps.keys
+      s3_key_list = var.environment == "ti" ? [] : data.aws_s3_objects.viz_db_dumps.keys
     })
   }
 
@@ -437,7 +437,7 @@ data "cloudinit_config" "startup" {
       db_password = local.dbs["egis"]["db_password"]
 
       s3_bucket   = data.aws_s3_objects.egis_db_dumps.bucket
-      s3_key_list = data.aws_s3_objects.egis_db_dumps.keys
+      s3_key_list = var.environment == "ti" ? [] : data.aws_s3_objects.egis_db_dumps.keys
     })
   }
 

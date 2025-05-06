@@ -19,7 +19,10 @@ db_max_flows:
 
 postprocess_sql:
   - sql_file: ana_high_flow_magnitude
-    target_table: publish.ana_high_flow_magnitude
+    target_table: 
+      -publish.ana_high_flow_magnitude
+      -publish.ana_high_flow_magnitude_new7
+      -publish.ana_high_flow_magnitude_new7_1_6
 
 services:
   - ana_high_flow_magnitude

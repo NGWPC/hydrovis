@@ -2237,13 +2237,6 @@
             "type" : "CIMFieldDescription",
             "alias" : "HydroID",
             "fieldName" : "hydroid",
-            "numberFormat" : {
-              "type" : "CIMNumericFormat",
-              "alignmentOption" : "esriAlignRight",
-              "alignmentWidth" : 0,
-              "roundingOption" : "esriRoundNumberOfDecimals",
-              "roundingValue" : 0
-            },
             "visible" : true,
             "searchMode" : "Exact"
           },

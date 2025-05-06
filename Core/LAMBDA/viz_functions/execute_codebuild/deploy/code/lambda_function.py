@@ -23,6 +23,6 @@ def lambda_handler(event, context):
         total_wait += 10
 
     if total_wait >= max_wait:
-        raise Exception("Failed to build {project_name} within configured max_wait of {max_wait} seconds")
+        raise Exception(f"Failed to build {project_name} within configured max_wait of {max_wait} seconds")
 
     print(f"Successfully built {project_name}")

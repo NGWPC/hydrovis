@@ -37,6 +37,8 @@ product_summaries:
       - publish.srf_18hr_max_inundation_counties
       - publish.srf_18hr_max_inundation_hucs
       - publish.srf_18hr_max_inundation_critical_infrastructure
-
+  - sql_file:  bridge_threats
+    target_table:
+      - publish.srf_18hr_max_inundation_bridge_threats
 services:
   - srf_18hr_max_inundation_extent_noaa

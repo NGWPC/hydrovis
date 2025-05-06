@@ -1,7 +1,7 @@
-FROM mambaorg/micromamba AS micromamba
+FROM ghcr.io/mamba-org/micromamba:latest AS micromamba
 
 # Create conda environment for hydrovis
-RUN --mount=type=bind,source=conda-linux-64.lock,target=/tmp/conda.lock \
+RUN --mount=type=bind,source=conda-linux-aarch64.lock,target=/tmp/conda.lock \
     micromamba install -y --file /tmp/conda.lock && \
     micromamba clean -afy
 
@@ -31,11 +31,7 @@ COPY --from=micromamba --chown=root /usr/local/bin/_*.sh /usr/local/bin/
 WORKDIR /home/code
 
 # Copy function code
-COPY lambda_function.py \
-    logger.py \
-    OptimizeRasters.py \
-    TIF_to_MRF.xml \
-    ./
+COPY code/ ./
 
 SHELL ["/usr/local/bin/_dockerfile_shell.sh"]
 

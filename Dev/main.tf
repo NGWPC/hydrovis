@@ -31,8 +31,13 @@ locals {
   }
 }
 
+module "validate-config" {
+  source = "./custom_deploy/validate_config"
+  env = local.env
+}
+
 provider "aws" {
-  profile = local.env.profile
+  profile = module.validate-config.env.profile
   region = local.region
   shared_credentials_files = ["/cloud/aws/credentials"]
   default_tags {
@@ -45,7 +50,7 @@ provider "aws" {
 provider "aws" {
   alias                    = "sns"
   region                   = local.region
-  profile                  = local.env.profile
+  profile                  = module.validate-config.env.profile
   shared_credentials_files = ["/cloud/aws/credentials"]
 
   default_tags {
@@ -58,7 +63,7 @@ provider "aws" {
 provider "aws" {
   alias = "no_tags"
   region = local.region
-  profile = local.env.profile
+  profile = module.validate-config.env.profile
   shared_credentials_files = ["/cloud/aws/credentials"]
 }
 
@@ -118,24 +123,6 @@ data "aws_secretsmanager_secret_version" "all" {
   secret_id = each.value
 }
 
-data "aws_batch_job_definition" "all" {
-  for_each = tomap({ 
-    for arn in data.aws_resourcegroupstaggingapi_resources.all.resource_tag_mapping_list[*].resource_arn: 
-      split(":", split("hv-vpp-ti-", arn)[1])[0] => arn
-        if startswith(arn, "arn:aws:batch:") && strcontains(arn, ":job-definition/hv-vpp-ti-")
-  })
-  arn = each.value
-}
-
-data "aws_batch_job_queue" "all" {
-  for_each = tomap({ 
-    for arn in data.aws_resourcegroupstaggingapi_resources.all.resource_tag_mapping_list[*].resource_arn: 
-      split("hv-vpp-ti-", arn)[1] => split(":job-queue/", arn)[1] 
-        if startswith(arn, "arn:aws:batch:") && strcontains(arn, ":job-queue/hv-vpp-ti-")
-  })
-  name = each.value
-}
-
 module "custom-deploy" {
   source = "./custom_deploy"
   providers = {
@@ -150,17 +137,16 @@ module "custom-deploy" {
   s3_buckets = data.aws_s3_bucket.all
   cloudwatch_log_groups = data.aws_cloudwatch_log_group.all
   secrets = data.aws_secretsmanager_secret_version.all
-  batch_job_definitions = data.aws_batch_job_definition.all
-  batch_job_queues = data.aws_batch_job_queue.all
   region = local.region
-  deploy_resources = local.env.deploy_resources
-  personal_tag = local.env.personal_tag
-  profile = local.env.profile
-  account_id = local.env.account_id
+  deploy_resources = module.validate-config.env.deploy_resources
+  personal_tag = module.validate-config.env.personal_tag
+  profile = module.validate-config.env.profile
+  account_id = module.validate-config.env.account_id
   default_tags = local.tags
   nwm_dataflow_version = local.nwm_dataflow_version
-  hand_version = local.env.hand_version
-  fim_version = local.env.fim_version
+  hand_version = module.validate-config.env.hand_version
+  fim_version = module.validate-config.env.fim_version
+  egis_portal_password = module.validate-config.env.egis_portal_password
 }
 #########################################################
 #########################################################

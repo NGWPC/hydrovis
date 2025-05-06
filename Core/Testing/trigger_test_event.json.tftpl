@@ -1,8 +1,15 @@
 {
   "QueryLanguage": "JSONata",
   "Comment": "A description of my state machine",
-  "StartAt": "Remove Stale Run",
+  "StartAt": "Store \"event\" variable",
   "States": {
+    "Store \"event\" variable": {
+      "Type": "Pass",
+      "Next": "Remove Stale Run",
+      "Assign": {
+        "event": "{% $states.input.event %}"
+      }
+    },
     "Remove Stale Run": {
       "Type": "Map",
       "ItemProcessor": {
@@ -35,14 +42,22 @@
       "Output": {
         "success": true
       },
-      "Next": "Move Apocalyptic Files"
+      "Next": "List Event Files"
     },
-    "Move Apocalyptic Files": {
+    "List Event Files": {
+      "Type": "Task",
+      "Arguments": {
+        "Bucket": "${deployment_bucket}",
+        "Prefix": "{% 'test_events/' & $event %}"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:s3:listObjectsV2",
+      "Next": "Copy Event Files to Live Feed"
+    },
+    "Copy Event Files to Live Feed": {
       "Type": "Map",
       "ItemProcessor": {
         "ProcessorConfig": {
-          "Mode": "DISTRIBUTED",
-          "ExecutionType": "EXPRESS"
+          "Mode": "INLINE"
         },
         "StartAt": "CopyObject",
         "States": {
@@ -51,27 +66,15 @@
             "Arguments": {
               "Bucket": "${deployment_bucket}",
               "CopySource": "{% $join(['${deployment_bucket}', $states.input.Key], '/') %}",
-              "Key": "{% $replace($states.input.Key, 'test_nwm_outputs', $now('common/data/model/com/nwm/prod/nwm.[Y0001][M01][D01]')) %}"
+              "Key": "{% $replace($states.input.Key, $join(['test_events/', $event], ''), $now('common/data/model/com/nwm/prod/nwm.[Y0001][M01][D01]')) %}"
             },
             "Resource": "arn:aws:states:::aws-sdk:s3:copyObject",
-            "End": true,
-            "Output": {}
+            "End": true
           }
         }
       },
-      "ItemReader": {
-        "Resource": "arn:aws:states:::s3:listObjectsV2",
-        "Arguments": {
-          "Bucket": "${deployment_bucket}",
-          "Prefix": "test_nwm_outputs/"
-        },
-        "ReaderConfig": {}
-      },
-      "Label": "MoveApocalypticFiles",
-      "End": true,
-      "Output": {
-        "success": true
-      }
+      "Items": "{% $states.input.Contents %}",
+      "End": true
     }
   }
 }

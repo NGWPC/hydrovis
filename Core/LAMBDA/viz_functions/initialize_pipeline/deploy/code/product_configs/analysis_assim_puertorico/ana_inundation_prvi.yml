@@ -32,7 +32,9 @@ product_summaries:
     target_table:
       - publish.ana_inundation_building_footprints_prvi
       - publish.ana_inundation_counties_prvi
-
+  - sql_file:  bridge_threats
+    target_table:
+      - publish.ana_inundation_prvi_bridge_threats
 services:
   - ana_inundation_extent_prvi_noaa
   - ana_inundation_extent_prvi
