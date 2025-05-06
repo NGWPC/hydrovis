@@ -21,9 +21,9 @@ data "archive_file" "deploy_zip" {
   }
 
   dynamic "source" {
-    for_each = fileset("${path.module}../", "**/*.sql")
+    for_each = fileset("${path.module}/../", "**/*.sql")
     content {
-      content  = sensitive(file("${path.module}/${source.key}"))
+      content  = sensitive(file("${path.module}/../${source.key}"))
       filename = "sql_files/${basename(source.key)}"
     }
   }
