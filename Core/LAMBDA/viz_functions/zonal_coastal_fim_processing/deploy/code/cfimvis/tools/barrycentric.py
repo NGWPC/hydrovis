@@ -171,9 +171,8 @@ def compute_3d_barycentric(database_path: str, node_table_name: str, element_tab
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     nodes_df = data_conn.table(node_table_name).execute()
     node_coords_dict = nodes_df.set_index('node_id')[['long', 'lat', 'elevation']].to_dict('index')
     triangles_df = data_conn.table(element_table_name).execute()

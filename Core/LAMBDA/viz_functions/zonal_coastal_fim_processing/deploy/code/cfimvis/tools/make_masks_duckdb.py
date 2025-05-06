@@ -35,9 +35,8 @@ def make_masks_duckdb(zip_folder_path: str, duckdb_path: str) -> None:
     mask_conn = ibis.duckdb.connect(duckdb_path)
     try:
         mask_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        mask_conn.raw_sql(f"INSTALL '{ext_path}'")
-        mask_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
 
     # Temporary extraction folder
     extraction_path = os.path.join(zip_folder_path, "temp_extracted")

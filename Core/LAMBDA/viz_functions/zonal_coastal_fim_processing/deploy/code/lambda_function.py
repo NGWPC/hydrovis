@@ -207,25 +207,6 @@ def lambda_handler(event, context):
          raise FileNotFoundError(f"Input DuckDB path does not exist: {efs_duckdb_path}")
     print("Input DuckDB path validation successful.")
 
-    # --- Ensure DuckDB spatial extension is loaded ---
-    try:
-        print(f"Ensuring DuckDB spatial extension is loaded for: {efs_duckdb_path}...")
-        with duckdb.connect(efs_duckdb_path, read_only=False) as con:
-            try:
-                con.execute(f"LOAD '{ext_path}';")
-                print(f"DuckDB spatial extension loaded from: {ext_path}")
-            except Exception as load_err:
-                print(f"DuckDB spatial extension failed to be loaded from: {ext_path}. Attempting to install...")
-                try:
-                    con.execute("SET home_directory='/tmp';")
-                    con.execute(f"INSTALL '{ext_path}';")
-                    con.execute(f"LOAD '{ext_path}';")
-                    print(f"DuckDB spatial extension installed and loaded from: {ext_path}")
-                except Exception as install_err:
-                    print(f"Failed to install/load DuckDB spatial extension from: {ext_path}. Error: {install_err}")
-    except Exception as e:
-        print(f"WARNING: Error during DuckDB spatial extension check: {e}")
-
     # --- Parse Target DB Info ---
     try:
         target_schema, target_table = target_db_table_full.split('.')

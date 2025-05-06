@@ -55,9 +55,8 @@ def interpolate(database_path: str) -> None:
     for conn in [data_conn]:
         try:
             conn.raw_sql(f"LOAD '{ext_path}'")
-        except:
-            conn.raw_sql(f"INSTALL '{ext_path}'")
-            conn.raw_sql(f"LOAD '{ext_path}'")
+        except Exception as e:
+            raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
 
     # out_data_conn.raw_sql(f"ATTACH '{database_path}' AS compute_db;")
 
@@ -156,9 +155,8 @@ def make_wse_depth_rasters(database_path: str, generate_wse: bool=False, generat
     for conn in [data_conn]:
         try:
             conn.raw_sql(f"LOAD '{ext_path}'")
-        except:
-            conn.raw_sql(f"INSTALL '{ext_path}'")
-            conn.raw_sql(f"LOAD '{ext_path}'")
+        except Exception as e:
+            raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     flags = [generate_depth, generate_wse]
     # flag_count = sum(flags)
     for i, flag in enumerate(flags):

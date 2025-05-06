@@ -34,9 +34,8 @@ def add_point_geo(database_path: str, table_name: str, lat_col_nam: str, long_co
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     data_conn.raw_sql(
         f""" 
         ALTER TABLE {table_name} ADD COLUMN geometry GEOMETRY; 
@@ -66,9 +65,8 @@ def write_to_database(database_path: str, table_name: str, df: pd.DataFrame([])=
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
 
     # Handle DataFrames
     if df is not None and not isinstance(df, gpd.GeoDataFrame):
@@ -122,9 +120,8 @@ def get_none_overlapping(dem_path: str, database_path: str, point_gdf_table: str
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
 
     # Vectorize raster
     with rasterio.open(dem_path) as src:
@@ -215,9 +212,8 @@ def extract_elevation(dem_path: str, database_path: str) -> gpd.GeoDataFrame([])
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     point_gdf = data_conn.table("nodes").execute()
     point_gdf = point_gdf.set_crs('EPSG:4326')
 
@@ -281,9 +277,8 @@ def mask_nodes(database_path: str, table_name:str, masked_table_name:str) -> Non
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     data_conn.raw_sql(
         f"""
         CREATE OR REPLACE TABLE '{masked_table_name}' AS
@@ -317,9 +312,8 @@ def add_elevation(database_path: str, table_name:str, elevation_table:str) -> No
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     data_conn.raw_sql(
         f"""
         CREATE OR REPLACE TABLE '{table_name}' AS
