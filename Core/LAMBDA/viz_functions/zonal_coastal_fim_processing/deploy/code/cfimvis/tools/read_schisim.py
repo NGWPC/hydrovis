@@ -212,9 +212,8 @@ def crosswalk_nodes(database_path: str) -> None:
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     data_conn.raw_sql(
         """
         CREATE OR REPLACE TABLE nodes AS
@@ -267,9 +266,8 @@ def mask_elements(database_path: str) -> None:
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     data_conn.raw_sql(
         f"""
         CREATE OR REPLACE TABLE masked_elements AS

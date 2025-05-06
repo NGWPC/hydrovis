@@ -22,9 +22,8 @@ def read_zonal_outputs(database_path: str, zonal_output_path: str) -> None:
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     data_conn.raw_sql(
         f"""
         CREATE OR REPLACE TABLE z_w AS 
@@ -49,9 +48,8 @@ def filter_masked(database_path: str) -> None:
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     data_conn.raw_sql(
         """CREATE OR REPLACE TABLE masked_coverage_fraction AS
         SELECT * FROM coverage_fraction AS cf

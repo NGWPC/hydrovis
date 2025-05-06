@@ -47,9 +47,8 @@ def estimate(database_path: str, table_name: str) -> None:
     # out_data_conn = ibis.duckdb.connect(output_database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")  
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     # out_data_conn.raw_sql(f"ATTACH '{database_path}' AS compute_db;")
     # Compute WSE based on barycentric weights for all elements
     data_conn.raw_sql(

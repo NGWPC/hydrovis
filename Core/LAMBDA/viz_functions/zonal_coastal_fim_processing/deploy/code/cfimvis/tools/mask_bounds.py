@@ -58,9 +58,8 @@ def create_general_mask(database_path: str,
     mask_conn = ibis.duckdb.connect(database_path)
     try:
         mask_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        mask_conn.raw_sql(f"INSTALL '{ext_path}'")
-        mask_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     sch_b = mask_conn.table(schisim_table_name).execute()
     sch_b = sch_b.set_crs("EPSG:4326")
     state = mask_conn.table(state_table_name).execute()
@@ -178,9 +177,8 @@ def filter_valid_elements(data_database_path: str, table_name:str) -> None:
     data_conn = ibis.duckdb.connect(data_database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
   
     # Also filter for null values in elevation (points outside domain)
     data_conn.raw_sql(
@@ -214,9 +212,8 @@ def mask_raster(mask_database_path: str, raster_path: str) -> None:
     mask_conn = ibis.duckdb.connect(mask_database_path)
     try:
         mask_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        mask_conn.raw_sql(f"INSTALL '{ext_path}'")
-        mask_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
     mask_gdf = mask_conn.table('step_5').execute()
     mask_gdf = mask_gdf.set_crs("EPSG:4326")
 
@@ -255,9 +252,8 @@ def filter_nodes(database_path: str) -> None:
     data_conn = ibis.duckdb.connect(database_path)
     try:
         data_conn.raw_sql(f"LOAD '{ext_path}'")
-    except Exception:
-        data_conn.raw_sql(f"INSTALL '{ext_path}'")
-        data_conn.raw_sql(f"LOAD '{ext_path}'")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load DuckDB spatial extension from {ext_path}: {e}")
 
     data_conn.raw_sql(
         """
