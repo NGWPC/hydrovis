@@ -22,10 +22,10 @@ variable "zonal_coastal_fim_processing_arn" {
 #######################
 
 resource "aws_sfn_state_machine" "step_function" {
-    name     = "hv-vpp-${var.environment}-process-schism-fim"
+    name     = "hv-vpp-${var.environment}-zonal-coastal-fim-processing"
     role_arn = var.viz_lambda_role
 
-    definition = sensitive(templatefile("${path.module}/schism_fim_processing.json.tftpl", {
+    definition = sensitive(templatefile("${path.module}/zonal_coastal_fim_processing.json.tftpl", {
         db_postprocess_sql_arn           = var.db_postprocess_sql_arn
         zonal_coastal_fim_processing_arn = var.zonal_coastal_fim_processing_arn
     }))

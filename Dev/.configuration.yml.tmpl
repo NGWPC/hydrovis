@@ -16,7 +16,8 @@ egis_portal_password: ""  # Only set if you are developing the publish-service l
 deploy_resources:  # Set to true for any resources you want to deploy your own copy of
   viz-pipeline: true  # step function
   hand-fim-processing: false  # this provides both the lambda and the step-function
-  schism-fim-processing: false # this provides both the lambda and the step-function
+  schism-fim-processing: false  # this provides both the lambda and the step-function
+  zonal-coastal-fim-processing: true  # this provides both the lambda and the step-function
   initialize-pipeline: false  # lambdas from here down
   db-postprocess-sql: false
   optimize-rasters: false

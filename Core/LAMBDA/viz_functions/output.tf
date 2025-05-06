@@ -58,6 +58,10 @@ output "update_egis_data" {
   value = length(module.update-egis-data) == 1 ? module.update-egis-data[0].lambda : null
 }
 
+output "zonal_coastal_fim_processing" {
+  value = length(module.zonal-coastal-fim-processing) == 1 ? module.zonal-coastal-fim-processing[0].lambda : null
+}
+
 output "egis_healthcheck_alarm" {
   value = aws_cloudwatch_metric_alarm.egis_healthcheck_errors
 }

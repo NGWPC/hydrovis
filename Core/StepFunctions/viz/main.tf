@@ -26,11 +26,8 @@ module "zonal-coastal-fim-processing" {
 
   viz_lambda_role = var.viz_lambda_role
   environment = var.environment
-  schism_fim_job_definition_arn = var.schism_fim_job_definition_arn
-  schism_fim_job_queue_arn = var.schism_fim_job_queue_arn
-  schism_fim_datasets_bucket = var.schism_fim_datasets_bucket
-  optimize_rasters_arn = var.optimize_rasters_arn
   db_postprocess_sql_arn = var.db_postprocess_sql_arn
+  zonal_coastal_fim_processing_arn = var.zonal_coastal_fim_processing_arn
 }
 
 ###############################################
@@ -50,6 +47,7 @@ module "hand-fim-processing" {
 ##     Viz Pipeline Step Function     ##
 ########################################
 module "viz-processing-pipeline" {
+  count = var.create_viz_processing_pipeline ? 1 : 0
   source = "./processing_pipeline"
 
   viz_lambda_role = var.viz_lambda_role
@@ -81,7 +79,7 @@ resource "aws_cloudwatch_event_rule" "viz_pipeline_step_function_failure" {
   "detail-type": ["Step Functions Execution Status Change"],
   "detail": {
     "status": ["FAILED", "TIMED_OUT"],
-    "stateMachineArn": ["${module.viz-processing-pipeline.step_function.arn}"]
+    "stateMachineArn": ["${module.viz-processing-pipeline[0].step_function.arn}"]
     }
   }
   EOF
@@ -96,5 +94,5 @@ resource "aws_cloudwatch_event_target" "viz_pipeline_step_function_failure_sns" 
 }
 
 output "viz_pipeline_step_function" {
-  value = module.viz-processing-pipeline.step_function
+  value = var.create_viz_processing_pipeline ? module.viz-processing-pipeline[0].step_function : null
 }

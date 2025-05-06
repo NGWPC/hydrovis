@@ -26,6 +26,10 @@ variable "schism_fim_datasets_bucket" {
   type        = string
 }
 
+variable "zonal_coastal_fim_processing_arn" {
+  type = string
+}
+
 variable "optimize_rasters_arn" {
   type        = string
 }
@@ -80,4 +84,9 @@ variable "zonal_coastal_fim_processing_step_function_arn_override" {
 variable "hand_fim_processing_step_function_arn_override" {
     type = string
     default = null
+}
+
+variable "create_viz_processing_pipeline" {
+  type = bool
+  default = true
 }
