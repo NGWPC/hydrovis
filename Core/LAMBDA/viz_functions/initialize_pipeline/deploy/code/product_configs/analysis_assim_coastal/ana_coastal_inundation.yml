@@ -1,4 +1,4 @@
-product: ana_zonal_coastal_inundation_depth
+product: ana_coastal_inundation
 configuration: analysis_assim_coastal
 product_type: "fim"
 published_format: "tif"
@@ -23,4 +23,4 @@ postprocess_sql:
     target_table: publish.ana_zonal_coastal_inundation_atlgulf
 
 services:
-  - ana_zonal_coastal_inundation_extent_dev_noaa
+  - ana_zonal_coastal_inundation_extent_noaa

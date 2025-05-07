@@ -60,9 +60,12 @@ def vectorize_binary_extent(raster_path):
             raster_crs = src.crs
             print(f"  Raster details: CRS={raster_crs}, Shape={image_depth.shape}, NoData={src.nodata}")
             print("  Creating mask for depth > 0...")
-            masked = (image_depth > 0).astype("uint8")
+            masked = np.ma.masked_less_equal(image_depth, 0, copy=False)
+            mask = ~masked.mask
+            data = mask.view('uint8')
+            del masked, image_depth
             print("  Polygonizing masked raster...")
-            raster_shapes = map(operator.itemgetter(0), features.shapes(masked.data, mask=~masked.mask, transform=transform))
+            raster_shapes = map(operator.itemgetter(0), features.shapes(data, mask=mask, transform=transform))
             gdf_polygons = gpd.GeoDataFrame(crs=raster_crs, geometry=list(map(shape, raster_shapes)))
             print(f"  Created GeoDataFrame with {len(gdf_polygons)} polygons.")
     except Exception as e:
