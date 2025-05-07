@@ -26,7 +26,6 @@ RUN mkdir -p /opt/duckdb_extensions && \
       -o /opt/duckdb_extensions/spatial.duckdb_extension.gz && \
     gzip -d /opt/duckdb_extensions/spatial.duckdb_extension.gz
 
-
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023-minimal AS alinux
 
 ENV MAMBA_ROOT_PREFIX="/opt/conda"

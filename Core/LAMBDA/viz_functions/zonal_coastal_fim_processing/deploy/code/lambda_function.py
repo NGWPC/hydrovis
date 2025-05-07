@@ -5,15 +5,15 @@ import geopandas as gpd
 import rasterio
 from rasterio import features
 import sqlalchemy
-import shutil
 import numpy as np
 import time
-import duckdb 
 from datetime import datetime
 import traceback
 from urllib.parse import urlparse 
 import fsspec
 import tempfile
+import operator
+from shapely.geometry import shape
 
 # Initialize S3 filesystem
 try:
@@ -44,9 +44,6 @@ except Exception as e_db:
     traceback.print_exc()
     raise e_db
 
-# Define DuckDB spatial extension path globally
-ext_path = os.environ.get("DUCKDB_SPATIAL_EXTENSION_PATH")
-
 # --- Helper Functions ---
 def vectorize_binary_extent(raster_path):
     """
@@ -55,64 +52,23 @@ def vectorize_binary_extent(raster_path):
     """
     print(f"Vectorizing binary extent from: {raster_path}")
     gdf_polygons = None
-    image_depth = None
-    binary_image = None
-    feature_list = []
-
     try:
         with rasterio.open(raster_path) as src:
-            print("  Reading depth raster...")
-            image_depth = src.read(1, masked=False).astype(rasterio.float32)
+            print("  Reading depth raster as masked array...")
+            image_depth = src.read(1, out_dtype='float32', masked=True)
             transform = src.transform
             raster_crs = src.crs
-            nodata_value = src.nodata
-            print(f"  Raster details: CRS={raster_crs}, Shape={image_depth.shape}, NoData={nodata_value}")
-
-            # Create binary image (1=wet, 0=dry/nodata), using uint8 for efficiency
-            print("  Binarizing depth raster...")
-            binary_image = np.zeros(image_depth.shape, dtype=np.uint8)
-            wet_mask = image_depth > 0
-            if nodata_value is not None:
-                nodata_mask = np.isnan(image_depth) if np.isnan(nodata_value) else (image_depth == nodata_value)
-                final_wet_mask = wet_mask & ~nodata_mask
-            else:
-                final_wet_mask = wet_mask
-            binary_image[final_wet_mask] = 1
-            print("  Binarization complete.")
-
-            # Release memory of large arrays no longer needed
-            print("  Releasing intermediate raster memory...")
-            del image_depth, wet_mask, final_wet_mask
-            if 'nodata_mask' in locals(): del nodata_mask
-
-            # Extract vector polygons from the binary raster where value is 1
-            polygonization_mask = (binary_image == 1)
-            print("  Extracting shapes (polygonizing)...")
-            shapes_generator = features.shapes(binary_image, mask=polygonization_mask, transform=transform)
-            # Convert generator to list for GeoDataFrame creation
-            feature_list = [{'properties': {}, 'geometry': s} for s, v in shapes_generator]
-            print(f"  Generated {len(feature_list)} raw features.")
-
-            if not feature_list:
-                print("  No inundated features found.")
-                gdf_polygons = gpd.GeoDataFrame({}, geometry=[], crs=raster_crs)
-            else:
-                print("  Creating GeoDataFrame...")
-                gdf_polygons = gpd.GeoDataFrame.from_features(feature_list, crs=raster_crs)
-                print(f"  Created GeoDataFrame with {len(gdf_polygons)} polygons.")
-                # Release list memory after GDF is created
-                print("  Releasing feature list memory...")
-                del feature_list
-
+            print(f"  Raster details: CRS={raster_crs}, Shape={image_depth.shape}, NoData={src.nodata}")
+            print("  Creating mask for depth > 0...")
+            masked = (image_depth > 0).astype("uint8")
+            print("  Polygonizing masked raster...")
+            raster_shapes = map(operator.itemgetter(0), features.shapes(masked.data, mask=~masked.mask, transform=transform))
+            gdf_polygons = gpd.GeoDataFrame(crs=raster_crs, geometry=list(map(shape, raster_shapes)))
+            print(f"  Created GeoDataFrame with {len(gdf_polygons)} polygons.")
     except Exception as e:
         print(f"ERROR during binary extent vectorization: {e}")
         traceback.print_exc()
         raise
-    finally:
-        # cleanup
-        if 'binary_image' in locals() and binary_image is not None: del binary_image
-        if 'feature_list' in locals(): del feature_list
-
     return gdf_polygons
 
 def write_gdf_to_postgis(gdf, postgis_engine, target_schema, target_table, target_srid=3857):
@@ -260,11 +216,10 @@ def lambda_handler(event, context):
             # === Stage 3: Run zonal_fim.py ===
             stage_start_time = time.time()
             print(f"\n--- Stage 3: Running zonal_fim.py ---")
-            python_executable = "/opt/conda/bin/python"
             zonal_fim_script = "/home/code/zonal_fim.py"
 
             cmd = [
-                python_executable, zonal_fim_script,
+                "python", zonal_fim_script,
                 "--execute", "True", "--preprocess", "False", "--generate_mask", "False",
                 "--generate_wse", "True", "--generate_depth", "True", "--zarr_format", "False",
                 "--dissolve", "False",
