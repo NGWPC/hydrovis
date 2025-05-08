@@ -4,7 +4,6 @@ import json
 import geopandas as gpd
 import rasterio
 from rasterio import features
-import sqlalchemy
 import numpy as np
 import time
 from datetime import datetime
@@ -15,6 +14,8 @@ import tempfile
 import operator
 from shapely.geometry import shape
 
+from viz_classes import database
+
 # Initialize S3 filesystem
 try:
     FS_S3 = fsspec.filesystem('s3')
@@ -23,26 +24,6 @@ except Exception as e_fs:
     print(f"FATAL ERROR: Failed to initialize global fsspec S3 filesystem during INIT: {e_fs}")
     traceback.print_exc()
     raise e_fs
-
-# Read DB credentials globally
-try:
-    VIZ_DB_DATABASE = os.environ["VIZ_DB_DATABASE"]
-    VIZ_DB_HOST = os.environ["VIZ_DB_HOST"]
-    VIZ_DB_USERNAME = os.environ["VIZ_DB_USERNAME"]
-    VIZ_DB_PASSWORD = os.environ["VIZ_DB_PASSWORD"]
-except KeyError as e_env:
-    print(f"FATAL ERROR: Missing database environment variable during INIT: {e_env}")
-    raise ValueError(f"Missing database environment variable: {e_env}") from e_env
-
-# Initialize SQLAlchemy Engine globally
-try:
-    DB_CONN_STR = f"postgresql://{VIZ_DB_USERNAME}:{VIZ_DB_PASSWORD}@{VIZ_DB_HOST}/{VIZ_DB_DATABASE}"
-    POSTGIS_ENGINE = sqlalchemy.create_engine(DB_CONN_STR, echo=False, pool_pre_ping=True) 
-    print(f"Initialized global SQLAlchemy engine for {VIZ_DB_HOST}.")
-except Exception as e_db:
-    print(f"FATAL ERROR: Failed to initialize global SQLAlchemy engine during INIT: {e_db}")
-    traceback.print_exc()
-    raise e_db
 
 # --- Helper Functions ---
 def vectorize_binary_extent(raster_path):
@@ -251,12 +232,13 @@ def lambda_handler(event, context):
             if not os.path.exists(depth_local_output):
                 print(f"WARNING: Depth raster not found ({depth_local_output}). Skipping Stage 4.")
             else:
+                process_db = database(db_type="viz")
                 extent_gdf = vectorize_binary_extent(depth_local_output)
                 if extent_gdf is not None and not extent_gdf.empty:
                     db_write_start = time.time()
                     written = write_gdf_to_postgis(
                         gdf=extent_gdf,
-                        postgis_engine=POSTGIS_ENGINE,
+                        postgis_engine=process_db.engine,
                         target_schema=target_schema,
                         target_table=target_table,
                         target_srid=3857
