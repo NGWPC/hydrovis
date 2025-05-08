@@ -14,6 +14,10 @@ output "fim_data_prep" {
   value = length(module.fim-data-prep) == 1 ? module.fim-data-prep[0].lambda : null
 }
 
+output "ripple_fim_data_prep" {
+  value = length(module.ripple-fim-data-prep) == 1 ? module.ripple-fim-data-prep[0].lambda : null
+}
+
 output "hand_fim_processing" {
   value = length(module.hand-fim-processing) == 1 ? module.hand-fim-processing[0].lambda : null
 }
@@ -60,6 +64,10 @@ output "update_egis_data" {
 
 output "zonal_coastal_fim_processing" {
   value = length(module.zonal-coastal-fim-processing) == 1 ? module.zonal-coastal-fim-processing[0].lambda : null
+}
+
+output "ripple_fim_processing" {
+  value = length(module.ripple-fim-processing) == 1 ? module.ripple-fim-processing[0].lambda : null
 }
 
 output "egis_healthcheck_alarm" {

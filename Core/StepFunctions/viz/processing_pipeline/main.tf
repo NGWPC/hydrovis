@@ -61,6 +61,10 @@ variable "hand_fim_processing_step_function_arn" {
   type = string
 }
 
+variable "ripple_fim_processing_step_function_arn" {
+  type = string
+}
+
 
 #######################
 ##     RESOURCES     ##
@@ -71,19 +75,20 @@ resource "aws_sfn_state_machine" "step_function" {
     role_arn = var.viz_lambda_role
 
     definition = sensitive(templatefile("${path.module}/viz_processing_pipeline.json.tftpl", {
-      python_preprocessing_3GB_arn = var.python_preprocessing_3GB_arn
-      python_preprocessing_10GB_arn = var.python_preprocessing_10GB_arn
-      db_postprocess_sql_arn = var.db_postprocess_sql_arn
-      db_ingest_arn = var.db_ingest_arn
-      raster_processing_arn = var.raster_processing_arn
-      optimize_rasters_arn = var.optimize_rasters_arn
-      fim_data_prep_arn = var.fim_data_prep_arn
-      update_egis_data_arn = var.update_egis_data_arn
-      publish_service_arn = var.publish_service_arn
-      schism_fim_processing_step_function_arn = var.schism_fim_processing_step_function_arn
-      zonal_coastal_fim_processing_step_function_arn = var.zonal_coastal_fim_processing_step_function_arn
-      hand_fim_processing_step_function_arn = var.hand_fim_processing_step_function_arn
-      viz_processing_pipeline_log_group = var.viz_processing_pipeline_log_group
+        python_preprocessing_3GB_arn = var.python_preprocessing_3GB_arn
+        python_preprocessing_10GB_arn = var.python_preprocessing_10GB_arn
+        db_postprocess_sql_arn = var.db_postprocess_sql_arn
+        db_ingest_arn = var.db_ingest_arn
+        raster_processing_arn = var.raster_processing_arn
+        optimize_rasters_arn = var.optimize_rasters_arn
+        fim_data_prep_arn = var.fim_data_prep_arn
+        update_egis_data_arn = var.update_egis_data_arn
+        publish_service_arn = var.publish_service_arn
+        schism_fim_processing_step_function_arn = var.schism_fim_processing_step_function_arn
+        zonal_coastal_fim_processing_step_function_arn = var.zonal_coastal_fim_processing_step_function_arn
+        hand_fim_processing_step_function_arn = var.hand_fim_processing_step_function_arn
+        ripple_fim_processing_step_function_arn = var.ripple_fim_processing_step_function_arn
+        viz_processing_pipeline_log_group = var.viz_processing_pipeline_log_group
     }))
 }
 

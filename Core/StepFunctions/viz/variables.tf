@@ -30,6 +30,10 @@ variable "zonal_coastal_fim_processing_arn" {
   type = string
 }
 
+variable "ripple_fim_bucket" {
+  type        = string
+}
+
 variable "optimize_rasters_arn" {
   type        = string
 }
@@ -39,6 +43,14 @@ variable "update_egis_data_arn" {
 }
 
 variable "fim_data_prep_arn" {
+  type        = string
+}
+
+variable "ripple_fim_data_prep_arn" {
+  type        = string
+}
+
+variable "ripple_fim_processing_arn" {
   type        = string
 }
 
@@ -84,6 +96,11 @@ variable "zonal_coastal_fim_processing_step_function_arn_override" {
 variable "hand_fim_processing_step_function_arn_override" {
     type = string
     default = null
+}
+
+variable "ripple_fim_processing_step_function_arn_override" {
+  type = string
+  default = null
 }
 
 variable "create_viz_processing_pipeline" {

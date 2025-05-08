@@ -877,9 +877,14 @@
                       "Next": "Process Coastal (SCHISM) FIM"
                     },
                     {
-                      "Next": "Process Zonal Coastal FIM",
                       "Variable": "$.fim_config.fim_type",
+                      "Next": "Process Zonal Coastal FIM",
                       "StringEquals": "zonal_coastal"
+                    },
+                    {
+                      "Variable": "$.fim_config.fim_type",
+                      "StringMatches": "ripple",
+                      "Next": "Process Ripple FIM"
                     }
                   ],
                   "Default": "FIM Cache - Prepare FIM Config Tables"
@@ -1212,6 +1217,23 @@
                   ],
                   "ResultPath": null,
                   "End": true
+                },
+                "Process Ripple FIM": {
+                  "Type": "Task",
+                  "Resource": "arn:aws:states:::states:startExecution.sync:2",
+                  "Parameters": {
+                    "StateMachineArn": "${ripple_fim_processing_step_function_arn}",
+                    "Name.$": "States.Format('{}_{}T{}Z_{}', $.fim_config.name, States.ArrayGetItem(States.StringSplit($.reference_time, ' '), 0), States.ArrayGetItem(States.StringSplit(States.ArrayGetItem(States.StringSplit($.reference_time, ' '), 1), ':'), 0), States.ArrayGetItem(States.StringSplit(States.UUID(), '-'), 0))",
+                    "Input": {
+                      "fim_config.$": "$.fim_config",
+                      "reference_time.$": "$.reference_time",
+                      "job_type.$": "$.job_type",
+                      "product.$": "$.product",
+                      "sql_rename_dict.$": "$.sql_rename_dict"
+                    }
+                  },
+                  "Next": "Postprocess SQL - FIM Config",
+                  "ResultPath": null
                 },
                 "Process Zonal Coastal FIM": {
                   "Type": "Task",

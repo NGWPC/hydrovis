@@ -33,6 +33,11 @@ variable "deployment_bucket" {
   type        = string
 }
 
+variable "ripple_bucket" {
+  description = "S3 bucket where ripple data lives."
+  type        = string
+}
+
 variable "python_preprocessing_bucket" {
   description = "S3 bucket where the outputted max flows will live."
   type        = string

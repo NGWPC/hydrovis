@@ -110,10 +110,9 @@ def lambda_handler(event, context):
     elif "summary_data" in step:
         tables = event['args']['postprocess_summary']['target_table']
     elif "fim_config_data" in step:
-        if not event['args']['fim_config'].get('postprocess'):
-            return
-        
-        tables = [event['args']['fim_config']['postprocess']['target_table']]
+        tables = [event['args']['fim_config']['target_table']]
+        if 'postprocess' in event['args']['fim_config']:
+            tables += [event['args']['fim_config']['postprocess']['target_table']]
     else:
         tables = [event['args']['postprocess_sql']['target_table']]
     

@@ -25,7 +25,7 @@
       "enableEyeDomeLighting" : true
     },
     "layers" : [
-      "CIMPATH=map/hydrovis_reference_ras2fim_boundaries.xml"
+      "CIMPATH=map/hydrovis_reference_hecras_boundaries.xml"
     ],
     "defaultViewingMode" : "Map",
     "mapType" : "Map",
@@ -35,7 +35,7 @@
       "xmax" : 361851.149006242573,
       "ymax" : 1212743.85054499982,
       "spatialReference" : {
-        "wkid" : 5070,
+        "wkid" : 102100,
         "latestWkid" : 5070
       }
     },
@@ -119,15 +119,15 @@
   "layerDefinitions" : [
     {
       "type" : "CIMFeatureLayer",
-      "name" : "Ras2Fim Boundaries",
-      "uRI" : "CIMPATH=map/hydrovis_reference_ras2fim_boundaries.xml",
+      "name" : "HECRAS Boundaries",
+      "uRI" : "CIMPATH=map/hydrovis_reference_hecras_boundaries.xml",
       "sourceModifiedTime" : {
         "type" : "TimeInstant",
         "start" : 978307200000
       },
       "metadataURI" : "CIMPATH=Metadata/9842de277e3ea2dea550740cc693dcd9.xml",
       "useSourceMetadata" : true,
-      "description" : "hydrovis.reference.ras2fim_boundaries",
+      "description" : "hydrovis.reference.hecras_boundaries",
       "layerElevation" : {
         "type" : "CIMLayerElevationSurface",
         "mapElevationID" : "{957EC4D5-505B-464A-9F1E-463392E0EF21}"
@@ -148,13 +148,22 @@
         "type" : "CIMFeatureTable",
         "displayField" : "oid",
         "editable" : true,
+        "fieldDescriptions" : [
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "USGS HUC8",
+            "fieldName" : "huc8",
+            "visible" : true,
+            "searchMode" : "Exact"
+          }]
+        ,
         "dataConnection" : {
           "type" : "CIMSqlQueryDataConnection",
           "workspaceConnectionString" : "ENCRYPTED_PASSWORD=00022e682f4d39515236444859524a65546d4d4c3430767a383931565143627237714350716b7a4375472b724c41382b73744756485651413651544472564238693358422a00;SERVER=hv-ti-egis-rds-pg-egdb.c4vzypepnkx3.us-east-1.rds.amazonaws.com;INSTANCE=sde:postgresql:hv-ti-egis-rds-pg-egdb.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DBCLIENT=postgresql;DB_CONNECTION_PROPERTIES=hv-ti-egis-rds-pg-egdb.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DATABASE=hydrovis;USER=hydrovis;AUTHENTICATION_MODE=DBMS",
           "workspaceFactory" : "SDE",
-          "dataset" : "hydrovis.reference.%ras2fim_boundaries",
+          "dataset" : "hydrovis.reference.%hecras_boundaries",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select geometry,oid from hydrovis.reference.ras2fim_boundaries",
+          "sqlQuery" : "select huc8,geom,oid from hydrovis.reference.hecras_boundaries where is_active=True",
           "srid" : "5070",
           "spatialReference" : {
             "wkid" : 5070,
@@ -174,7 +183,18 @@
           },
           "queryFields" : [
             {
-              "name" : "geometry",
+              "name" : "oid",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "oid"
+            },
+            {
+              "name" : "huc8",
+              "type" : "esriFieldTypeString",
+              "alias" : "huc8",
+              "length" : 8
+            },
+            {
+              "name" : "geom",
               "type" : "esriFieldTypeGeometry",
               "alias" : "geometry",
               "geometryDef" : {
@@ -187,12 +207,7 @@
                   "latestWkid" : 5070
                 }
               }
-            },
-            {
-              "name" : "oid",
-              "type" : "esriFieldTypeInteger",
-              "alias" : "oid"
-            }
+            }            
           ],
           "spatialStorageType" : 8
         },

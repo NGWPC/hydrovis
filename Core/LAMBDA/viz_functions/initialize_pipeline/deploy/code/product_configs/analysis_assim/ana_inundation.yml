@@ -26,6 +26,11 @@ fim_configs:
     postprocess:
       sql_file: ana_inundation
       target_table: publish.ana_inundation
+  - name: ana_ripple
+    flows_table: cache.max_flows_ana
+    target_table: publish.ana_inundation_ripple
+    map_file: ripple_model_max_flows_ana.csv
+    fim_type: ripple
   
 product_summaries:
   - sql_file:  public_subset
@@ -46,3 +51,4 @@ product_summaries:
 services:
   - ana_inundation_extent
   - ana_inundation_extent_noaa
+  - ana_inundation_extent_rasfim_noaa

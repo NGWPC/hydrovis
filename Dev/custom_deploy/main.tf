@@ -24,6 +24,7 @@ module "viz-lambda-functions" {
   rnr_data_bucket                = var.s3_buckets["rnr"].bucket
   deployment_bucket              = var.s3_buckets["deployment"].bucket
   viz_cache_bucket               = var.s3_buckets["fim"].bucket
+  ripple_bucket                  = var.s3_buckets["ripple"].bucket
   fim_version                    = var.fim_version
   hand_version                   = var.hand_version
   lambda_role                    = var.viz_role
@@ -87,9 +88,13 @@ module "viz-step-functions" {
   schism_fim_datasets_bucket = var.s3_buckets["deployment"].bucket
   schism_fim_job_definition_arn = lookup(var.deploy_resources, "schism-fim-processing", false) ? module.viz-lambda-functions.schism_fim.job_definition.arn : "arn:aws:batch:${var.region}:${var.account_id}:job-definition/hv-vpp-ti-schism-fim-job-definition:2"
   schism_fim_job_queue_arn = lookup(var.deploy_resources, "schism-fim-processing", false) ? module.viz-lambda-functions.schism_fim.job_queue.arn : "arn:aws:batch:${var.region}:${var.account_id}:job-queue/hv-vpp-ti-schism-fim-job-queue"
+  ripple_fim_bucket = var.s3_buckets["ripple"].bucket
+  ripple_fim_data_prep_arn = lookup(var.deploy_resources, "ripple-fim-data-prep", false) ? module.viz-lambda-functions.ripple_fim_data_prep.arn : var.lambda_functions["viz-ripple-fim-data-prep"].arn
+  ripple_fim_processing_arn = lookup(var.deploy_resources, "ripple-fim-processing", false) ? module.viz-lambda-functions.ripple_fim_processing.arn : var.lambda_functions["viz-ripple-fim-processing"].arn
   hand_fim_processing_arn = lookup(var.deploy_resources, "hand-fim-processing", false) ? module.viz-lambda-functions.hand_fim_processing.arn : var.lambda_functions["viz-hand-fim-processing"].arn
   hand_fim_processing_step_function_arn_override = lookup(var.deploy_resources, "hand-fim-processing", false) ? null : var.step_functions["hand-fim-processing"].arn
   schism_fim_processing_step_function_arn_override = lookup(var.deploy_resources, "schism-fim-processing", false) ? null : var.step_functions["process-schism-fim"].arn
   zonal_coastal_fim_processing_step_function_arn_override = lookup(var.deploy_resources, "zonal-coastal-fim-processing", false) ? null : var.step_functions["zonal-coastal-fim-processing"].arn
+  ripple_fim_processing_step_function_arn_override = lookup(var.deploy_resources, "ripple-fim-processing", false) ? null : var.step_functions["ripple-fim-processing"].arn
   create_viz_processing_pipeline = lookup(var.deploy_resources, "viz-pipeline", false)
 }
