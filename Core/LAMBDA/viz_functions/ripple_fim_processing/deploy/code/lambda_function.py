@@ -1,29 +1,25 @@
-import sys
 import fsspec
-import os
-from urllib.parse import urlparse
-from datetime import datetime
-import re
-import subprocess
 import json
+import os
 import shutil
+import subprocess
+import sys
 import traceback
 
-from loguru import logger
+from datetime import datetime
+from urllib.parse import urlparse
 
-import geopandas
-from sqlalchemy import create_engine
-
-import rasterio
 import geopandas as gpd
-from shapely.geometry import Polygon
+import math
 import numpy as np
 import pandas as pd
-import math
-
-from rasterio import features
-
+import rasterio
 import tracemalloc
+
+from loguru import logger
+from shapely.geometry import Polygon
+from rasterio import features
+from viz_classes import database
 
 #from osgeo import gdal
 #print(gdal.__version__)
@@ -31,21 +27,19 @@ import tracemalloc
 ######################################################################################
 START_TIME = datetime.now()
 
-FS_S3 = fsspec.filesystem('s3')
+ENV_DB_SRID = os.getenv('VIZ_SRID')  # 3857
+ENV_UPLOAD_TRACKING = os.getenv('UPLOAD_TRACKING', 'false').lower() == "true"
+ENV_CONSOLE_DEBUGGING = os.getenv('CONSOLE_DEBUGGING', 'false').lower() == "true"
+ENV_CONSOLE_DEBUGGING_FOR_EVERY_TIF = os.getenv('CONSOLE_DEBUGGING_FOR_EVERY_TIF', 'false').lower() == "true"
+ENV_DB_TRACKING_SCHEMA = os.getenv("DB_TRACKING_SCHEMA", "dev")
+ENV_DB_TRACKING_TABLE_NAME = os.getenv("DB_TRACKING_TABLE_NAME", "ripple_model_tracker")
 
-ENV_DB_HOST = os.getenv('VIZ_DB_HOST')          #rds-viz.hydrovis.internal:5432
-ENV_DB_USERNAME = os.getenv('VIZ_DB_USERNAME')  #
-ENV_DB_PASSWORD = os.getenv('VIZ_DB_PASSWORD')  #
-ENV_DB_DATABASE = os.getenv('VIZ_DB_DATABASE')  #vizprocessing
-ENV_DB_SRID = os.getenv('VIZ_SRID')             #3857
-VIZ_ENGINE = create_engine(f'postgresql://{ENV_DB_USERNAME}:{ENV_DB_PASSWORD}@{ENV_DB_HOST}/{ENV_DB_DATABASE}')
+FS_S3 = fsspec.filesystem('s3')
+VIZ_ENGINE = database(db_type="viz").engine
+TRACKING_INPUT_MODEL_NAME = "LAMBDA_TEST"  #Modified in Step 0
 RIPPLE_LOCAL_PATH = ""        #Modified in get_Ripple_file function
 FLOW_LOCAL_PATH = ""          #Modified in get_Flows_file function
 START_REACHES_LOCAL_PATH = "" #Modified in get_Reaches_file function
-ENV_DB_TRACKING_SCHEMA = "dev"
-ENV_DB_TRACKING_TABLE_NAME = "leonard_ripple_model_tracker"
-TRACKING_INPUT_MODEL_NAME = "LAMBDA_TEST"  #Modified in Step 0
-
 ######################################################################################
 
 class MissingS3FileException(Exception):
@@ -84,6 +78,8 @@ def check_environment_value(variable):
     Returns:
         bool: True if exists, False otherwise
     """
+    if not isinstance(variable, str):
+        return False
     if not variable.strip():
         return False
     if len(variable) == 0:
@@ -152,11 +148,11 @@ def track_changes( skipped_count, process_count, error_location):
     except:
         print("[track_changes] Error uploading summary to tracking table")
 
-def get_Ripple_file(ripple_file, dir_data_inputs,console_debugging ):
+def get_Ripple_file(ripple_file, dir_data_inputs):
     
     ripple_bucket, ripple_key, ripple_fname = parse_s3_url_GET_bucket_key_filename(ripple_file)
 
-    if (console_debugging):
+    if (ENV_CONSOLE_DEBUGGING):
         print("Bucket:", ripple_bucket)
         print("Key:", ripple_key)
         print("Fname:", ripple_fname)
@@ -165,7 +161,7 @@ def get_Ripple_file(ripple_file, dir_data_inputs,console_debugging ):
     RIPPLE_LOCAL_PATH = os.path.join(dir_data_inputs, ripple_fname)
 
     try:
-        FS_S3.download( f"{ripple_file}", RIPPLE_LOCAL_PATH)
+        FS_S3.download(ripple_file, RIPPLE_LOCAL_PATH)
     except Exception as e:
         traceback_str = traceback.format_exc()
         print(f"{traceback_str} ")
@@ -182,10 +178,10 @@ def get_Ripple_file(ripple_file, dir_data_inputs,console_debugging ):
     
     return True
 
-def get_Flows_file(input_flow_file, dir_data_inputs,console_debugging ):
+def get_Flows_file(input_flow_file, dir_data_inputs):
         
     flow_bucket, flow_key, flow_fname = parse_s3_url_GET_bucket_key_filename(input_flow_file)
-    if (console_debugging):
+    if (ENV_CONSOLE_DEBUGGING):
         print("Bucket:", flow_bucket)
         print("Key:", flow_key)
         print("Fname:", flow_fname)
@@ -211,10 +207,10 @@ def get_Flows_file(input_flow_file, dir_data_inputs,console_debugging ):
             
     return True
 
-def get_Reaches_file(start_reaches_file, dir_data_inputs,console_debugging ):
+def get_Reaches_file(start_reaches_file, dir_data_inputs):
 
     start_reaches_bucket, start_reaches_key, start_reaches_fname = parse_s3_url_GET_bucket_key_filename(start_reaches_file)
-    if (console_debugging):
+    if (ENV_CONSOLE_DEBUGGING):
         print("Bucket:", start_reaches_bucket)
         print("Key:", start_reaches_key)
         print("Fname:", start_reaches_fname)
@@ -223,7 +219,7 @@ def get_Reaches_file(start_reaches_file, dir_data_inputs,console_debugging ):
     START_REACHES_LOCAL_PATH = os.path.join(dir_data_inputs, start_reaches_fname)
 
     try:
-        FS_S3.download( f"{start_reaches_file}", START_REACHES_LOCAL_PATH)
+        FS_S3.download(start_reaches_file, START_REACHES_LOCAL_PATH)
     except Exception as e:
         traceback_str = traceback.format_exc()
         print(f"{traceback_str} ")
@@ -240,19 +236,19 @@ def get_Reaches_file(start_reaches_file, dir_data_inputs,console_debugging ):
                     
     return True
 
-def get_all_data_inputs(ripple_file, input_flow_file, start_reaches_file, dir_data_inputs,console_debugging):
+def get_all_data_inputs(ripple_file, input_flow_file, start_reaches_file, dir_data_inputs):
 
     try:
 
-        download_result = get_Ripple_file(ripple_file, dir_data_inputs, console_debugging )
+        download_result = get_Ripple_file(ripple_file, dir_data_inputs)
         if download_result == False:
             return False
         
-        download_result = get_Flows_file(input_flow_file, dir_data_inputs, console_debugging )
+        download_result = get_Flows_file(input_flow_file, dir_data_inputs)
         if download_result == False:
             return False
         
-        download_result = get_Reaches_file(start_reaches_file, dir_data_inputs, console_debugging )
+        download_result = get_Reaches_file(start_reaches_file, dir_data_inputs)
         if download_result == False:
             return False
         
@@ -267,7 +263,6 @@ def process_control_file_upload_to_database(s3_library_folder,         #Base S3 
                                             output_control_local_path, #Control file created from Step 3
                                             env_db_schema,             #Schema of database destination
                                             env_db_tablename,          #Table Name of database destination
-                                            console_debugging,         #For debugging purposes
                                             upload_tracking ):         #Upload number of tifs processed to table
     try:
         #Chunk size for uploading rows to database. ATM this is a guess, need some large datasets to evaluate MB usage
@@ -280,7 +275,7 @@ def process_control_file_upload_to_database(s3_library_folder,         #Base S3 
             s3_path = s3_path.replace("/vsis3/", "s3://")
 
         library_bucket, library_key, library_fname = parse_s3_url_GET_bucket_key_filename(s3_path)
-        if (console_debugging):
+        if (ENV_CONSOLE_DEBUGGING_FOR_EVERY_TIF):
             print("Bucket:", library_bucket)
             print("Key:", library_key)
             print("Fname:", library_fname) #Will be empty
@@ -296,7 +291,7 @@ def process_control_file_upload_to_database(s3_library_folder,         #Base S3 
             next(c_file) #Skip Header
             for line in c_file:
                 
-                if (console_debugging):
+                if (ENV_CONSOLE_DEBUGGING_FOR_EVERY_TIF):
                     logger.debug(f"[Step:4-0-01] {line}")
                 
                 split_line = line.split(',')
@@ -328,7 +323,7 @@ def process_control_file_upload_to_database(s3_library_folder,         #Base S3 
 
                 #Continue if path exists
                 #Not all the paths exists!!!!
-                if (console_debugging):
+                if (ENV_CONSOLE_DEBUGGING_FOR_EVERY_TIF):
                     logger.debug(f"[Step:4-0-02] {key_file_check}")
                     logger.debug(f"[Step:4-0-03] {key_file_check}")
                     logger.debug(f"[Step:4-0-04] {full_s3_raster_path}")
@@ -345,7 +340,7 @@ def process_control_file_upload_to_database(s3_library_folder,         #Base S3 
                             logger.debug(f"[Step:4-1-00] WARNING use default SRID value of {srid_as_int}")
 
                         df_prj = master_gdf.to_crs(epsg=srid_as_int)
-                        if (console_debugging):
+                        if (ENV_CONSOLE_DEBUGGING_FOR_EVERY_TIF):
                             print("Reprojected CRS:", df_prj.crs)
 
                         df_prj.set_crs(f'epsg:{ENV_DB_SRID}', inplace=True, allow_override=True)
@@ -355,9 +350,9 @@ def process_control_file_upload_to_database(s3_library_folder,         #Base S3 
                         #if upload_chunksize < 512:
                         #    upload_chunksize = 512
 
-                        if (console_debugging):
+                        if (ENV_CONSOLE_DEBUGGING_FOR_EVERY_TIF):
                             logger.debug(f"[Step:4-2-00] Using a chunk size of {upload_chunksize}")
-                            logger.debug(f"[Step:4-2-01] Using {ENV_DB_HOST} {ENV_DB_DATABASE} {env_db_schema} {env_db_tablename}")
+                            logger.debug(f"[Step:4-2-01] Using {env_db_schema} {env_db_tablename}")
 
                         try:
                             #NOTE the use of append, as the step function will create the destination table before executing this image
@@ -376,7 +371,7 @@ def process_control_file_upload_to_database(s3_library_folder,         #Base S3 
                         error_cnt += 1
                 except:
                     #We know files are missing
-                    if (console_debugging):
+                    if (ENV_CONSOLE_DEBUGGING_FOR_EVERY_TIF):
                         print("[Step:4-4-00] File does not exist:", full_s3_raster_path)
                         traceback_str = traceback.format_exc()
                         logger.debug(f"{traceback_str}")
@@ -401,13 +396,7 @@ def process_control_file_upload_to_database(s3_library_folder,         #Base S3 
 def lambda_handler(event, context):
 
     try:
-        #Change these three boolean variables to reflect the environment.
-        console_debugging = True #False #A way to show step messages within testing
-
-        console_debugging_for_every_tif = False #Separated from console debugging due to large number of tifs
-        upload_tracking = True #Only use this for testing purposes
-
-        if upload_tracking == True: #FOR TESTING ONLY
+        if ENV_UPLOAD_TRACKING == True: #FOR TESTING ONLY
             tracemalloc.start()  
 
         ########################################################################################
@@ -415,7 +404,7 @@ def lambda_handler(event, context):
         print(START_TIME.strftime("%Y-%m-%d %H:%M:%S")) 
         ########################################################################################
 
-        if console_debugging == True:
+        if ENV_CONSOLE_DEBUGGING == True:
             print(event)
 
         ########################################################################################
@@ -426,13 +415,8 @@ def lambda_handler(event, context):
         start_reaches_file = ''
         library_folder = ''
 
-        ####################################
-        env_db_schema = "dev" #Using as my dummy for lambda tests
-        env_db_tablename = "leonard_ripple_max_flows_ana" #Using as my dummy for lambda tests
-        ####################################
-
         try:
-            if console_debugging == True:
+            if ENV_CONSOLE_DEBUGGING == True:
                 print("[Step:1 Prepare variables]")
 
             #Values coming by csv row in a Map function
@@ -457,21 +441,13 @@ def lambda_handler(event, context):
             TRACKING_INPUT_MODEL_NAME = input_model_name
 
         except Exception as e:
-            if upload_tracking:
+            if ENV_UPLOAD_TRACKING:
                 track_changes(-1,-1,7777)
 
             traceback_str = traceback.format_exc()
             raise Exception(f"[Step:0-0-00] Missing Arguments. {event} --- {traceback_str}")
         
         #Check Batch variables needed
-        if not check_environment_value(ENV_DB_HOST):
-            raise Exception(f"[Step:0-0-01] Invalid database host.")
-        if not check_environment_value(ENV_DB_USERNAME):
-            raise Exception(f"[Step:0-0-02] Invalid database username.")
-        if not check_environment_value(ENV_DB_PASSWORD):
-            raise Exception(f"[Step:0-0-03] Invalid database password.")
-        if not check_environment_value(ENV_DB_DATABASE):
-            raise Exception(f"[Step:0-0-04] Invalid database name.")
         if not check_environment_value(ENV_DB_SRID):
             raise Exception(f"[Step:0-0-05] Invalid SRID value.")
         if not check_environment_value(env_db_schema):
@@ -509,10 +485,6 @@ def lambda_handler(event, context):
         logger.debug(f"[Step:0-0-10] {start_reaches_file}") #Required for Flows2Fim
         logger.debug(f"[Step:0-0-11] {library_folder}")     #Required for Flows2Fim
 
-        logger.debug(f"[Step:0-0-12] {ENV_DB_HOST}")
-        logger.debug(f"[Step:0-0-13] {ENV_DB_USERNAME}")
-        logger.debug(f"[Step:0-0-14] {ENV_DB_PASSWORD}")
-        logger.debug(f"[Step:0-0-15] {ENV_DB_DATABASE}")
         logger.debug(f"[Step:0-0-16] {env_db_schema}")
         logger.debug(f"[Step:0-0-17] {env_db_tablename}")
         logger.debug(f"[Step:0-0-18] {ENV_DB_SRID}")
@@ -521,7 +493,7 @@ def lambda_handler(event, context):
         ## Step 1: Set up logging
         ## Create and configure logger
         ########################################################################################
-        if (console_debugging):
+        if (ENV_CONSOLE_DEBUGGING):
             print("[Step:1] Setting up logging")
 
         #Default log file name
@@ -533,13 +505,13 @@ def lambda_handler(event, context):
         ########################################################################################
         ## Step 2: Get Ripple Input files
         ########################################################################################
-        if (console_debugging):
+        if (ENV_CONSOLE_DEBUGGING):
             print("[Step:2] Download Ripple Files")        
             logger.debug(f"[Step:2-1-01] Download Ripple file {ripple_file}")
             logger.debug(f"[Step:2-1-02] Download Flows file {input_flow_file}")
             logger.debug(f"[Step:2-1-03] Download start reaches file {start_reaches_file}")
 
-        download_data_result = get_all_data_inputs(ripple_file, input_flow_file, start_reaches_file, dir_data_inputs, console_debugging)
+        download_data_result = get_all_data_inputs(ripple_file, input_flow_file, start_reaches_file, dir_data_inputs)
         if download_data_result == False:
              raise Exception(f"[Step:2] Failed to download Ripple data.")
 
@@ -552,7 +524,7 @@ def lambda_handler(event, context):
         ########################################################################################
         ## Step 3: Execute Flows2Fim.exe Control file
         ########################################################################################
-        if (console_debugging):
+        if (ENV_CONSOLE_DEBUGGING):
             print("[Step:3] Create Control file")
             logger.debug(f"[Step:3-0-00] {RIPPLE_LOCAL_PATH}")
             logger.debug(f"[Step:3-0-01] {FLOW_LOCAL_PATH}")
@@ -575,13 +547,13 @@ def lambda_handler(event, context):
             if file_size < 30:
                 logger.debug(f"[Step:3-0-2] Control file size created too small. '{file_size}' -> '{output_control_local_path}'")
 
-                if upload_tracking:
+                if ENV_UPLOAD_TRACKING:
                     track_changes( -1,-1,304)
 
                 raise Exception(f"[Step:3] Flows2Fim.exe finished but created an EMPTY control file.")
 
         else:
-            if upload_tracking:
+            if ENV_UPLOAD_TRACKING:
                 track_changes( -1,-1, 301)
 
             raise Exception(f"[Step:3] ERROR during the process of creating the Control file")
@@ -589,15 +561,13 @@ def lambda_handler(event, context):
         ########################################################################################
         ## Step 4: Create FIM Vector results from Control File directly to database
         ########################################################################################
-        if (console_debugging):
+        if (ENV_CONSOLE_DEBUGGING):
             print("[Step:4] Uploading vector to database")
 
         process_control_file_upload_to_database(library_folder,                  #Base S3 folder of HUC with FIM tifs
                                                 output_control_local_path,       #Control file created from Step 3
                                                 env_db_schema,                   #Schema of database destination
-                                                env_db_tablename,                #Table Name of database destination
-                                                console_debugging_for_every_tif, #For debugging purposes
-                                                upload_tracking )                #Upload number of tifs processed to tracking table 
+                                                env_db_tablename)                #Table Name of database destination
 
         ########################################################################################
         ## Wrap up
@@ -609,7 +579,7 @@ def lambda_handler(event, context):
         print("Time difference:", time_difference)
         print("[Ripple Main end]")
 
-        if upload_tracking:
+        if ENV_UPLOAD_TRACKING:
             tracemalloc.stop()
 
         result = {
