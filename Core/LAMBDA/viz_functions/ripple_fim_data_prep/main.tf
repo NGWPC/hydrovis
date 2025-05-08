@@ -9,10 +9,20 @@ terraform {
 
 data "archive_file" "deploy_zip" {
   type = "zip"
+  output_path = "${path.module}/temp/${var.environment}_${var.region}_deploy.zip"
 
-  source_file = "${path.module}/viz_ripple_fim_data_prep/lambda_function.py"
+  dynamic "source" {
+    for_each = fileset("${path.module}/deploy", "**")
+    content {
+      content  = sensitive(file("${path.module}/deploy/${source.key}"))
+      filename = source.key
+    }
+  }
 
-  output_path = "${path.module}/temp/viz_ripple_fim_data_prep_${var.environment}_${var.region}.zip"
+  source {
+    content  = sensitive(file("${path.module}/../../layers/viz_lambda_shared_funcs/python/viz_classes.py"))
+    filename = "viz_classes.py"
+  }
 }
 
 resource "aws_s3_object" "deploy_zip_upload" {
