@@ -14,7 +14,7 @@ import tempfile
 import operator
 from shapely.geometry import shape
 
-from viz_classes import database
+from viz_database import VizDatabase
 
 # Initialize S3 filesystem
 try:
@@ -232,7 +232,7 @@ def lambda_handler(event, context):
             if not os.path.exists(depth_local_output):
                 print(f"WARNING: Depth raster not found ({depth_local_output}). Skipping Stage 4.")
             else:
-                process_db = database(db_type="viz")
+                process_db = VizDatabase(db_type="viz")
                 extent_gdf = vectorize_binary_extent(depth_local_output)
                 if extent_gdf is not None and not extent_gdf.empty:
                     db_write_start = time.time()

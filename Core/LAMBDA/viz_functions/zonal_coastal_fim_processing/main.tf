@@ -27,8 +27,8 @@ data "archive_file" "deploy_zip" {
   }
 
   source {
-    content  = sensitive(file("${path.module}/../../layers/viz_lambda_shared_funcs/python/viz_classes.py"))
-    filename = "code/viz_classes.py"
+    content  = sensitive(file("${path.module}/../../layers/viz_lambda_shared_funcs/python/viz_database.py"))
+    filename = "code/viz_database.py"
   }
 
   source {
