@@ -25,6 +25,8 @@ except Exception as e_fs:
     traceback.print_exc()
     raise e_fs
 
+VIZ_DB_CONN = VizDatabase(db_type="viz").connection
+
 # --- Helper Functions ---
 def vectorize_binary_extent(raster_path):
     """
@@ -55,7 +57,7 @@ def vectorize_binary_extent(raster_path):
         raise
     return gdf_polygons
 
-def write_gdf_to_postgis(gdf, postgis_engine, target_schema, target_table, target_srid=3857):
+def write_gdf_to_postgis(gdf, postgis_connection, target_schema, target_table, target_srid=3857):
     """
     Writes a GeoDataFrame to a PostGIS table using the provided SQLAlchemy engine.
     """
@@ -80,7 +82,7 @@ def write_gdf_to_postgis(gdf, postgis_engine, target_schema, target_table, targe
         # Use the passed-in engine for the connection
         gdf_proj.to_postgis(
             name=target_table,
-            con=postgis_engine, 
+            con=postgis_connection, 
             schema=target_schema,
             if_exists='append',
             index=False,
@@ -232,13 +234,12 @@ def lambda_handler(event, context):
             if not os.path.exists(depth_local_output):
                 print(f"WARNING: Depth raster not found ({depth_local_output}). Skipping Stage 4.")
             else:
-                process_db = VizDatabase(db_type="viz")
                 extent_gdf = vectorize_binary_extent(depth_local_output)
                 if extent_gdf is not None and not extent_gdf.empty:
                     db_write_start = time.time()
                     written = write_gdf_to_postgis(
                         gdf=extent_gdf,
-                        postgis_engine=process_db.engine,
+                        postgis_connection=VIZ_DB_CONN,
                         target_schema=target_schema,
                         target_table=target_table,
                         target_srid=3857
