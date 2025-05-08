@@ -1,0 +1,20 @@
+service: mrf_nbm_5day_max_inundation_extent_rasfim_noaa
+summary: Medium-Range NBM 5 Day Maximum Inundation Extent Forecast with RASFIM
+description: '
+<br><br>
+*****THIS IS AN EXPERIMENTAL SERVICE*****
+<br><br>
+Test service to examine and provide feedback to GID on accuracy of RAS mapping for certain areas using the NWM MRF NBM 5 Day Forecast.  This mapping service is for testing and analysis only at this time, and after approval will be integrated into the primary flood mapping service.  
+<br><br>
+This service is updated every 6 hours.
+<br><br>
+This service is for internal use only for NOAA employees and requires access to view.  Please do not share externally without prior approval from OWP as this service is experimental and undergoing regular developmental changes. 
+<br><br>
+For feedback or questions please reach out to GID directly via slack at national-water-center-gid or national-water-center-fim pages or reach out directly to derek.giardino@noaa.gov
+'
+tags: national water model, nwm, mrf, medium, range, conus, fim, inundation, extent, rasfim, ripple
+credits: National Water Model, NOAA/NWS National Water Center
+egis_server: server
+egis_folder: nwm
+feature_service: true
+public_service: false

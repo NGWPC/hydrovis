@@ -182,6 +182,9 @@ module "s3" {
       module.iam-roles.role_data_ingest.arn,
       module.iam-roles.role_rnr.arn
     ]
+    "ripple" = [
+      module.iam-roles.role_viz_pipeline.arn,
+    ]
     # "ised" = [
     #   # module.iam-users.user_ISEDServiceAccount.arn
     # ]
@@ -638,6 +641,7 @@ module "viz-lambda-functions" {
   python_preprocessing_bucket    = module.s3.buckets["fim"].bucket
   rnr_data_bucket                = module.s3.buckets["rnr"].bucket
   deployment_bucket              = module.s3.buckets["deployment"].bucket
+  ripple_bucket                  = module.s3.buckets["ripple"].bucket
   viz_cache_bucket               = module.s3.buckets["fim"].bucket
   fim_version                    = local.env.fim_version
   hand_version                   = local.env.hand_version
@@ -707,8 +711,11 @@ module "viz-step-functions" {
   schism_fim_job_definition_arn     = module.viz-lambda-functions.schism_fim.job_definition.arn
   schism_fim_job_queue_arn          = module.viz-lambda-functions.schism_fim.job_queue.arn
   schism_fim_datasets_bucket        = module.s3.buckets["deployment"].bucket
+  ripple_fim_bucket                 = module.s3.buckets["ripple"].bucket
   email_sns_topics                  = module.sns.email_sns_topics
   viz_processing_pipeline_log_group = module.cloudwatch.viz_processing_pipeline_log_group.name
+  ripple_fim_data_prep_arn          = module.viz-lambda-functions.ripple_fim_data_prep.arn
+  ripple_fim_processing_arn         = module.viz-lambda-functions.ripple_fim_processing.arn
 }
 
 module "rnr-step-functions" {

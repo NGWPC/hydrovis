@@ -23,6 +23,7 @@ locals {
   initialize_pipeline = "initialize-pipeline"
   db_postprocess_sql = "db-postprocess-sql"
   fim_data_prep = "fim-data-prep"
+  ripple_fim_data_prep = "ripple-fim-data-prep"
   publish_service = "publish-service"
   test_wrds_db = "test-wrds-db"
   update_egis_data = "update-egis-data"
@@ -187,6 +188,45 @@ module "execute-codebuild" {
   viz_role = var.lambda_role
   db_lambda_security_groups = var.db_lambda_security_groups
   db_lambda_subnets = var.db_lambda_subnets
+}
+
+
+#############################
+##   RIPPLE FIM DATA PREP  ##
+#############################
+module "ripple-fim-data-prep" {
+  count = lookup(var.creation_map, "all", false) || lookup(var.creation_map, local.ripple_fim_data_prep, false) ? 1 : 0
+  source = "./ripple_fim_data_prep"
+  providers = {
+    aws     = aws
+    aws.no_tags = aws.no_tags
+  }
+  environment = var.environment
+  region = var.region
+  deployment_bucket = var.deployment_bucket
+  ripple_bucket = var.ripple_bucket
+  lambda_role = var.lambda_role
+  db_lambda_security_groups = var.db_lambda_security_groups
+  db_lambda_subnets = var.db_lambda_subnets
+  viz_db_host = var.viz_db_host
+  viz_db_name = var.viz_db_name
+  viz_db_user_secret_string = var.viz_db_user_secret_string
+  layers = [
+    var.psycopg2_sqlalchemy_layer,
+    var.viz_lambda_shared_funcs_layer,
+    var.pandas_layer
+  ]
+}
+
+resource "aws_lambda_function_event_invoke_config" "ripple_fim_data_prep_destinations" {
+  count     = contains(local.prodlike_environments, var.environment) ? 1 : 0
+  function_name          = module.ripple-fim-data-prep[0].lambda.function_name
+  maximum_retry_attempts = 0
+  destination_config {
+    on_failure {
+      destination = var.email_sns_topics["viz_lambda_errors"].arn
+    }
+  }
 }
 
 #############################
@@ -563,5 +603,31 @@ module "update-egis-data" {
   viz_cache_bucket = var.viz_cache_bucket
   default_tags = var.default_tags
   profile = var.profile
+  execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
+}
+
+#######################
+# ripple fim processing
+#######################
+module "ripple-fim-processing" {
+  count = lookup(var.creation_map, "all", false) || lookup(var.creation_map, local.update_egis_data, false) ? 1 : 0
+  source = "./ripple_fim_processing"
+  providers = {
+    aws = aws
+    aws.no_tags = aws.no_tags
+  }
+  environment = var.environment
+  account_id = var.account_id
+  region = var.region
+  ecr_repository_image_tag = local.ecr_repository_image_tag
+  lambda_role = var.lambda_role
+  security_groups = var.db_lambda_security_groups
+  subnets = var.db_lambda_subnets
+  deployment_bucket = var.deployment_bucket
+  viz_db_name = var.viz_db_name
+  viz_db_host = var.viz_db_host
+  viz_db_user_secret_string = var.viz_db_user_secret_string
+  viz_authoritative_bucket = var.viz_authoritative_bucket
+  default_tags = var.default_tags
   execute_codebuild_function_name = var.execute_codebuild_function_name_override != null ? var.execute_codebuild_function_name_override : module.execute-codebuild[0].lambda.function_name
 }
