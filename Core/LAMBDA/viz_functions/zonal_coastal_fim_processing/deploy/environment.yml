@@ -1,0 +1,30 @@
+name: coastal_fim_vis
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  - awslambdaric
+  - pip 
+  - fsspec
+  - geopandas
+  - rasterio
+  - rioxarray
+  - rasterstats
+  - shapely
+  - sqlalchemy
+  - psycopg2-binary
+  - geoalchemy2
+  - duckdb 
+  - ibis-framework
+  - numpy
+  - pandas
+  - xarray
+  - scipy
+  - netcdf4
+  - zarr
+  - numcodecs
+  - s3fs
+  - tqdm
+  - affine
+  - rio-tiler

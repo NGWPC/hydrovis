@@ -26,6 +26,10 @@ variable "schism_fim_datasets_bucket" {
   type        = string
 }
 
+variable "zonal_coastal_fim_processing_arn" {
+  type = string
+}
+
 variable "ripple_fim_bucket" {
   type        = string
 }
@@ -84,6 +88,11 @@ variable "schism_fim_processing_step_function_arn_override" {
     default = null
 }
 
+variable "zonal_coastal_fim_processing_step_function_arn_override" {
+  type = string
+  default = null
+}
+
 variable "hand_fim_processing_step_function_arn_override" {
     type = string
     default = null
@@ -92,4 +101,9 @@ variable "hand_fim_processing_step_function_arn_override" {
 variable "ripple_fim_processing_step_function_arn_override" {
   type = string
   default = null
+}
+
+variable "create_viz_processing_pipeline" {
+  type = bool
+  default = true
 }
