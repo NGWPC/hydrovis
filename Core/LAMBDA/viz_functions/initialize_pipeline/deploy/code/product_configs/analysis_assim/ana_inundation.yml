@@ -45,7 +45,9 @@ product_summaries:
       - publish.ana_inundation_counties
       - publish.ana_inundation_hucs
       - publish.ana_inundation_critical_infrastructure
-
+  - sql_file:  bridge_threats
+    target_table:
+      - publish.ana_inundation_bridge_threats
 services:
   - ana_inundation_extent
   - ana_inundation_extent_noaa

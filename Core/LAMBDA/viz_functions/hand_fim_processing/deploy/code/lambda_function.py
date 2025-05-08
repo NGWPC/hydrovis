@@ -13,12 +13,21 @@ import fsspec
 
 from viz_classes import database
 
+
 FIM_VERSION = os.environ['FIM_VERSION']
 HAND_BUCKET = os.environ['HAND_BUCKET']
 HAND_VERSION = os.environ['HAND_VERSION']
 HAND_PREFIX = os.environ.get('HAND_PREFIX_OVERRIDE')  # Optional override for development
+
+# When you override, you have to path it from the s3 bucket all the to the huc folder
+# fim/v5_2/hand_4_6_1_4_rob_test  or rob_test/myhand_folders/
 if not HAND_PREFIX:
     HAND_PREFIX = f"fim/v{FIM_VERSION.replace('.', '_')}/hand_{HAND_VERSION.replace('.', '_')}/hand_datasets"
+else:
+    if HAND_PREFIX.endswith("/"):  # Drops the last char it if has a forward slash
+        HAND_PREFIX = HAND_PREFIX[:-1]
+    if HAND_PREFIX.startswith("/"):  # Drops the first char it if has a forward slash
+        HAND_PREFIX = HAND_PREFIX[1:]
 
 CACHE_FIM_RESOLUTION_FT = 0.25
 CACHE_FIM_RESOLUTION_ROUNDING = 'up'
@@ -59,6 +68,13 @@ def lambda_handler(event, context):
     branch = huc8_branch.split("-")[1]
     s3_path_piece = ''
     
+    # -------------------
+    # validation
+    # TODO: Add some validation of key variables to ensure they have values and are the 
+    # types, acceptable values or whatever
+    
+    # -------------------
+
     # Get db table names and setup db connection
     db_schema = db_fim_table.split(".")[0]
     db_table = db_fim_table.split(".")[-1]

@@ -32,7 +32,9 @@ product_summaries:
     target_table:
       - publish.srf_48hr_max_inundation_building_footprints_prvi
       - publish.srf_48hr_max_inundation_counties_prvi
-
+  - sql_file:  bridge_threats
+    target_table:
+      - publish.srf_48hr_max_inundation_prvi_bridge_threats
 services:
   - srf_48hr_max_inundation_extent_prvi
   - srf_48hr_max_inundation_extent_prvi_noaa

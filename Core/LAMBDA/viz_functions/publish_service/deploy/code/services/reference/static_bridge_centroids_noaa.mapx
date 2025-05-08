@@ -30,10 +30,10 @@
     "defaultViewingMode" : "Map",
     "mapType" : "Map",
     "defaultExtent" : {
-      "xmin" : -12198122.3572027851,
-      "ymin" : 4993135.89520195778,
-      "xmax" : -11811559.2811111044,
-      "ymax" : 5372459.9623780651,
+      "xmin" : -10905480.9662389234,
+      "ymin" : 3825441.85547239752,
+      "xmax" : -10802272.0931545123,
+      "ymax" : 3879967.29785661539,
       "spatialReference" : {
         "wkid" : 102100,
         "latestWkid" : 3857
@@ -119,7 +119,7 @@
   "layerDefinitions" : [
     {
       "type" : "CIMFeatureLayer",
-      "name" : "hydrovis.reference.bridge_centroids",
+      "name" : "Open Street Map Bridge Points",
       "uRI" : "CIMPATH=map/hydrovis_reference_bridge_centroids.xml",
       "sourceModifiedTime" : {
         "type" : "TimeInstant"
@@ -132,7 +132,6 @@
       },
       "expanded" : true,
       "layerType" : "Operational",
-      "minScale" : 1000000,
       "showLegends" : true,
       "visibility" : true,
       "displayCacheType" : "Permanent",
@@ -153,6 +152,20 @@
             "type" : "CIMFieldDescription",
             "alias" : "OpenStreetMap ID",
             "fieldName" : "osmid",
+            "numberFormat" : {
+              "type" : "CIMNumericFormat",
+              "alignmentOption" : "esriAlignRight",
+              "alignmentWidth" : 0,
+              "roundingOption" : "esriRoundNumberOfDecimals",
+              "roundingValue" : 0
+            },
+            "visible" : true,
+            "searchMode" : "Exact"
+          },
+          {
+            "type" : "CIMFieldDescription",
+            "alias" : "Name",
+            "fieldName" : "name",
             "visible" : true,
             "searchMode" : "Exact"
           },
@@ -165,22 +178,8 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Name",
-            "fieldName" : "name",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },          
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "geometry",
-            "fieldName" : "geometry",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "FIM Version",
-            "fieldName" : "fim_version",
+            "alias" : "USGS HUC8",
+            "fieldName" : "huc8",
             "visible" : true,
             "searchMode" : "Exact"
           },
@@ -208,26 +207,19 @@
           },
           {
             "type" : "CIMFieldDescription",
-            "alias" : "Hydro ID",
-            "fieldName" : "hydroid",
-            "visible" : true,
-            "searchMode" : "Exact"
-          },
-          {
-            "type" : "CIMFieldDescription",
-            "alias" : "Feature ID",
-            "fieldName" : "feature_id",
-            "visible" : true,
+            "alias" : "geom",
+            "fieldName" : "geom",
+            "visible" : false,
             "searchMode" : "Exact"
           }
-        ],          
+        ],
         "dataConnection" : {
           "type" : "CIMSqlQueryDataConnection",
           "workspaceConnectionString" : "ENCRYPTED_PASSWORD=00022e684d506452516769794f637a52734347484a63326b317462685a6d635342792f696a48336b305664527655336b2f506875596749484368376b4b573579524856742a00;SERVER=hv-ti-egis-rds-pg-egdb.c4vzypepnkx3.us-east-1.rds.amazonaws.com;INSTANCE=sde:postgresql:hv-ti-egis-rds-pg-egdb.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DBCLIENT=postgresql;DB_CONNECTION_PROPERTIES=hv-ti-egis-rds-pg-egdb.c4vzypepnkx3.us-east-1.rds.amazonaws.com;DATABASE=hydrovis;USER=hydrovis;AUTHENTICATION_MODE=DBMS",
           "workspaceFactory" : "SDE",
           "dataset" : "hydrovis.reference.%bridge_centroids",
           "datasetType" : "esriDTFeatureClass",
-          "sqlQuery" : "select oid,osmid,name,feature_id,hydroid,bridge_type,model_version,fim_version,geometry from hydrovis.reference.bridge_centroids",
+          "sqlQuery" : "select oid,osmid,name,bridge_type,huc8,model_version,geom from hydrovis.reference.bridge_centroids",
           "srid" : "3857",
           "spatialReference" : {
             "wkid" : 102100,
@@ -247,55 +239,43 @@
           },
           "queryFields" : [
             {
-              "name" : "oid",
-              "type" : "esriFieldTypeInteger",
-              "alias" : "oid"
-            },
-            {
               "name" : "osmid",
-              "type" : "esriFieldTypeString",
-              "alias" : "osmid",
-              "length" : 60000
+              "type" : "esriFieldTypeDouble",
+              "alias" : "osmid"
             },
             {
               "name" : "name",
               "type" : "esriFieldTypeString",
               "alias" : "name",
-              "length" : 60000
-            },
-            {
-              "name" : "feature_id",
-              "type" : "esriFieldTypeDouble",
-              "alias" : "feature_id"
-            },
-            {
-              "name" : "hydroid",
-              "type" : "esriFieldTypeString",
-              "alias" : "hydroid",
-              "length" : 60000
+              "length" : 200
             },
             {
               "name" : "bridge_type",
               "type" : "esriFieldTypeString",
               "alias" : "bridge_type",
-              "length" : 60000
+              "length" : 200
+            },
+            {
+              "name" : "huc8",
+              "type" : "esriFieldTypeString",
+              "alias" : "huc8",
+              "length" : 8
             },
             {
               "name" : "model_version",
               "type" : "esriFieldTypeString",
               "alias" : "model_version",
-              "length" : 60000
+              "length" : 50
             },
             {
-              "name" : "fim_version",
-              "type" : "esriFieldTypeString",
-              "alias" : "fim_version",
-              "length" : 60000
+              "name" : "oid",
+              "type" : "esriFieldTypeInteger",
+              "alias" : "oid"
             },
             {
-              "name" : "geometry",
+              "name" : "geom",
               "type" : "esriFieldTypeGeometry",
-              "alias" : "geometry",
+              "alias" : "geom",
               "geometryDef" : {
                 "avgNumPoints" : 0,
                 "geometryType" : "esriGeometryPoint",
@@ -606,9 +586,9 @@
                           "color" : {
                             "type" : "CIMRGBColor",
                             "values" : [
-                              204.49000000000001,
-                              240.46000000000001,
-                              252.44999999999999,
+                              0,
+                              112,
+                              255,
                               100
                             ]
                           }

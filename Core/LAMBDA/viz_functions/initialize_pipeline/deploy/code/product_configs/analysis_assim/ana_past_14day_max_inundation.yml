@@ -71,6 +71,11 @@ product_summaries:
       - publish.ana_past_14day_max_inundation_counties
       - publish.ana_past_14day_max_inundation_hucs
       - publish.ana_past_14day_max_inundation_critical_infrastructure
-
+  - sql_file:  7_day_bridge_threats
+    target_table:
+      - publish.ana_past_7day_max_inundation_bridge_threats
+  - sql_file:  14_day_bridge_threats
+    target_table:
+      - publish.ana_past_14day_max_inundation_bridge_threats
 services:
   - ana_past_14day_max_inundation_extent_noaa

@@ -1,6 +1,8 @@
 service: static_bridge_centroids_noaa
 summary: Bridge Locations
-description: 'location of OSM, Open Street Map, bridges'
+description: 'Depicts locations of bridges of various types such as highway, rail
+  pedestrian bridges, etc. Bridge is available under the Open Database License from https://openstreetmap.org.
+   See https://www.openstreetmap.org/copyright legal information.'
 tags: nws, flood, categorical, hand, fim, osm, inundation, bridges
 credits: National Water Model, NOAA/NWS National Water Center, OpenStreetMap Foundation
 egis_server: server
