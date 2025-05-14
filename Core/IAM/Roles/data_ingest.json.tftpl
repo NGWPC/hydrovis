@@ -2,6 +2,15 @@
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Action": [
+        "states:SendTaskFailure"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:states:${region}:${account_id}:stateMachine:hv-vpp-${environment}-db-dumps-to-s3"
+      ]
+    },
+    {
       "Sid": "VisualEditor0",
       "Effect": "Allow",
       "Action": [

@@ -1,0 +1,14 @@
+service: ana_inundation_extent_rasfim_noaa
+summary: RAS FIM Inundation Extent Analysis (EXPERIMENTAL)
+description: "Test service to examine and provide feedback to GID on accuracy of RAS mapping for certain areas in the observation/analysis version of the NWM.  This mapping service is for testing and analysis only at this time, and after approval will be integrated into the primary flood mapping service.\n\nUpdated hourly. 
+  \n\nThis service is for internal use only for NOAA employees
+  and requires access to view.  Please do not share externally without prior approval
+  from OWP as this service is experimental and undergoing regular developmental changes.
+  \n\nFor feedback or questions please reach out to GID directly via slack at national-water-center-gid
+  or national-water-center-fim pages or reach out directly to derek.giardino@noaa.gov"
+tags: national water model, nwm, ana, conus, fim, inundation, rasfim, ripple
+credits: National Water Model, NOAA/NWS National Water Center
+egis_server: server
+egis_folder: nwm
+feature_service: true
+public_service: false

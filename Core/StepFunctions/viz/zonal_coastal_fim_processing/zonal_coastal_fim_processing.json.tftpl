@@ -1,0 +1,114 @@
+{
+  "Comment": "A description of my state machine",
+  "StartAt": "DB Prep",
+  "States": {
+    "DB Prep": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${db_postprocess_sql_arn}",
+        "Payload": {
+          "step": "ingest_prep",
+          "folder": "admin",
+          "args": {
+            "reference_time.$": "$.reference_time",
+            "sql_rename_dict.$": "$.sql_rename_dict",
+            "db_ingest_group": {
+              "target_table.$": "$.fim_config.target_table",
+              "index_columns": "()",
+              "index_name.$": "States.Format('idx_{}', States.ArrayGetItem(States.StringSplit($.fim_config.target_table, '.'), 1))",
+              "dependent_on": ""
+            }
+          }
+        }
+      },
+      "ResultPath": null,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Zonal Coastal FIM Processing"
+    },
+    "Zonal Coastal FIM Processing": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${zonal_coastal_fim_processing_arn}",
+        "Payload": {
+          "config_name.$": "$.fim_config.name",
+          "fim_type.$": "$.fim_config.fim_type",
+          "domain.$": "$.fim_config.domain",
+          "forecast_type.$": "$.fim_config.forecast_type",
+          "efs_duckdb_path.$": "States.Format('/mnt/efs/{}/{}_{}_zonal_database.duckdb', $.fim_config.domain, $.fim_config.forecast_type, $.fim_config.domain)",
+          "input_s3_netcdf_path.$": "States.Format('s3://{}/{}', $.fim_config.max_file_bucket, $.fim_config.max_file)",
+          "target_db_table.$": "$.fim_config.target_table",
+          "reference_time.$": "$.reference_time"
+        }
+      },
+      "ResultPath": null,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "DB Finalize"
+    },
+    "DB Finalize": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${db_postprocess_sql_arn}",
+        "Payload": {
+          "step": "ingest_finish",
+          "folder": "admin",
+          "args": {
+            "reference_time.$": "$.reference_time",
+            "sql_rename_dict.$": "$.sql_rename_dict",
+            "db_ingest_group": {
+              "target_table.$": "$.fim_config.target_table",
+              "index_columns.$": "States.Format('USING GIST (geom)')",
+              "index_name.$": "States.Format('idx_{}', States.ArrayGetItem(States.StringSplit($.fim_config.target_table, '.'), 1))",
+              "dependent_on": ""
+            }
+          }
+        }
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "ResultPath": null,
+      "End": true
+    }
+  },
+  "QueryLanguage": "JSONPath"
+}

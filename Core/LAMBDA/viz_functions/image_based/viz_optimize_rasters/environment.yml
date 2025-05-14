@@ -1,9 +1,0 @@
-name: optimize_rasters
-channels:
-  - conda-forge
-  - nodefaults
-dependencies:
-  - python=3.12
-  - awslambdaric
-  - gdal
-  - boto3

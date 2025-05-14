@@ -1,0 +1,15 @@
+service: rfc_based_5day_max_inundation_extent_rasfim_noaa
+summary: RFC Based 5-Day Maximum Inundation Forecast
+description: "Test service to examine and provide feedback to GID on accuracy of RAS mapping for certain areas using the RFC official forecast.  This mapping service is for testing and analysis only at this time, and after approval will be integrated into the primary flood mapping service.\n\n
+  Updated every 15 minutes based on RFC Forecast availability\n\nThis service is for
+  internal use only for NOAA employees and requires access to view.  Please do not
+  share externally without prior approval from OWP as this service is experimental
+  and undergoing regular developmental changes. \n\nFor feedback or questions please
+  reach out to GID directly via slack at national-water-center-gid or national-water-center-fim
+  pages or reach out directly to derek.giardino@noaa.gov"
+tags: national water model, nwm, rfc, conus, fim, inundation, extent, rasfim, ripple
+credits: National Water Model, NOAA/NWS National Water Center
+egis_server: server
+egis_folder: rfc
+feature_service: true
+public_service: false

@@ -1,0 +1,9 @@
+service: static_hecras_boundaries_noaa
+summary: HECRAS Boundaries
+description: Depicts the boundaries for the HECRAS catchments
+tags: ras2fim, ripple, hecras
+credits: National Water Model, NOAA/NWS National Water Center, Advanced Hydrologic Prediction Service, National River Layer Database
+egis_server: server
+egis_folder: reference
+feature_service: true
+public_service: false

@@ -17,14 +17,21 @@ import os
 import boto3
 import json
 import re
+import sys
+
 from datetime import datetime
 import numpy as np
 import pandas as pd
 import xarray as xr
 from io import StringIO
 from psycopg2.errors import UndefinedTable, BadCopyFileFormat, InvalidTextRepresentation
-from .viz_classes import database
-from .viz_lambda_shared_funcs import check_if_file_exists, get_db_connection_url
+
+sys.path.append(os.path.abspath('..'))
+
+import viz_classes
+
+from viz_classes import database
+from viz_lambda_shared_funcs import check_if_file_exists, get_db_connection_url
 
 s3 = boto3.client('s3')
 s3_resource = boto3.resource('s3')

@@ -1,0 +1,38 @@
+service: srf_18hr_max_inundation_extent_noaa
+summary: Short-Range 18 Hour Maximum Inundation Extent Forecast
+description: "Depicts the inundation extent of the peak National Water Model (NWM)
+  streamflow forecast over the next 18 hours where the NWM is signaling high water.
+  This service is derived from the short-range configuration of the NWM over the contiguous
+  U.S. Shown are reaches with peak flow at or above high water thresholds. High water
+  thresholds (regionally varied) and AEPs were derived using the 40-year NWM v3.0
+  re-analysis simulation.
+  <br/><br/>
+  SRC Skill: Depicts USGS sites that have an official rating
+  curve, symbolized by the \"skill\" of the synthetic rating curve compared to the
+  official USGS rating curve. Each point is symbolized by the mean difference in Water
+  Surface Elevation (WSE) between the two curves. 
+  <br/><br/>
+  Estimated Impacted Buildings: Depicts building footprints that intersect inundation extents. The source of the building data is the FEMA USA Structures dataset: https://gis-fema.hub.arcgis.com/pages/usa-structures (as of August, 2022). Occupancy type data is only available for AL, CA, FL, GA, LA, MS, NC, SC, TX, and VA at this time. Also shown are a relative density heatmap
+  of potentially impacted buildings (based on extent), county, and HUC level summary
+  layers.
+  <br/><br/>
+  Estimated Impacted Critical Infrastructure: Depicts colleges, 
+  fire stations, hospitals, nursing homes, police stations, and schools
+  that intersect inundation extents. The critical infrastructure data is derived
+  from the static FEMA Infrastructure dataset.
+  <br/><br/>
+  Estimated Impacted Bridges: Depicts bridges of various types such as highway, rail pedestrian bridges, etc. Bridge is available under the Open Database License from https://openstreetmap.org. See https://www.openstreetmap.org/copyright legal information.
+  <br/><br/>
+  Updated hourly.
+  <br/><br/>
+  This service is for internal use only for NOAA employees and requires access to view.  
+  Please do not share externally without prior approval from OWP as this 
+  service is experimental and undergoing regular developmental changes.
+  <br/><br/>
+  For feedback or questions please reach out to GID directly via slack at national-water-center-gid or national-water-center-fim pages or reach out directly to derek.giardino@noaa.gov"
+tags: national water model, nwm, srf, short, range, conus, fim, inundation, extent
+credits: National Water Model, NOAA/NWS National Water Center
+egis_server: server
+egis_folder: nwm
+feature_service: true
+public_service: false

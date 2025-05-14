@@ -1,0 +1,16 @@
+# DEPLOY PERSONAL DEVELOPER VERSIONS OF AWS VIZ-PIPELINE RESOURCES
+
+1. Make a copy of the .configuration.yml.tmpl file adjacent to this README. Rename the copy to configuration.yml.
+2. Edit the configuration.yml file. There are inline notes to help.
+3. Open terminal to this file locaiton. (If using VSCode: Right click this file on the left and select "Open in Integrated Terminal".)
+4. Execute `aws sso login --profile <profile_name>` to log into your AWS account via the command line
+5. Execute `terraform init` (like `git init` this should only be needed this one time and never again)
+6. Execute `terraform apply` (this is the command you'll keep coming back to when deploying code updates)
+7. Type `yes` if you'd like to accept the plan, or `no` if something doesn't look right.
+
+If you accept the plan, the resources set to `true` in the `deploy_resources` section will be created for you. 
+Any lambdas you create will be referenced by your own viz-pipeline step function. Otherwise, your step function 
+will reference the official "-ti-" resources.
+
+From here, you can make changes to your resources via the AWS GUI or via code. Just note that any changes made directly 
+via the GUI will be overwritten the next time you run `terraform apply` if they were not reflected back into the code base.
