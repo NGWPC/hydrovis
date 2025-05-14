@@ -47,7 +47,7 @@ services:
       context: ../RnR
       dockerfile: docker/Dockerfile.troute
     volumes:
-      - ${RNR_DATA_PATH:-../data}:/app/data
+      - ${RNR_DATA_PATH:-../data}:/t-route/data
     env_file:
       - ./config.env
     environment:
