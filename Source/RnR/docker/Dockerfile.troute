@@ -14,7 +14,7 @@ RUN uv python install 3.11
 # Clone the repository
 RUN git clone https://github.com/NGWPC/t-route.git
 WORKDIR "/t-route/"
-RUN git checkout uv_compiler
+RUN git checkout pi_6
 
 # Create netcdf symlink with error handling
 RUN ln -s /usr/lib64/gfortran/modules/netcdf.mod /usr/include/openmpi-x86_64/netcdf.mod || echo "NetCDF module link creation failed but continuing"
