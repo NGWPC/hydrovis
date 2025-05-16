@@ -70,3 +70,6 @@ Dev/configuration.yml
 
 # Ignore conda-lock.yml
 conda-lock.yml
+
+# RnR Data too large for github
+Source/data
