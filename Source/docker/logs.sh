@@ -3,8 +3,8 @@
 
 if [ "$#" -eq 0 ]; then
     # No arguments, show logs from all services
-    docker compose --env-file config.env logs -f
+    docker compose logs -f
 else
     # Show logs for specified service
-    docker compose --env-file config.env logs -f "$@"
+    docker compose logs -f "$@"
 fi

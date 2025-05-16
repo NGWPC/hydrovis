@@ -48,11 +48,8 @@ services:
       dockerfile: docker/Dockerfile.troute
     volumes:
       - ../data:/t-route/data
-    env_file:
-      - ./config.env
     environment:
-      - REDIS_HOST=redis
-      - PYTHONUNBUFFERED=1
+      - RABBITMQ_HOST=rabbitmq
     networks:
       - app-network
     depends_on:
@@ -66,12 +63,6 @@ services:
       dockerfile: docker/Dockerfile.process_flows
     volumes:
       - ../data:/t-route/data
-    env_file:
-      - ./config.env
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-      - REDIS_HOST=redis
-      - PYTHONUNBUFFERED=1
     networks:
       - app-network
     depends_on:
