@@ -1,6 +1,6 @@
 [project]
 name = "hml_reader"
-version = "0.2.0"
+version = "2025.6.0"
 description = "an hml reader service to parse the weather.gov api"
 authors = [
     { name = "Tadd.Bindas", email = "Tadd.N.Bindas@rtx.com" }
