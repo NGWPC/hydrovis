@@ -2,7 +2,7 @@ FROM rockylinux:9.3
 RUN yum install -y epel-release
 RUN yum install -y git cmake
 
-COPY --from=ghcr.io/astral-sh/uv:0.7.3 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.7.8 /uv /uvx /bin/
 
 # Use UV to install Python 3.11
 RUN uv python install 3.11
