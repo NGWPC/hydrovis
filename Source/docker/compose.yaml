@@ -1,0 +1,77 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"  # AMQP port
+      - "15672:15672"  # Management UI port
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7.2.5
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - app-network
+
+  ingest:
+    build:
+      context: ../Ingest
+      dockerfile: docker/Dockerfile.ingest
+    restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - REDIS_HOST=redis
+      - PYTHONUNBUFFERED=1
+    networks:
+      - app-network
+    command: ["tail", "-f", "/dev/null"]
+
+  rnr:
+    build:
+      context: ../RnR
+      dockerfile: docker/Dockerfile.troute
+    volumes:
+      - ../data:/t-route/data
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - app-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    command: ["tail", "-f", "/dev/null"]
+
+  process_flows:
+    build:
+      context: ../RnR
+      dockerfile: docker/Dockerfile.process_flows
+    volumes:
+      - ../data:/t-route/data
+    networks:
+      - app-network
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    command: ["tail", "-f", "/dev/null"]
+  
+networks:
+  app-network:
+    driver: bridge

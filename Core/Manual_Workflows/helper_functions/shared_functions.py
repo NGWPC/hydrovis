@@ -236,15 +236,23 @@ def get_schemas(db_type="viz"):
     sql = "SELECT DISTINCT(table_schema) FROM information_schema.tables ORDER BY table_schema;"
     return run_sql_in_db(sql, db_type=db_type)
 
+def does_table_exist(schema_name, table_name, db_type="viz"):
+
+    does_exist = True
+    rtn = get_tables(schema_name, table_name, db_type = db_type)
+    if len(rtn) == 0:
+        does_exist = False
+
+    return does_exist
 
 def get_tables(schema, containing='', db_type="viz"):
     sql = f"SELECT table_name FROM information_schema.tables WHERE table_schema = '{schema}'"
     if containing:
         sql += f" AND table_name LIKE '%%{containing}%%'"
     sql += " ORDER BY table_name;"
-    
-    return run_sql_in_db(sql, db_type=db_type)
 
+    return run_sql_in_db(sql, db_type=db_type)
+    
 def get_columns(schema_and_optional_table, table='', db_type="viz"):
     if '.' in schema_and_optional_table and not table:
         schema, table = schema_and_optional_table.split('.')
@@ -300,43 +308,44 @@ def sql_to_leafmap(db_alias, sql, layer_name="My Layer", fill_colors=["red", "gr
     )
     return m
 
-# TODO: Aug 2024: Consider moving this to the new s3_shared_functions file  (or more like just the s3 code in this function)
-def save_gdf_shapefile(gdf, output_folder, shapefile_name):
-    shapefiles_folder = folder
+# Apr 2025: Likely deprecated.. has no bucket name arg coming in. If we rebuild this,
+#    consider moving it to s3_shared_functions.
+# def save_gdf_shapefile(gdf, output_folder, shapefile_name):
+#     shapefiles_folder = folder
 
-    gdf.to_file(f'{shapefiles_folder}/{shapefile_name}.shp', index=False)
+#     gdf.to_file(f'{shapefiles_folder}/{shapefile_name}.shp', index=False)
 
-    for file in os.listdir(shapefiles_folder):
-        file_basename = os.path.basename(file).split(".")[0]
-        if file_basename == shapefile_name:
-            file_path = os.path.join(shapefiles_folder, file)
-            s3_key = f"{bucket_folder}/{file}"
+#     for file in os.listdir(shapefiles_folder):
+#         file_basename = os.path.basename(file).split(".")[0]
+#         if file_basename == shapefile_name:
+#             file_path = os.path.join(shapefiles_folder, file)
+#             s3_key = f"{bucket_folder}/{file}"
 
-            print(f"Uploading {file} to {upload_bucket}:/{s3_key}")
-            s3_client.upload_file(
-               file_path, upload_bucket, s3_key, ExtraArgs={"ServerSideEncryption": "aws:kms"}
-            )
+#             print(f"Uploading {file} to {upload_bucket}:/{s3_key}")
+#             s3_client.upload_file(
+#                file_path, upload_bucket, s3_key, ExtraArgs={"ServerSideEncryption": "aws:kms"}
+#             )
 
-            
-# TODO: Aug 2024: Consider moving this to the new s3_shared_functions file  (or more like just the s3 code in this function)
-def save_gdf_shapefile_to_s3(gdf, shapefile_name):
-    s3_client = boto3.client('s3')
-    shapefiles_folder = "shapefiles"
-    upload_bucket = "hydrovis-dev-fim-us-east-1"
-    bucket_folder = "sagemaker/shapefiles"
+# Apr 2025: Likely deprecated.. has no bucket name arg coming in. If we rebuild this,
+#    consider moving it to s3_shared_functions.
+# def save_gdf_shapefile_to_s3(gdf, shapefile_name):
+#     s3_client = boto3.client('s3')
+#     shapefiles_folder = "shapefiles"
+#     upload_bucket = "hydrovis-dev-fim-us-east-1"
+#     bucket_folder = "sagemaker/shapefiles"
 
-    gdf.to_file(f'{shapefiles_folder}/{shapefile_name}.shp', index=False)
+#     gdf.to_file(f'{shapefiles_folder}/{shapefile_name}.shp', index=False)
 
-    for file in os.listdir(shapefiles_folder):
-        file_basename = os.path.basename(file).split(".")[0]
-        if file_basename == shapefile_name:
-            file_path = os.path.join(shapefiles_folder, file)
-            s3_key = f"{bucket_folder}/{file}"
+#     for file in os.listdir(shapefiles_folder):
+#         file_basename = os.path.basename(file).split(".")[0]
+#         if file_basename == shapefile_name:
+#             file_path = os.path.join(shapefiles_folder, file)
+#             s3_key = f"{bucket_folder}/{file}"
 
-            print(f"Uploading {file} to {upload_bucket}:/{s3_key}")
-            s3_client.upload_file(
-               file_path, upload_bucket, s3_key, ExtraArgs={"ServerSideEncryption": "aws:kms"}
-            )
+#             print(f"Uploading {file} to {upload_bucket}:/{s3_key}")
+#             s3_client.upload_file(
+#                file_path, upload_bucket, s3_key, ExtraArgs={"ServerSideEncryption": "aws:kms"}
+#             )
 
             
             

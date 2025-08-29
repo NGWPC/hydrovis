@@ -198,7 +198,7 @@ locals {
 resource "aws_instance" "rds-bastion" {
   ami                    = data.aws_ami.linux.id
   iam_instance_profile   = var.ec2_instance_profile_name
-  instance_type          = "m5.large"
+  instance_type          = "m5.2xlarge"
   availability_zone      = var.ec2_instance_availability_zone
   vpc_security_group_ids = var.ec2_instance_sgs
   subnet_id              = var.ec2_instance_subnet
@@ -355,7 +355,7 @@ data "cloudinit_config" "startup" {
       db_password = local.dbs["viz"]["db_password"]
 
       s3_bucket   = data.aws_s3_objects.viz_db_dumps.bucket
-      s3_key_list = data.aws_s3_objects.viz_db_dumps.keys
+      s3_key_list = var.environment == "ti" ? [] : data.aws_s3_objects.viz_db_dumps.keys
     })
   }
 
@@ -377,6 +377,7 @@ data "cloudinit_config" "startup" {
       foreign_schema      = "public"
       foreign_server      = "wrds_location"
       user_mappings       = [jsondecode(var.viz_proc_admin_rw_secret_string)["username"]]
+      expect_task_token   = false
     })
   }
 
@@ -398,6 +399,7 @@ data "cloudinit_config" "startup" {
       foreign_schema      = "public EXCEPT (hml, hml_status, hml_log, hml_xml, hml_xml_log)"
       foreign_server      = "wrds_rfcfcst"
       user_mappings       = [jsondecode(var.viz_proc_admin_rw_secret_string)["username"]]
+      expect_task_token   = false
     })
   }
 
@@ -435,7 +437,7 @@ data "cloudinit_config" "startup" {
       db_password = local.dbs["egis"]["db_password"]
 
       s3_bucket   = data.aws_s3_objects.egis_db_dumps.bucket
-      s3_key_list = data.aws_s3_objects.egis_db_dumps.keys
+      s3_key_list = var.environment == "ti" ? [] : data.aws_s3_objects.egis_db_dumps.keys
     })
   }
 
@@ -505,6 +507,28 @@ data "cloudinit_config" "startup" {
               viz_db_username      = local.dbs["viz"]["db_username"]
               viz_db_password      = local.dbs["viz"]["db_password"]
               viz_db_name          = local.dbs["viz"]["db_name"]
+            })
+          },
+          {
+            path        = "/deploy_files/setup_wrds_location3_db_foreign_tables_on_viz_db.sh"
+            permissions = "0700"
+            owner       = "ec2-user:ec2-user"
+            content     = templatefile("${path.module}/scripts/utils/setup_foreign_tables.tftpl", {
+              db_name             = local.dbs["viz"]["db_name"]
+              db_host             = local.dbs["viz"]["db_host"]
+              db_port             = local.dbs["viz"]["db_port"]
+              db_username         = local.dbs["viz"]["db_username"]
+              db_password         = local.dbs["viz"]["db_password"]
+              db_schema           = "external"
+              foreign_db_name     = local.dbs["location"]["db_name"]
+              foreign_db_host     = local.dbs["location"]["db_host"]
+              foreign_db_port     = local.dbs["location"]["db_port"]
+              foreign_db_username = local.dbs["location"]["db_username"]
+              foreign_db_password = local.dbs["location"]["db_password"]
+              foreign_schema      = "public"
+              foreign_server      = "wrds_location"
+              user_mappings       = [jsondecode(var.viz_proc_admin_rw_secret_string)["username"]]
+              expect_task_token   = true
             })
           }
         ]

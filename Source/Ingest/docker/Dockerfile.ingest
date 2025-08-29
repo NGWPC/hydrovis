@@ -1,0 +1,19 @@
+FROM python:3.12-slim
+
+# Install curl for UV installation
+RUN apt-get update && apt-get install -y curl
+
+# Install UV properly by copying from the official image
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the content of the build context to /app
+COPY . /app
+
+RUN uv venv
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Install the package in development mode
+RUN uv pip install -e .

@@ -70,6 +70,10 @@ resource "aws_iam_role" "EC2ImageBuilderDistributionCrossAccountRole" {
       },
     ]
   })
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "EC2ImageBuilderDistributionCrossAccountRole" {

@@ -1,0 +1,80 @@
+{
+  "QueryLanguage": "JSONata",
+  "Comment": "A description of my state machine",
+  "StartAt": "Store \"event\" variable",
+  "States": {
+    "Store \"event\" variable": {
+      "Type": "Pass",
+      "Next": "Remove Stale Run",
+      "Assign": {
+        "event": "{% $states.input.event %}"
+      }
+    },
+    "Remove Stale Run": {
+      "Type": "Map",
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "Mode": "DISTRIBUTED",
+          "ExecutionType": "EXPRESS"
+        },
+        "StartAt": "DeleteObject",
+        "States": {
+          "DeleteObject": {
+            "Type": "Task",
+            "Arguments": {
+              "Bucket": "${deployment_bucket}",
+              "Key": "{% $states.input.Key %}"
+            },
+            "Resource": "arn:aws:states:::aws-sdk:s3:deleteObject",
+            "End": true
+          }
+        }
+      },
+      "ItemReader": {
+        "Resource": "arn:aws:states:::s3:listObjectsV2",
+        "Arguments": {
+          "Bucket": "${deployment_bucket}",
+          "Prefix": "common/data/model/com/nwm/prod/"
+        },
+        "ReaderConfig": {}
+      },
+      "Label": "RemoveStaleRun",
+      "Output": {
+        "success": true
+      },
+      "Next": "List Event Files"
+    },
+    "List Event Files": {
+      "Type": "Task",
+      "Arguments": {
+        "Bucket": "${deployment_bucket}",
+        "Prefix": "{% 'test_events/' & $event %}"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:s3:listObjectsV2",
+      "Next": "Copy Event Files to Live Feed"
+    },
+    "Copy Event Files to Live Feed": {
+      "Type": "Map",
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "Mode": "INLINE"
+        },
+        "StartAt": "CopyObject",
+        "States": {
+          "CopyObject": {
+            "Type": "Task",
+            "Arguments": {
+              "Bucket": "${deployment_bucket}",
+              "CopySource": "{% $join(['${deployment_bucket}', $states.input.Key], '/') %}",
+              "Key": "{% $replace($states.input.Key, $join(['test_events/', $event], ''), $now('common/data/model/com/nwm/prod/nwm.[Y0001][M01][D01]')) %}"
+            },
+            "Resource": "arn:aws:states:::aws-sdk:s3:copyObject",
+            "End": true
+          }
+        }
+      },
+      "Items": "{% $states.input.Contents %}",
+      "End": true
+    }
+  }
+}

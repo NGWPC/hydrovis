@@ -1,0 +1,81 @@
+product: ana_past_14day_max_inundation
+configuration: analysis_assim
+product_type: "fim"
+domain: conus
+run: true
+run_times:
+  - '00:00'
+        
+python_preprocessing:
+  - file_format: common/data/model/com/nwm/{{variable:NWM_DATAFLOW_VERSION}}/nwm.{{datetime:%Y%m%d}}/analysis_assim/nwm.t{{datetime:%H}}z.analysis_assim.channel_rt.tm00.conus.nc
+    file_step: PT1H
+    file_window: P7D
+    product: max_values
+    lambda_ram: 3gb
+    output_file: max_flows/analysis_assim/{{datetime:%Y%m%d}}/ana_7day_00_max_flows.nc
+    target_table: ingest.nwm_channel_rt_ana_7day_max
+    target_keys: (feature_id, streamflow)
+  - file_format: common/data/model/com/nwm/{{variable:NWM_DATAFLOW_VERSION}}/nwm.{{datetime:%Y%m%d}}/analysis_assim/nwm.t{{datetime:%H}}z.analysis_assim.channel_rt.tm00.conus.nc
+    file_step: PT1H
+    file_window: P14D
+    product: max_values
+    lambda_ram: 3gb
+    output_file: max_flows/analysis_assim/{{datetime:%Y%m%d}}/ana_14day_00_max_flows.nc
+    target_table: ingest.nwm_channel_rt_ana_14day_max
+    target_keys: (feature_id, streamflow)
+
+db_max_flows:
+  - name: 7_day_max_flows
+    target_table: cache.max_flows_ana_7day
+    target_keys: (feature_id, streamflow)
+    method: lambda
+    max_flows_sql_file: ana_7day_max_flows
+  - name: 14_day_max_flows
+    target_table: cache.max_flows_ana_14day
+    target_keys: (feature_id, streamflow)
+    method: lambda
+    max_flows_sql_file: ana_14day_max_flows
+
+fim_configs:
+  - name: ana_past_7day_max_inundation
+    flows_table: cache.max_flows_ana_7day
+    target_table: fim_ingest.ana_past_7day_max_inundation
+    fim_type: hand
+    postprocess:
+      sql_file: ana_past_7day_max_inundation
+      target_table: publish.ana_past_7day_max_inundation
+  - name: ana_past_14day_max_inundation
+    flows_table: cache.max_flows_ana_14day
+    target_table: fim_ingest.ana_past_14day_max_inundation
+    fim_type: hand
+    postprocess:
+      sql_file: ana_past_14day_max_inundation
+      target_table: publish.ana_past_14day_max_inundation
+  
+product_summaries:
+  - sql_file:  7day_src_skill
+    target_table:
+      - publish.ana_past_7day_max_inundation_src_skill
+  - sql_file:  7day_building_footprints_fimpact
+    target_table:
+      - publish.ana_past_7day_max_inundation_building_footprints
+      - publish.ana_past_7day_max_inundation_counties
+      - publish.ana_past_7day_max_inundation_hucs
+      - publish.ana_past_7day_max_inundation_critical_infrastructure
+  - sql_file:  14day_src_skill
+    target_table:
+      - publish.ana_past_14day_max_inundation_src_skill
+  - sql_file:  14day_building_footprints_fimpact
+    target_table:
+      - publish.ana_past_14day_max_inundation_building_footprints
+      - publish.ana_past_14day_max_inundation_counties
+      - publish.ana_past_14day_max_inundation_hucs
+      - publish.ana_past_14day_max_inundation_critical_infrastructure
+  - sql_file:  7_day_bridge_threats
+    target_table:
+      - publish.ana_past_7day_max_inundation_bridge_threats
+  - sql_file:  14_day_bridge_threats
+    target_table:
+      - publish.ana_past_14day_max_inundation_bridge_threats
+services:
+  - ana_past_14day_max_inundation_extent_noaa
