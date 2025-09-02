@@ -1,5 +1,5 @@
 #!/bin/bash
-# run_rnr.sh - Formats the .nc files to create output csvs
+# run_post_process.sh - Formats the .nc files to create output csvs
 
 # Goes into the container, activates the .venv/, runs the read script
-docker exec docker-process_flows-1 bash -c "source ../../.venv/bin/activate && python post_process.py"
+docker exec docker-rnr-1 bash -c "source ../../.venv/bin/activate && python post_process.py"

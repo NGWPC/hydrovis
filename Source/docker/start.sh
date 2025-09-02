@@ -54,7 +54,7 @@ check_service_health "Redis" 6379 10 2 || { echo "Redis failed to start properly
 
 # Step 5: Start the rest of the services in detached mode
 echo "Starting application services..."
-docker compose up -d process_flows rnr ingest
+docker compose up -d rnr ingest
 
 echo "All services have been started successfully!"
 echo "Use './run_ingest.sh', './run_rnr.sh', or './run_post_process.sh' to run specific services individually."
