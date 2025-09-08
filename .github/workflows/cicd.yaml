@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
     pull_request:
-        branches: [main, development]
+        branches: [main, development, pi-7-NGWPC-6258]
     push:
         branches: [main, development]
         tags: ['v*.*.*']
