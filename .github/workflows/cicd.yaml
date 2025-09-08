@@ -188,8 +188,8 @@ jobs:
           - name: Build & push ingest image
             uses: docker/build-push-action@v6
             with:
-              context: ./Ingest
-              file: ./Ingest/docker/Dockerfile.ingest
+              context: ./Source/Ingest
+              file: docker/Dockerfile.ingest
               push: true
               tags: ${{ steps.prep_tags.outputs.tags }}
 
@@ -217,4 +217,23 @@ jobs:
               fi
 
               # If the trigger was a version tag, add that version as a tag
-              if [[ "${{ github.ref }}" == refs/tags/v
+              if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+                # github.ref_name holds the tag name (e.g., "v1.0.0")
+                VERSION_TAG=${{ github.ref_name }}
+                TAGS="$TAGS,${{ needs.setup.outputs.image_base }}/rnr:${VERSION_TAG}"
+              fi
+
+              echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+          - name: Log in to registry
+            uses: docker/login-action@v3
+            with:
+              registry: ${{ env.REGISTRY }}
+              username: ${{ github.actor }}
+              password: ${{ secrets.GITHUB_TOKEN }}
+          - name: Build & push RnR image
+            uses: docker/build-push-action@v6
+            with:
+              context: ./Source/RnR
+              file: docker/Dockerfile.troute
+              push: true
+              tags: ${{ steps.prep_tags.outputs.tags }}
