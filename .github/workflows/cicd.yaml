@@ -61,8 +61,8 @@ jobs:
             id: build-ingest
             uses: docker/build-push-action@v6
             with:
-              context: ./Ingest
-              file: ./Ingest/docker/Dockerfile.ingest
+              context: ./Source/Ingest
+              file: docker/Dockerfile.ingest
               # Load the image to the local Docker daemon, but do not push it
               load: true
               tags: ${{ needs.setup.outputs.image_base }}/ingest:${{ needs.setup.outputs.test_image_tag }}
@@ -91,8 +91,8 @@ jobs:
             id: build-rnr
             uses: docker/build-push-action@v6
             with:
-              context: ./RnR
-              file: ./RnR/docker/Dockerfile.troute
+              context: ./Source/RnR
+              file: docker/Dockerfile.troute
               load: true
               tags: ${{ needs.setup.outputs.image_base }}/rnr:${{ needs.setup.outputs.test_image_tag }}
           - name: Scan RnR container with Trivy
