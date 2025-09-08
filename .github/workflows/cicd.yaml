@@ -113,8 +113,6 @@ jobs:
         name: CodeQL Scan
         if: github.event_name == 'pull_request' || github.event_name == 'push'
         runs-on: ubuntu-latest
-        # The 'unit-test' job is disabled for now. When you re-enable it, uncomment the line below.
-        # needs: unit-test
         permissions:
             actions: read
             contents: read
@@ -135,16 +133,17 @@ jobs:
             uses: github/codeql-action/init@v3
             with:
               languages: python
-          - name: Install Ingest dependencies
-            run: |
-              if [ -f "Source/Ingest/pyproject.toml" ]; then
-                cd Source/Ingest && uv sync
-              fi
-          - name: Install RnR dependencies  
-            run: |
-              if [ -f "Source/RnR/pyproject.toml" ]; then
-                cd Source/RnR && uv sync
-              fi
+        #  Commenting out as binary/wheels are missing
+        #   - name: Install Ingest dependencies
+        #     run: |
+        #       if [ -f "Source/Ingest/pyproject.toml" ]; then
+        #         cd Source/Ingest && uv sync
+        #       fi
+        #   - name: Install RnR dependencies  
+        #     run: |
+        #       if [ -f "Source/RnR/pyproject.toml" ]; then
+        #         cd Source/RnR && uv sync
+        #       fi
           - name: Perform CodeQL Analysis
             uses: github/codeql-action/analyze@v3
 
