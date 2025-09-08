@@ -62,7 +62,7 @@ jobs:
             uses: docker/build-push-action@v6
             with:
               context: ./Source/Ingest
-              file: docker/Dockerfile.ingest
+              file: ./Source/Ingest/docker/Dockerfile.ingest
               # Load the image to the local Docker daemon, but do not push it
               load: true
               tags: ${{ needs.setup.outputs.image_base }}/ingest:${{ needs.setup.outputs.test_image_tag }}
@@ -92,7 +92,7 @@ jobs:
             uses: docker/build-push-action@v6
             with:
               context: ./Source/RnR
-              file: docker/Dockerfile.troute
+              file: ./Source/RnR/docker/Dockerfile.troute
               load: true
               tags: ${{ needs.setup.outputs.image_base }}/rnr:${{ needs.setup.outputs.test_image_tag }}
           - name: Scan RnR container with Trivy
@@ -123,12 +123,12 @@ jobs:
             uses: actions/setup-python@v5
             with:
               python-version: ${{ env.PYTHON_VERSION }}
-          - name: Install uv
-            uses: astral-sh/setup-uv@v5
-            with:
-              enable-cache: true
-              python-version: ${{ env.PYTHON_VERSION }}
-              cache-dependency-glob: "**/uv.lock **/pyproject.toml"
+        #   - name: Install uv
+        #     uses: astral-sh/setup-uv@v5
+        #     with:
+        #       enable-cache: true
+        #       python-version: ${{ env.PYTHON_VERSION }}
+        #       cache-dependency-glob: "**/uv.lock **/pyproject.toml"
           - name: Initialize CodeQL
             uses: github/codeql-action/init@v3
             with:
@@ -188,7 +188,7 @@ jobs:
             uses: docker/build-push-action@v6
             with:
               context: ./Source/Ingest
-              file: docker/Dockerfile.ingest
+              file: ./Source/Ingest/docker/Dockerfile.ingest
               push: true
               tags: ${{ steps.prep_tags.outputs.tags }}
 
@@ -233,6 +233,6 @@ jobs:
             uses: docker/build-push-action@v6
             with:
               context: ./Source/RnR
-              file: docker/Dockerfile.troute
+              file: ./Source/RnR/docker/Dockerfile.troute
               push: true
               tags: ${{ steps.prep_tags.outputs.tags }}
