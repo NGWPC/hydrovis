@@ -1,20 +1,11 @@
 FROM rockylinux:9
 
 # Install system dependencies
-RUN yum update -y && \
-    yum install -y epel-release && \
-    yum install -y \
-        gcc \
-        gcc-c++ \
-        netcdf \
-        netcdf-devel \
-        netcdf-fortran \
-        netcdf-fortran-devel \
-        hdf5-devel \
-        pkg-config \
-        git \
-        cmake && \
-    yum clean all
+RUN yum update -y
+RUN yum install -y epel-release
+RUN yum install -y gcc
+RUN yum install -y netcdf netcdf-fortran netcdf-fortran-devel netcdf-openmpi
+RUN yum install -y git cmake
 
 # Install UV by copying the binaries directly from the official image
 COPY --from=ghcr.io/astral-sh/uv:0.8.14 /uv /uvx /bin/
