@@ -1,6 +1,7 @@
 
 import os
 
+import pika
 from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
@@ -21,7 +22,6 @@ class Settings(BaseSettings):
     rabbitmq_default_host: str = "localhost"
     rabbitmq_default_port: int = 5672
 
-    aio_pika_url: str = "amqp://{}:{}@{}:{}/"
     redis_url: str = "localhost"
     redis_port: int = 6379
 
@@ -39,9 +39,15 @@ class Settings(BaseSettings):
         if os.getenv("REDIS_HOST") is not None:
             self.redis_url = os.getenv("REDIS_HOST") 
 
-        self.aio_pika_url = self.aio_pika_url.format(
-            self.rabbitmq_default_username,
-            self.rabbitmq_default_password,
-            self.rabbitmq_default_host,
-            self.rabbitmq_default_port,
+        creds = pika.PlainCredentials(
+            self.rabbitmq_default_username, 
+            self.rabbitmq_default_password
+        )
+        
+        self.connection_params = pika.ConnectionParameters(
+            host=self.rabbitmq_default_host,
+            port=self.rabbitmq_default_port,
+            credentials=creds,
+            heartbeat=30,
+            blocked_connection_timeout=300,
         )
