@@ -1,3 +1,0 @@
-[submodule "Source/iac"]
-	path = Source/iac
-	url = https://github.com/NGWPC/rnr-aws
